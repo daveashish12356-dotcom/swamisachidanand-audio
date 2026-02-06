@@ -1,0 +1,29 @@
+અમરકંટક – GitHub Release pe upload karte waqt ye files is naam se upload karo
+(Desktop folder: અમરકંટક અને મધ્યપ્રદેશનો મહિમા)
+
+part_01.wav  ←  1.અમરકંટક અને મધ્યપ્રદેશનો મહિમા.wav
+part_02.wav  ←  2.ભૂમિકા.wav
+part_03.wav  ←  3.પ્રસ્થાન.wav
+part_04.wav  ←  4.ભોપાલ તરફ.wav
+part_05.wav  ←  5.સાંચી.wav
+part_06.wav  ←  6.પંચમઢી - ભીમબેટકા.wav
+part_07.wav  ←  7.ભેડાઘાટ 1.wav
+part_08.wav  ←  7.ભેડાઘાટ 2.wav
+part_09.wav  ←  8.અમરકંટક 1.wav
+part_10.wav  ←  8.અમરકંટક 2.wav
+part_11.wav  ←  8.અમરકંટક 3.wav
+part_12.wav  ←  9.બાંધવગઢ 1.wav
+part_13.wav  ←  9.બાંધવગઢ 2.wav
+part_14.wav  ←  10.ચિત્રકૂટ 1.wav
+part_15.wav  ←  10.ચિત્રકૂટ 2.wav
+part_16.wav  ←  11.ખજુરાહો - ઓરછા 1.wav
+part_17.wav  ←  11.ખજુરાહો - ઓરછા 2.wav
+part_18.wav  ←  12.ઝાંસી અને રાણી લક્ષ્મીબાઈ 1.wav
+part_19.wav  ←  12.ઝાંસી અને રાણી લક્ષ્મીબાઈ 2.WAV
+part_20.wav  ←  12.ઝાંસી અને રાણી લક્ષ્મીબાઈ 3.wav
+part_21.wav  ←  12.ઝાંસી અને રાણી લક્ષ્મીબાઈ 4.wav
+part_22.wav  ←  12.ઝાંસી અને રાણી લક્ષ્મીબાઈ 5.wav
+part_23.wav  ←  13.ગ્વાલિયર.wav
+part_24.wav  ←  14.ઉજ્જૈન.wav
+
+Total: 24 files, ~571 MB. Release tag: amarakantak (ya v1.0).
