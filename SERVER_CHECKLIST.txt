@@ -1,0 +1,28 @@
+Audio server ready karne – checklist (jo tumhe karna hai)
+=========================================================
+
+[ ] 1. GitHub pe repo banao
+      https://github.com/new
+      Repository name: swamisachidanand-audio
+      Public, "Add README" mat lagao → Create
+
+[ ] 2. Push karo
+      f:\ss\audio-repo\DO_ALL_SERVER_SETUP.bat double-click karo
+      (Login prompt aaye to GitHub username/password ya token daalo)
+
+[ ] 3. Pages on karo
+      Repo → Settings → Pages
+      Source: Deploy from a branch
+      Branch: main, Folder: / (root) → Save
+
+[ ] 4. 2–3 minute wait, phir check
+      Browser: https://daveashish12356-dotcom.github.io/swamisachidanand-audio/audio_list.json
+      JSON dikhe = list ready, app server se list legi
+
+[ ] 5. Audio play ke liye – Release banao
+      Repo → Releases → Create a new release
+      Tag: amarakantak
+      Attach 24 files: part_01.wav … part_24.wav (names RELEASE_UPLOAD_MAP.txt me)
+      (Desktop folder: અમરકંટક અને મધ્યપ્રદેશનો મહિમા)
+
+Jo hum yahan se kar sakte the (commit, script) wo ho chuka. Baaki 1–5 tumhe browser/GitHub pe karna hoga.

@@ -2,7 +2,7 @@
 
 Audio list for Swami Sachidanand app. Served via GitHub Pages.
 
-- **Audio list URL:** https://swamisachidanand.github.io/swamisachidanand-audio/audio_list.json
+- **Audio list URL:** https://daveashish12356-dotcom.github.io/swamisachidanand-audio/audio_list.json
 - **Setup:** See [HOSTING_README.md](HOSTING_README.md)
 - **Releases:** Upload WAV files as release assets (see RELEASE_UPLOAD_MAP.txt).
 

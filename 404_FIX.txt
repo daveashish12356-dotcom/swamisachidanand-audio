@@ -10,7 +10,7 @@
    git add .
    git commit -m "Audio list and docs"
    git branch -M main
-   git remote add origin https://github.com/swamisachidanand/swamisachidanand-audio.git
+   git remote add origin https://github.com/daveashish12356-dotcom/swamisachidanand-audio.git
    git push -u origin main
 
 3. Repo → Settings → Pages
@@ -19,7 +19,7 @@
    Save
 
 4. 2–3 minute wait, phir open karo:
-   https://swamisachidanand.github.io/swamisachidanand-audio/audio_list.json
+   https://daveashish12356-dotcom.github.io/swamisachidanand-audio/audio_list.json
    404 hat jayega, app ko list mil jayegi.
 
 5. Audio play ke liye: Releases → Create release tag "amarakantak" → 24 WAV files upload (see RELEASE_UPLOAD_MAP.txt).
