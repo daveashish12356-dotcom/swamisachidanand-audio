@@ -1,4 +1,8 @@
-અમરકંટક – GitHub Release pe upload karte waqt ye files is naam se upload karo
+=== HAR BOOK ALAG RELEASE (ALAG FOLDER) ME ===
+Doosri book add karte waqt naya release tag banao aur sirf us book ki files usi release me upload karo. Is tarah sab books ki files mix nahi hoti.
+
+--- Book 1: અમરકંટક (release tag: amarakantak) ---
+GitHub Release pe upload karte waqt ye files is naam se upload karo.
 (Desktop folder: અમરકંટક અને મધ્યપ્રદેશનો મહિમા)
 
 part_01.wav  ←  1.અમરકંટક અને મધ્યપ્રદેશનો મહિમા.wav
@@ -26,4 +30,10 @@ part_22.wav  ←  12.ઝાંસી અને રાણી લક્ષ્મ�
 part_23.wav  ←  13.ગ્વાલિયર.wav
 part_24.wav  ←  14.ઉજ્જૈન.wav
 
-Total: 24 files, ~571 MB. Release tag: amarakantak (ya v1.0).
+Total: 24 files, ~571 MB. Release tag: amarakantak.
+
+--- Nayi book add karte waqt ---
+1. Naya release banao, naya tag do (e.g. book2_tag).
+2. Sirf us book ki files usi release me upload karo.
+3. Isi type ka naya map banao: RELEASE_UPLOAD_MAP_<book_tag>.txt (optional).
+4. audio_list.json me nayi book add karo, URLs me .../releases/download/<book_tag>/part_XX.wav use karo.
