@@ -1,54 +1,67 @@
 ========================================
- SIRF 2 KAAM - BILKUL SIMPLE
+ SABSE PEHLE - SIRF 3 CHEEZEIN
 ========================================
 
-Code GitHub pe already push ho chuka hai. Ab sirf ye 2 cheezein karna hai.
+1. Link kholo: https://github.com/daveashish12356-dotcom/swamisachidanand-audio
+2. Upar right "Settings" click → left side "Pages" click
+3. Source = "Deploy from a branch", Branch = "main", Folder = "/ (root)" → "Save" click
+
+Bas. 2 min baad list ready.
+
+========================================
+ DETAIL MEIN (agar upar samaj na aaye)
+========================================
+
+Kaam 2 (Release / audio files) baad me karo. Ab sirf ye:
 
 
-■■■ KAAM 1: Pages ON karo ■■■
-
-1. Browser me ye link kholo:
-   https://github.com/daveashish12356-dotcom/swamisachidanand-audio
-
-2. Page ke upar right side "Settings" likha hoga – uspe click karo.
-
-3. Left side list me "Pages" dhundho – uspe click karo.
-
-4. Neeche "Build and deployment" me:
-   - Source: "Deploy from a branch" choose karo
-   - Branch: "main" choose karo
-   - Folder: "/ (root)" choose karo
-   - "Save" button pe click karo
-
-5. 2–3 minute wait karo. Phir ye link kholo:
-   https://daveashish12356-dotcom.github.io/swamisachidanand-audio/audio_list.json
-
-   Agar JSON text dikhe = list ready. App me audio list server se aayegi.
+--- Step 1 ---
+Browser me ye link copy karke address bar me paste karo, Enter dabao:
+https://github.com/daveashish12356-dotcom/swamisachidanand-audio
 
 
-■■■ KAAM 2: Audio sunne ke liye – Release banao (baad me bhi kar sakte ho) ■■■
+--- Step 2 ---
+Page ke UPAR right side pe "Settings" likha hoga (gear icon ke saath).
+Us "Settings" pe CLICK karo.
 
-1. Wahi repo kholo: https://github.com/daveashish12356-dotcom/swamisachidanand-audio
 
-2. "Releases" pe click karo (right side).
+--- Step 3 ---
+Left side list me sab options aayenge. Wahan "Pages" likha hoga.
+Us "Pages" pe CLICK karo.
 
-3. "Create a new release" pe click karo.
 
-4. Tag me likho: amarakantak  →  "Create new tag" pe click karo.
+--- Step 4 ---
+Ab page pe "Build and deployment" heading dikhegi.
 
-5. Neeche "Publish release" pe click karo.
+Uske niche "Source" ke samne ek dropdown hoga.
+Us dropdown me click karo aur "Deploy from a branch" CHOOSE karo.
 
-6. Release page pe "Attach binaries" – wahan 24 WAV files drag-drop karo.
-   Names: part_01.wav, part_02.wav … part_24.wav
-   Kaunsi file ka kaunsa naam – wo RELEASE_UPLOAD_MAP.txt me hai.
+Phir "Branch" ke samne dropdown me "main" CHOOSE karo.
 
-7. Upload ho jaye to save. Phir app me tap karte hi audio online chalegi.
+Phir "Folder" ke samne dropdown me "/ (root)" CHOOSE karo.
+
+Sab choose karne ke baad neeche "Save" button dikhega.
+Us "Save" pe CLICK karo.
+
+
+--- Step 5 ---
+2 minute wait karo. Phir ye link kholo (copy-paste karo):
+https://daveashish12356-dotcom.github.io/swamisachidanand-audio/audio_list.json
+
+Agar kuch text (JSON) dikhe = ho gaya. App me audio list aa jayegi.
 
 
 ========================================
- Short:
+ KAAM 2 (Audio play) - JAB SUNNA HO TAB
 ========================================
-Kaam 1 (Pages) = app ko list milegi
-Kaam 2 (Release + 24 WAV) = audio play hogi
 
-Pehle Kaam 1 karo. Kaam 2 baad me bhi kar sakte ho.
+Abhi skip karo. Jab app me audio sunna ho tab ye karo:
+
+1. https://github.com/daveashish12356-dotcom/swamisachidanand-audio kholo
+2. Right side "Releases" pe click
+3. "Create a new release" pe click
+4. Tag me likho: amarakantak
+5. "Publish release" pe click
+6. Usi page pe neeche "Attach binaries" - wahan 24 WAV files drag karke chhodo (naam part_01.wav se part_24.wav - RELEASE_UPLOAD_MAP.txt dekho)
+
+========================================
