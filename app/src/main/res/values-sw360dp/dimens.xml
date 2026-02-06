@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="spacing_tiny">5dp</dimen>
+    <dimen name="spacing_small">10dp</dimen>
+    <dimen name="spacing_medium">14dp</dimen>
+    <dimen name="spacing_normal">18dp</dimen>
+    <dimen name="spacing_large">22dp</dimen>
+    <dimen name="spacing_xlarge">26dp</dimen>
+    <dimen name="spacing_xxlarge">32dp</dimen>
+    <dimen name="spacing_section_bottom">22dp</dimen>
+
+    <dimen name="search_bar_margin_h">18dp</dimen>
+    <dimen name="search_bar_margin_v">14dp</dimen>
+    <dimen name="search_bar_radius">32dp</dimen>
+    <dimen name="search_bar_padding_h">22dp</dimen>
+    <dimen name="search_bar_padding_v">14dp</dimen>
+    <dimen name="search_icon_size">26dp</dimen>
+    <dimen name="search_text_size">17sp</dimen>
+
+    <dimen name="section_title_size">21sp</dimen>
+    <dimen name="section_title_margin_bottom">14dp</dimen>
+
+    <dimen name="bottom_nav_height">58dp</dimen>
+    <dimen name="bottom_nav_icon_size">28dp</dimen>
+    <dimen name="bottom_nav_padding_v">9dp</dimen>
+    <dimen name="bottom_nav_padding_bottom">7dp</dimen>
+
+    <!-- Home hero video (top section) -->
+    <dimen name="hero_video_height">240dp</dimen>
+
+    <dimen name="book_card_margin">12dp</dimen>
+    <dimen name="book_card_radius">22dp</dimen>
+    <dimen name="book_card_thumbnail_height">240dp</dimen>
+    <dimen name="book_card_inner_padding">22dp</dimen>
+    <dimen name="book_card_title_size">18sp</dimen>
+    <dimen name="book_card_year_size">15sp</dimen>
+
+    <dimen name="book_home_card_width">150dp</dimen>
+    <dimen name="book_home_card_thumbnail_height">195dp</dimen>
+    <dimen name="book_home_card_margin_h">10dp</dimen>
+    <dimen name="book_home_card_radius">10dp</dimen>
+    <dimen name="book_home_card_inner_padding">14dp</dimen>
+    <dimen name="book_home_card_title_size">15sp</dimen>
+    <dimen name="book_home_card_year_size">13sp</dimen>
+
+    <dimen name="search_results_recycler_height">280dp</dimen>
+
+    <dimen name="pdf_top_bar_margin_h">18dp</dimen>
+    <dimen name="pdf_top_bar_margin_v">10dp</dimen>
+    <dimen name="pdf_toggle_btn_size">64dp</dimen>
+    <dimen name="pdf_more_btn_size">54dp</dimen>
+    <dimen name="pdf_book_title_size">14sp</dimen>
+    <dimen name="pdf_bottom_bar_padding">12dp</dimen>
+    <dimen name="pdf_chapter_btn_size">54dp</dimen>
+    <dimen name="pdf_progress_text_size">13sp</dimen>
+    <dimen name="pdf_text_overlay_height">420dp</dimen>
+    <dimen name="pdf_text_overlay_margin">18dp</dimen>
+
+    <dimen name="empty_icon_size">110dp</dimen>
+    <dimen name="empty_title_size">24sp</dimen>
+    <dimen name="empty_message_size">17sp</dimen>
+</resources>

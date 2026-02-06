@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/background_light">
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:overScrollMode="never">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="?attr/background_light">
+
+        <!-- Search Bar Section - Same as Books Page -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/search_bar_margin_h"
+            android:layout_marginEnd="@dimen/search_bar_margin_h"
+            android:layout_marginTop="@dimen/search_bar_margin_v"
+            android:layout_marginBottom="@dimen/spacing_section_bottom"
+            app:cardCornerRadius="@dimen/search_bar_radius"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:strokeWidth="1dp"
+            app:strokeColor="#E0E0E0">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/search_bar_padding_h"
+                android:paddingEnd="@dimen/search_bar_padding_h"
+                android:paddingTop="@dimen/search_bar_padding_v"
+                android:paddingBottom="@dimen/search_bar_padding_v">
+
+                <ImageView
+                    android:layout_width="@dimen/search_icon_size"
+                    android:layout_height="@dimen/search_icon_size"
+                    android:src="@android:drawable/ic_menu_search"
+                    app:tint="#757575"
+                    android:layout_marginEnd="12dp" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/search_input"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="પુસ્તકો શોધો"
+                    android:textSize="@dimen/search_text_size"
+                    android:textColorHint="#9E9E9E"
+                    android:textColor="#212121"
+                    android:background="@android:color/transparent"
+                    android:inputType="text|textAutoComplete|textAutoCorrect"
+                    android:imeOptions="actionSearch"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textCursorDrawable="@null" />
+
+                <ImageView
+                    android:id="@+id/clear_search"
+                    android:layout_width="@dimen/search_icon_size"
+                    android:layout_height="@dimen/search_icon_size"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    app:tint="#757575"
+                    android:layout_marginStart="8dp"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <ImageView
+                    android:id="@+id/mic_button"
+                    android:layout_width="@dimen/search_icon_size"
+                    android:layout_height="@dimen/search_icon_size"
+                    android:src="@android:drawable/ic_btn_speak_now"
+                    app:tint="#4285F4"
+                    android:layout_marginStart="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="Voice search" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Search Results (visible when user types) -->
+        <LinearLayout
+            android:id="@+id/search_results_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginStart="@dimen/spacing_large"
+            android:layout_marginEnd="@dimen/spacing_large"
+            android:layout_marginBottom="@dimen/spacing_normal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Search Results"
+                android:textSize="@dimen/section_title_size"
+                android:textStyle="bold"
+                android:textColor="?attr/text_primary"
+                android:layout_marginBottom="8dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/search_results_recycler"
+                android:layout_width="match_parent"
+            android:layout_height="@dimen/search_results_recycler_height"
+            android:paddingStart="@dimen/spacing_normal"
+            android:paddingEnd="@dimen/spacing_normal"
+                android:scrollbars="horizontal"
+                android:clipToPadding="false" />
+
+            <TextView
+                android:id="@+id/search_no_results"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No books found"
+                android:textSize="16sp"
+                android:textColor="#757575"
+                android:visibility="gone"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <!-- Hero Video section: Padma Bhushan clip, auto-play muted, no controls -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/hero_video_container"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/hero_video_height"
+            android:layout_marginStart="@dimen/spacing_large"
+            android:layout_marginEnd="@dimen/spacing_large"
+            android:layout_marginBottom="@dimen/spacing_section_bottom"
+            app:cardCornerRadius="16dp"
+            app:cardUseCompatPadding="true"
+            app:cardElevation="6dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/gradient_background">
+
+                <VideoView
+                    android:id="@+id/hero_video_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:keepScreenOn="true"
+                    android:layout_gravity="center" />
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Recently Read Books Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:paddingBottom="@dimen/section_title_margin_bottom"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="📚 તાજેતરનાં વાંચેલો પુસ્તકો"
+                android:textSize="@dimen/section_title_size"
+                android:textStyle="bold"
+                android:textColor="?attr/text_primary"
+                android:letterSpacing="0.02" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recent_books_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_xxlarge"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:scrollbars="none"
+            android:clipToPadding="false" />
+
+        <!-- Popular Books Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:paddingBottom="@dimen/section_title_margin_bottom"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🔥 લોકપ્રિય પુસ્તકો"
+                android:textSize="@dimen/section_title_size"
+                android:textStyle="bold"
+                android:textColor="?attr/text_primary"
+                android:letterSpacing="0.02" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/best_books_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_xxlarge"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:scrollbars="none"
+            android:clipToPadding="false" />
+
+        <!-- Category: Bhakti Books -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:paddingBottom="@dimen/section_title_margin_bottom"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🕉️ ભક્તિ પુસ્તકો"
+                android:textSize="@dimen/section_title_size"
+                android:textStyle="bold"
+                android:textColor="?attr/text_primary"
+                android:letterSpacing="0.02" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/bhakti_books_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_xxlarge"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:scrollbars="none"
+            android:clipToPadding="false" />
+
+        <!-- Category: Yatra Books -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:paddingBottom="@dimen/section_title_margin_bottom"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="✈️ યાત્રા પુસ્તકો"
+                android:textSize="@dimen/section_title_size"
+                android:textStyle="bold"
+                android:textColor="?attr/text_primary"
+                android:letterSpacing="0.02" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/yatra_books_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_xxlarge"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:scrollbars="none"
+            android:clipToPadding="false" />
+
+        <!-- Category: Updesh Books -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:paddingBottom="@dimen/section_title_margin_bottom"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="💡 ઉપદેશ પુસ્તકો"
+                android:textSize="@dimen/section_title_size"
+                android:textStyle="bold"
+                android:textColor="?attr/text_primary"
+                android:letterSpacing="0.02" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/updesh_books_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_xxlarge"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:scrollbars="none"
+            android:clipToPadding="false" />
+
+        <!-- Category: Jeevan Books -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:paddingBottom="@dimen/section_title_margin_bottom"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="📖 જીવન પુસ્તકો"
+                android:textSize="@dimen/section_title_size"
+                android:textStyle="bold"
+                android:textColor="?attr/text_primary"
+                android:letterSpacing="0.02" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/jeevan_books_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_xxlarge"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:scrollbars="none"
+            android:clipToPadding="false" />
+
+    </LinearLayout>
+
+</ScrollView>
+
+</FrameLayout>

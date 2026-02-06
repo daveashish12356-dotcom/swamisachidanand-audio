@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">પદ્મભૂષણ શ્રી સ્વામીસચ્ચિદાનંદ</string>
+    <string name="category_all">બધા</string>
+    <string name="category_bhakti">ભક્તિ</string>
+    <string name="category_yatra">યાત્રા</string>
+    <string name="category_updesh">ઉપદેશ</string>
+    <string name="category_jeevan">જીવન</string>
+    <string name="nav_home">હોમ</string>
+    <string name="nav_books">પુસ્તક</string>
+    <string name="nav_about">વિશે</string>
+</resources>

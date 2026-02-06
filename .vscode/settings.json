@@ -1,0 +1,19 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.import.gradle.enabled": false,
+    "java.import.gradle.arguments": [],
+    "java.import.gradle.wrapper.enabled": true,
+    "java.configuration.runtimes": [],
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.jdt.ls.lombokSupport.enabled": false,
+    "java.errors.incompleteClasspath.severity": "ignore",
+    "java.project.importHint": false,
+    "java.project.sourcePaths": ["app/src/main/java"],
+    "java.project.referencedLibraries": [],
+    "java.configuration.checkProjectSettingsExclusions": false,
+    "java.server.launchMode": "LightWeight",
+    "files.exclude": {
+        "**/.gradle": false,
+        "**/build": false
+    }
+}

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <item
+        android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="Search Chapters"
+        app:showAsAction="always" />
+    
+    <item
+        android:id="@+id/action_eye_protection"
+        android:icon="@android:drawable/ic_menu_view"
+        android:title="Eye Protection"
+        app:showAsAction="always" />
+    
+    <item
+        android:id="@+id/action_night_mode"
+        android:icon="@drawable/ic_night_mode"
+        android:title="Night Mode"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_read_aloud"
+        android:icon="@drawable/ic_speaker"
+        android:title="ગુજરાતીમાં વાંચો"
+        app:showAsAction="never" />
+    
+    <item
+        android:id="@+id/action_more"
+        android:icon="@android:drawable/ic_menu_more"
+        android:title="More"
+        app:showAsAction="always" />
+        
+</menu>
+
+

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <ImageView
+        android:id="@+id/photo_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:contentDescription="Photo"
+        android:visibility="visible"
+        android:background="@android:color/white" />
+
+    <!-- Play icon for video card (position 0) -->
+    <ImageView
+        android:id="@+id/play_overlay"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center"
+        android:src="@android:drawable/ic_media_play"
+        android:background="@android:drawable/btn_default"
+        android:padding="16dp"
+        android:visibility="gone"
+        android:contentDescription="Play video" />
+
+    <!-- Video plays here in same card (visibility gone until play) -->
+    <VideoView
+        android:id="@+id/carousel_video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:contentDescription="Inline video" />
+
+</FrameLayout>

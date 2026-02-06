@@ -1,0 +1,1 @@
+public/books/*.pdf !text !filter !merge !diff

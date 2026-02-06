@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "658673440967",
+    "project_id": "swami-sachidanand",
+    "storage_bucket": "swami-sachidanand.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658673440967:android:1f775ca8ffae25f6b8c6e2",
+        "android_client_info": {
+          "package_name": "com.swamisachidanand"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKd52WD-j-62h8X1mTqOXVe44ZNxwbc8I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

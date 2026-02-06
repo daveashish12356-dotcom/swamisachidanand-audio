@@ -1,0 +1,27 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme for night mode. -->
+    <style name="Theme.Swami" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color - Bhagva (Orange) -->
+        <item name="colorPrimary">@color/bhagva</item>
+        <item name="colorPrimaryVariant">@color/bhagva_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/bhagva</item>
+        <item name="colorSecondaryVariant">@color/bhagva_dark</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Background color - Dark -->
+        <item name="android:windowBackground">@color/background_light</item>
+        <!-- Custom attributes for theming -->
+        <item name="background_light">@color/background_light</item>
+        <item name="card_background">@color/card_background</item>
+        <item name="text_primary">@color/text_primary</item>
+        <item name="text_secondary">@color/text_secondary</item>
+        <!-- Customize your theme here. -->
+    </style>
+    
+    <style name="Theme.Swami.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    
+    <style name="Theme.Swami.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+</resources>

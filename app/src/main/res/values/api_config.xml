@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 
+    Google Cloud Text-to-Speech API Key
+    
+    Steps to get your API Key:
+    1. Go to https://console.cloud.google.com
+    2. Create a new project or select existing one
+    3. Enable "Cloud Text-to-Speech API"
+    4. Go to APIs & Services > Credentials
+    5. Create API Key
+    6. Copy the key and paste it below
+    
+    Note: Keep this key secure. For production, use environment variables or secure storage.
+    -->
+    <string name="google_cloud_tts_api_key">YOUR_GOOGLE_CLOUD_API_KEY_HERE</string>
+</resources>
+
