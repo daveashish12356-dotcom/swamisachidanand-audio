@@ -6,18 +6,17 @@ App ko server se connect karne ke liye **sirf GitHub + GitHub Pages** use karo. 
 
 ## 1. Code GitHub pe push karna
 
-GitHub pe repo naam rakho: **swamisachidanand-audio** (is se URL sahi rahega).
+GitHub **username** bhi **swamisachidanand** rakho, repo naam **swamisachidanand-audio**. Is se URL: `swamisachidanand.github.io/swamisachidanand-audio`.
 
 ```bash
 cd f:\ss
-git remote add origin https://github.com/YOUR_USERNAME/swamisachidanand-audio.git
+git remote add origin https://github.com/swamisachidanand/swamisachidanand-audio.git
 git branch -M main
 git push -u origin main
 ```
 
-- GitHub.com pe jao → **New repository** banao  
-- **Repository name:** `swamisachidanand-audio`  
-- **YOUR_USERNAME** = apna GitHub username
+- GitHub.com pe **Sign up** (agar account nahi) → username: **swamisachidanand**  
+- **New repository** → **Repository name:** `swamisachidanand-audio`
 
 ---
 
@@ -30,17 +29,17 @@ git push -u origin main
 5. **Folder:** `/ (root)` ya `public` (agar tum **public** folder serve karna chahte ho to “public” select karo)  
 6. **Save**
 
-Thodi der baad ye URL live ho jayega (repo name = **swamisachidanand-audio**):
+Thodi der baad ye URL live ho jayega (username = **swamisachidanand**, repo = **swamisachidanand-audio**):
 
 - **Agar root choose kiya:**  
-  `https://YOUR_USERNAME.github.io/swamisachidanand-audio/`  
+  `https://swamisachidanand.github.io/swamisachidanand-audio/`  
   - Audio list URL:  
-  `https://YOUR_USERNAME.github.io/swamisachidanand-audio/audio_list.json`
+  `https://swamisachidanand.github.io/swamisachidanand-audio/audio_list.json`
 
 - **Agar “public” folder choose kiya:**  
-  `https://YOUR_USERNAME.github.io/swamisachidanand-audio/public/`  
+  `https://swamisachidanand.github.io/swamisachidanand-audio/public/`  
   - Audio list URL:  
-  `https://YOUR_USERNAME.github.io/swamisachidanand-audio/public/audio_list.json`
+  `https://swamisachidanand.github.io/swamisachidanand-audio/public/audio_list.json`
 
 App me jab “server se connect” wala code add karoge, isi URL se `audio_list.json` fetch karna.
 
@@ -88,7 +87,7 @@ GitHub Pages thodi der me update ho jayega; app jab list fetch karegi to naya au
 |-------------------|----------------------------------------------------|
 | Code GitHub pe    | `git remote add origin ...` → `git push -u origin main` |
 | Server URL        | GitHub repo → **Settings → Pages** → branch `main`, folder root ya `public` |
-| Audio list URL    | `https://YOUR_USERNAME.github.io/swamisachidanand-audio/audio_list.json` (ya `.../public/audio_list.json`) |
+| Audio list URL    | `https://swamisachidanand.github.io/swamisachidanand-audio/audio_list.json` (ya `.../public/audio_list.json`) |
 | Naya audio        | `audio_list.json` edit → `git add` → `git commit` → `git push` |
 
 **Firebase hosting ki zaroorat nahi – sirf GitHub use karo, space limit nahi.**
