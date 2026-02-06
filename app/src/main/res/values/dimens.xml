@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Margins & padding - small/normal phones -->
+    <dimen name="spacing_tiny">4dp</dimen>
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_medium">12dp</dimen>
+    <dimen name="spacing_normal">16dp</dimen>
+    <dimen name="spacing_large">20dp</dimen>
+    <dimen name="spacing_xlarge">24dp</dimen>
+    <dimen name="spacing_xxlarge">28dp</dimen>
+    <dimen name="spacing_section_bottom">20dp</dimen>
+
+    <!-- Search bar -->
+    <dimen name="search_bar_margin_h">16dp</dimen>
+    <dimen name="search_bar_margin_v">12dp</dimen>
+    <dimen name="search_bar_radius">30dp</dimen>
+    <dimen name="search_bar_padding_h">20dp</dimen>
+    <dimen name="search_bar_padding_v">12dp</dimen>
+    <dimen name="search_icon_size">24dp</dimen>
+    <dimen name="search_text_size">16sp</dimen>
+
+    <!-- Section titles -->
+    <dimen name="section_title_size">20sp</dimen>
+    <dimen name="section_title_margin_bottom">12dp</dimen>
+
+    <!-- Bottom nav -->
+    <dimen name="bottom_nav_height">56dp</dimen>
+    <dimen name="bottom_nav_icon_size">26dp</dimen>
+    <dimen name="bottom_nav_padding_v">8dp</dimen>
+    <dimen name="bottom_nav_padding_bottom">6dp</dimen>
+
+    <!-- Home hero video (top section) - thodi chhoti height so it looks more balanced -->
+    <dimen name="hero_video_height">180dp</dimen>
+
+    <!-- Book cards - list (Books tab) -->
+    <dimen name="book_card_margin">10dp</dimen>
+    <dimen name="book_card_radius">20dp</dimen>
+    <dimen name="book_card_thumbnail_height">220dp</dimen>
+    <dimen name="book_card_inner_padding">20dp</dimen>
+    <dimen name="book_card_title_size">17sp</dimen>
+    <dimen name="book_card_year_size">14sp</dimen>
+
+    <!-- Book cards - home horizontal strips -->
+    <dimen name="book_home_card_width">140dp</dimen>
+    <dimen name="book_home_card_thumbnail_height">180dp</dimen>
+    <dimen name="book_home_card_margin_h">8dp</dimen>
+    <dimen name="book_home_card_radius">8dp</dimen>
+    <dimen name="book_home_card_inner_padding">12dp</dimen>
+    <dimen name="book_home_card_title_size">14sp</dimen>
+    <dimen name="book_home_card_year_size">12sp</dimen>
+
+    <!-- Search results strip height -->
+    <dimen name="search_results_recycler_height">260dp</dimen>
+
+    <!-- PDF viewer -->
+    <dimen name="pdf_top_bar_margin_h">16dp</dimen>
+    <dimen name="pdf_top_bar_margin_v">8dp</dimen>
+    <dimen name="pdf_toggle_btn_size">62dp</dimen>
+    <dimen name="pdf_more_btn_size">52dp</dimen>
+    <dimen name="pdf_book_title_size">13sp</dimen>
+    <dimen name="pdf_bottom_bar_padding">11.7dp</dimen>
+    <dimen name="pdf_chapter_btn_size">52dp</dimen>
+    <dimen name="pdf_progress_text_size">12sp</dimen>
+    <dimen name="pdf_text_overlay_height">380dp</dimen>
+    <dimen name="pdf_text_overlay_margin">16dp</dimen>
+
+    <!-- Empty state (Books) -->
+    <dimen name="empty_icon_size">100dp</dimen>
+    <dimen name="empty_title_size">22sp</dimen>
+    <dimen name="empty_message_size">16sp</dimen>
+</resources>

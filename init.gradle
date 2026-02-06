@@ -1,0 +1,2 @@
+// Empty init script - used so IDE Gradle connection does not fail when looking for init script.
+// Fix: "Could not run phased build action - initialization script could not be found"

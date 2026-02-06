@@ -1,0 +1,20 @@
+# Eclipse JDT core preferences - reduce warnings so status bar doesn't show "Java: Warning"
+eclipse.preferences.version=1
+org.eclipse.jdt.core.compiler.problem.redundantNullAnnotation=ignore
+org.eclipse.jdt.core.compiler.problem.unusedDeclaredThrownException=ignore
+org.eclipse.jdt.core.compiler.problem.deprecation=ignore
+org.eclipse.jdt.core.compiler.problem.unusedImport=ignore
+org.eclipse.jdt.core.compiler.problem.unusedParameter=ignore
+org.eclipse.jdt.core.compiler.problem.unusedDeclaredThrownExceptionExemptExceptionAndThrowable=ignore
+org.eclipse.jdt.core.compiler.problem.uncheckedTypeOperation=ignore
+org.eclipse.jdt.core.compiler.problem.rawTypeReference=ignore
+org.eclipse.jdt.core.compiler.problem.unavoidableGenericTypeProblems=ignore
+org.eclipse.jdt.core.compiler.problem.fatalOptionalError=disabled
+org.eclipse.jdt.core.compiler.problem.missingHashCodeMethod=ignore
+org.eclipse.jdt.core.compiler.problem.overridingMethodWithoutSuperInvocation=ignore
+org.eclipse.jdt.core.compiler.problem.emptyStatement=ignore
+org.eclipse.jdt.core.compiler.problem.finalParameterBound=ignore
+org.eclipse.jdt.core.compiler.problem.finalStaticMethod=ignore
+org.eclipse.jdt.core.compiler.problem.hiddenCatchBlock=ignore
+org.eclipse.jdt.core.compiler.problem.overridingPackageDefaultMethod=ignore
+org.eclipse.jdt.core.compiler.problem.suppressOptionalErrors=enabled

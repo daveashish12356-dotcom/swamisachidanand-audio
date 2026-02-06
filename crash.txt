@@ -1,0 +1,918 @@
+﻿--------- beginning of main
+02-01 15:10:06.851   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+--------- beginning of system
+02-01 15:10:07.019 17111 17134 E WindowManager: win=Window{29c0eca u0 Splash Screen com.swamisachidanand EXITING} destroySurfaces: appStopped=false win.mWindowRemovalAllowed=true win.mRemoveOnExit=true win.mViewVisibility=8 caller=com.android.server.wm.ActivityRecord.destroySurfaces:5848 com.android.server.wm.ActivityRecord.destroySurfaces:5829 com.android.server.wm.WindowState.onExitAnimationDone:5968 com.android.server.wm.WindowStateAnimator.onAnimationFinished:242 com.android.server.wm.WindowState.onAnimationFinished:6221 com.android.server.wm.WindowContainer$$ExternalSyntheticLambda0.onAnimationFinished:2 com.android.server.wm.SurfaceAnimator.lambda$getFinishedCallback$0$SurfaceAnimator:113 
+02-01 15:10:07.068 17438 17438 E IndicatorGardenAlgorithmBasicCutout: NOT MATCH !!!! resourceHeight:114, cutoutHeight:113 ([IndicatorGardenInputProperty]  Rotation(0-0,90-1,180-2,270-3)0, Density:3.5, ScreenWidthSize:1440, CoverSidePadding:0, mIndicatorGardenCenterOffset:15, mCameraCutoutCropSize:0, mGardenPaddingStart:28, mIndicatorCornerPadding:72, mCameraSidePadding:36, mCameraTopMargin:23, DpCutout:DisplayCutout{insets=Rect(0, 113 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(675, 0 - 765, 113), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1440 displayHeight=3040 density={3.5} cutoutSpec={M 0,0 H -12.85714285714286 V 32.28571428571429 H 12.85714285714286 V 0 H 0 Z @dp} rotation={0} scale={1.0}}}}) 
+02-01 15:10:07.068 17438 17438 E IndicatorGardenAlgorithmBasicCutout: NOT MATCH !!!! resourceHeight:114, cutoutHeight:113 ([IndicatorGardenInputProperty]  Rotation(0-0,90-1,180-2,270-3)0, Density:3.5, ScreenWidthSize:1440, CoverSidePadding:0, mIndicatorGardenCenterOffset:15, mCameraCutoutCropSize:0, mGardenPaddingStart:28, mIndicatorCornerPadding:72, mCameraSidePadding:36, mCameraTopMargin:23, DpCutout:DisplayCutout{insets=Rect(0, 113 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(675, 0 - 765, 113), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1440 displayHeight=3040 density={3.5} cutoutSpec={M 0,0 H -12.85714285714286 V 32.28571428571429 H 12.85714285714286 V 0 H 0 Z @dp} rotation={0} scale={1.0}}}}) 
+02-01 15:10:07.168   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.184   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.237   810 15482 E OMXNodeInstance: getParameter(0xef2e6260:Exynos.avc.dec, ??(0x6f600011)) ERROR: UnsupportedIndex(0x8000101a)
+02-01 15:10:07.253   810 15482 E OMXNodeInstance: setConfig(0xef2e6260:Exynos.avc.dec, ??(0x7f030009)) ERROR: UnsupportedIndex(0x8000101a)
+02-01 15:10:07.255   810 15482 E OMXNodeInstance: getConfig(0xef2e6260:Exynos.avc.dec, ConfigCommonOutputCrop(0x700000f)) ERROR: NotReady(0x80001010)
+02-01 15:10:07.260   810 25805 E OMXNodeInstance: getConfig(0xef2e6260:Exynos.avc.dec, ??(0x7f030009)) ERROR: UnsupportedIndex(0x8000101a)
+02-01 15:10:07.311   545   551 E statsd  : Predicate -7037417284711607308 dropping data for dimension key (10)0x2010101->10438[I] (10)0x30000->AudioMix[S] 
+02-01 15:10:07.312   545   551 E statsd  : Predicate 5980654721335871649 dropping data for dimension key (10)0x2010101->10438[I] (10)0x30000->AudioMix[S] 
+02-01 15:10:07.332   810   810 E OMXNodeInstance: getConfig(0xef2e6260:Exynos.avc.dec, ??(0x7f030009)) ERROR: UnsupportedIndex(0x8000101a)
+02-01 15:10:07.380   810  4781 E OMXNodeInstance: getConfig(0xef2e6260:Exynos.avc.dec, ??(0x7f030009)) ERROR: UnsupportedIndex(0x8000101a)
+02-01 15:10:07.417   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.419   528   528 E audit   : type=1400 audit(1769938807.413:69605): avc:  denied  { getattr } for  pid=642 comm="RenderEngine" name="anon_inode:" dev="anon_inodefs" ino=1 scontext=u:r:surfaceflinger:s0 tcontext=u:object_r:unlabeled:s0 tclass=filesystem permissive=0 SEPF_SM-N975F_12_0001 audit_filtered
+02-01 15:10:07.419   528   528 E audit   : type=1300 audit(1769938807.413:69605): arch=c00000b7 syscall=44 success=no exit=-13 a0=145 a1=7035f0cd30 a2=7035f0ce84 a3=1026680 items=0 ppid=1 pid=642 auid=4294967295 uid=1000 gid=1003 euid=1000 suid=1000 fsuid=1000 egid=1003 sgid=1003 fsgid=1003 tty=(none) ses=4294967295 comm="RenderEngine" exe="/system/bin/surfaceflinger" subj=u:r:surfaceflinger:s0 key=(null)
+02-01 15:10:07.419   528   528 E audit   : type=1327 audit(1769938807.413:69605): proctitle="/system/bin/surfaceflinger"
+02-01 15:10:07.550   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.551   528   528 E audit   : type=1400 audit(1769938807.545:69606): avc:  denied  { getattr } for  pid=642 comm="RenderEngine" name="anon_inode:" dev="anon_inodefs" ino=1 scontext=u:r:surfaceflinger:s0 tcontext=u:object_r:unlabeled:s0 tclass=filesystem permissive=0 SEPF_SM-N975F_12_0001 audit_filtered
+02-01 15:10:07.551   528   528 E audit   : type=1300 audit(1769938807.545:69606): arch=c00000b7 syscall=44 success=no exit=-13 a0=14d a1=7035f0cd30 a2=7035f0ce84 a3=1026680 items=0 ppid=1 pid=642 auid=4294967295 uid=1000 gid=1003 euid=1000 suid=1000 fsuid=1000 egid=1003 sgid=1003 fsgid=1003 tty=(none) ses=4294967295 comm="RenderEngine" exe="/system/bin/surfaceflinger" subj=u:r:surfaceflinger:s0 key=(null)
+02-01 15:10:07.551   528   528 E audit   : type=1327 audit(1769938807.545:69606): proctitle="/system/bin/surfaceflinger"
+02-01 15:10:07.584   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.601   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.617   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.634   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.667   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.667   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.684   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.717   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.750   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.767   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.800   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.801   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.817   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.834   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.867   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.881   573   573 E Sensors : AutoRotation::inject_sensor_data: size 31
+02-01 15:10:07.917   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:07.951   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.001   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.035   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.067   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.118   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.151   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.190 16972  5346 E TrafficController: FREECESS
+02-01 15:10:08.201   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.234   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.240 17111 18705 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+02-01 15:10:08.241 17111 18705 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+02-01 15:10:08.241 17111 18705 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+02-01 15:10:08.241 17111 18705 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+02-01 15:10:08.241 17111 18705 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+02-01 15:10:08.268   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.318   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.352   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.401   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.435   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.469   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.518   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.552   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.601   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.635   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.668   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.718   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.751   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.801   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.835   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.869   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.918   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:08.952   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.002   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.035   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.069   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.119   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.152   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.202   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.236   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.269   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.319   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.353   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.402   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.436   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.469   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.519   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.552   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.602   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.636   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.670   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.719   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.753   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.803   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.836   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.869   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.920   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:09.953   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.003   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.036   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.064   528   528 E audit   : type=1400 audit(1769938810.061:69617): avc:  denied  { write } for  pid=18519 comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=12628 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-N975F_12_0001 audit_filtered
+02-01 15:10:10.064   528   528 E audit   : type=1300 audit(1769938810.061:69617): arch=c00000b7 syscall=203 success=no exit=-13 a0=7b a1=729e1608c0 a2=1e a3=ffffffff96824fd5 items=0 ppid=16968 pid=18519 auid=4294967295 uid=10078 gid=10078 euid=10078 suid=10078 fsuid=10078 egid=10078 sgid=10078 fsgid=10078 tty=(none) ses=4294967295 comm="ThreadPoolForeg" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c512,c768 key=(null)
+02-01 15:10:10.064   528   528 E audit   : type=1327 audit(1769938810.061:69617): proctitle="com.google.android.gms.persistent"
+02-01 15:10:10.069   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.119   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.153   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.203   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.237   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.270   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.320   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.353   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.403   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.436   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.470   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.520   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.553   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.603   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.637   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.670   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.720   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.754   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.804   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.837   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.870   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.921   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.954   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:10.978 17204 17204 E android.hardware.health@2.1-service-samsung: Could not open /sys/class/power_supply/battery/lrp
+02-01 15:10:11.004   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.023 17438 15854 E PowerUI.Notification: no saved value, so we do nothing !!
+02-01 15:10:11.032 17438 17438 E IndicatorGardenAlgorithmBasicCutout: NOT MATCH !!!! resourceHeight:114, cutoutHeight:113 ([IndicatorGardenInputProperty]  Rotation(0-0,90-1,180-2,270-3)0, Density:3.5, ScreenWidthSize:1440, CoverSidePadding:0, mIndicatorGardenCenterOffset:15, mCameraCutoutCropSize:0, mGardenPaddingStart:28, mIndicatorCornerPadding:72, mCameraSidePadding:36, mCameraTopMargin:23, DpCutout:DisplayCutout{insets=Rect(0, 113 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(675, 0 - 765, 113), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1440 displayHeight=3040 density={3.5} cutoutSpec={M 0,0 H -12.85714285714286 V 32.28571428571429 H 12.85714285714286 V 0 H 0 Z @dp} rotation={0} scale={1.0}}}}) 
+02-01 15:10:11.032 17438 17438 E IndicatorGardenAlgorithmBasicCutout: NOT MATCH !!!! resourceHeight:114, cutoutHeight:113 ([IndicatorGardenInputProperty]  Rotation(0-0,90-1,180-2,270-3)0, Density:3.5, ScreenWidthSize:1440, CoverSidePadding:0, mIndicatorGardenCenterOffset:15, mCameraCutoutCropSize:0, mGardenPaddingStart:28, mIndicatorCornerPadding:72, mCameraSidePadding:36, mCameraTopMargin:23, DpCutout:DisplayCutout{insets=Rect(0, 113 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(675, 0 - 765, 113), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1440 displayHeight=3040 density={3.5} cutoutSpec={M 0,0 H -12.85714285714286 V 32.28571428571429 H 12.85714285714286 V 0 H 0 Z @dp} rotation={0} scale={1.0}}}}) 
+02-01 15:10:11.037   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.066 31641 31641 E roid.apps.turb: Not starting debugger since process cannot load the jdwp agent.
+02-01 15:10:11.071   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.078 31641 31641 E USNET   : USNET: appName: com.google.android.apps.turbo
+02-01 15:10:11.121   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.154   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.204   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.238   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.271   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.321   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.322 31662 31662 E ocess.gservice: Not starting debugger since process cannot load the jdwp agent.
+02-01 15:10:11.328 31662 31662 E USNET   : USNET: appName: com.google.process.gservices
+02-01 15:10:11.354   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.404   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.438   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.471   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.495 31662 31682 E GmsClient: unable to connect to service: com.google.android.gms.gservices.START on com.google.android.gms
+02-01 15:10:11.521   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.555   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.604   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.638   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.671   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.722   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.755   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.804   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.838   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.871   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.922   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:11.955   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.005   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.038   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.072   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.122   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.155   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.205   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.240   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.266   528   528 E audit   : type=1400 audit(1769938812.261:69618): avc:  denied  { write } for  pid=19243 comm="PerfettoTrace" name="traced_producer" dev="tmpfs" ino=12628 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-N975F_12_0001 audit_filtered
+02-01 15:10:12.266   528   528 E audit   : type=1300 audit(1769938812.261:69618): arch=c00000b7 syscall=203 success=no exit=-13 a0=66 a1=6e00902e60 a2=1e a3=ffffffff96824fd5 items=0 ppid=16968 pid=19243 auid=4294967295 uid=10078 gid=10078 euid=10078 suid=10078 fsuid=10078 egid=10078 sgid=10078 fsgid=10078 tty=(none) ses=4294967295 comm="PerfettoTrace" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c512,c768 key=(null)
+02-01 15:10:12.266   528   528 E audit   : type=1327 audit(1769938812.261:69618): proctitle="com.google.android.gms"
+02-01 15:10:12.272   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.322   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.356   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.405   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.438   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.472   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.522   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.556   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.606   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.639   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.672   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.722   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.756   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.806   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.842   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.875   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.922   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:12.956   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.006   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.043   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.072   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.123   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.156   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.206   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.239   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.252   528   528 E audit   : type=1400 audit(1769938813.249:69619): avc:  denied  { write } for  pid=21550 comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=12628 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-N975F_12_0001 audit_filtered
+02-01 15:10:13.252   528   528 E audit   : type=1300 audit(1769938813.249:69619): arch=c00000b7 syscall=203 success=no exit=-13 a0=50 a1=729e0bda80 a2=1e a3=ffffffff96824fd5 items=0 ppid=16968 pid=21550 auid=4294967295 uid=9510078 gid=9510078 euid=9510078 suid=9510078 fsuid=9510078 egid=9510078 sgid=9510078 fsgid=9510078 tty=(none) ses=4294967295 comm="ThreadPoolForeg" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c512,c768 key=(null)
+02-01 15:10:13.273   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.323   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.356   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.406   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.440   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.473   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.523   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.556   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.606   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.640   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.673   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.723   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.756   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.790   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.823   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.873   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.907   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.956   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:13.990   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.023   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.073   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.107   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.157   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.191   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.224   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.274   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.307   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.357   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.391   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.424   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.474   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.508   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.558   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.591   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.624   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.675   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.708   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.757   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.791   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.824   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.874   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.908   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.960   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:14.991   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.025   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.075   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.108   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.162   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.192   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.225   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.275   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.308   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.358   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.391   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.425   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.475   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.508   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.558   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.592   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.625   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.675   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.708   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.759   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.792   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.826   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.875   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.909   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.936 17111 17148 E system_server: Cannot read thread CPU times for PID 17111
+02-01 15:10:15.959   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:15.992   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.026   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.038 17111 17148 E system_server: Cannot read thread CPU times for PID 17111
+02-01 15:10:16.076   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.109   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.159   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.193   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.226   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.276   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.309   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.359   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.393   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.426   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.477   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.509   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.559   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.593   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.626   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.680   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.710   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.760   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.793   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.826   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.876   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.910   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.960   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:16.993   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.027   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.077   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.110   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.160   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.193   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.227   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.277   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.310   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.360   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.393   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.427   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.477   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.510   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.560   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.594   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.627   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.677   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.711   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.762   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.794   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.828   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.877   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.911   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.961   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:17.994   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.028   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.078   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.111   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.161   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.196   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.228   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.279   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.311   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.361   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.396   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.428   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.478   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.512   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.561   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.595   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.629   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.678   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.712   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.762   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.798   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.829   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.878   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.899   573   573 E Sensors : inject_scontext_data: New ssp_data_injection_fd(40)
+02-01 15:10:18.912 17111 17225 E SemContext.CaeProvider: setAttribute() : attribute is null!
+02-01 15:10:18.912   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.922 17111 17225 E SensorService: BigData:Pakage) 5 already enabled. 
+02-01 15:10:18.962   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:18.995   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.029   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.078   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.112   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.162   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.178   573   573 E Sensors : inject_scontext_data: New ssp_data_injection_fd(40)
+02-01 15:10:19.195   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.229   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.280   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.312   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.344 17111 17225 E SensorService: BigData:Pakage) 5 already disabled. 
+02-01 15:10:19.362   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.396   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.429   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.479   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.512   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.562   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.596   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.630   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.679   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.712   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.763   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.796   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.829   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.880   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.913   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.963   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:19.996   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.030   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.080   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.113   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.163   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.197   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.230   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.280   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.316   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.363   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.397   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.430   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.480   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.516   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.563   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.597   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.630   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.680   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.718   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.763   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.797   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.831   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.881   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.914   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.964   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:20.997   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.030   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.081   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.114   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.164   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.198   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.202 17204 17204 E android.hardware.health@2.1-service-samsung: Could not open /sys/class/power_supply/battery/lrp
+02-01 15:10:21.223 17438 30221 E PowerUI.Notification: no saved value, so we do nothing !!
+02-01 15:10:21.231   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.246 17438 17438 E IndicatorGardenAlgorithmBasicCutout: NOT MATCH !!!! resourceHeight:114, cutoutHeight:113 ([IndicatorGardenInputProperty]  Rotation(0-0,90-1,180-2,270-3)0, Density:3.5, ScreenWidthSize:1440, CoverSidePadding:0, mIndicatorGardenCenterOffset:15, mCameraCutoutCropSize:0, mGardenPaddingStart:28, mIndicatorCornerPadding:72, mCameraSidePadding:36, mCameraTopMargin:23, DpCutout:DisplayCutout{insets=Rect(0, 113 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(675, 0 - 765, 113), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1440 displayHeight=3040 density={3.5} cutoutSpec={M 0,0 H -12.85714285714286 V 32.28571428571429 H 12.85714285714286 V 0 H 0 Z @dp} rotation={0} scale={1.0}}}}) 
+02-01 15:10:21.246 17438 17438 E IndicatorGardenAlgorithmBasicCutout: NOT MATCH !!!! resourceHeight:114, cutoutHeight:113 ([IndicatorGardenInputProperty]  Rotation(0-0,90-1,180-2,270-3)0, Density:3.5, ScreenWidthSize:1440, CoverSidePadding:0, mIndicatorGardenCenterOffset:15, mCameraCutoutCropSize:0, mGardenPaddingStart:28, mIndicatorCornerPadding:72, mCameraSidePadding:36, mCameraTopMargin:23, DpCutout:DisplayCutout{insets=Rect(0, 113 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(675, 0 - 765, 113), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1440 displayHeight=3040 density={3.5} cutoutSpec={M 0,0 H -12.85714285714286 V 32.28571428571429 H 12.85714285714286 V 0 H 0 Z @dp} rotation={0} scale={1.0}}}}) 
+02-01 15:10:21.281   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.314   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.364   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.398   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.431   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.481   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.514   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.565   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.598   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.631   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.681   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.715   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.765   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.798   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.834   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.881   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.915   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.965   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:21.998   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.035   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.082   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.115   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.165   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.199   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.232   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.282   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.309 17438 17602 E CscParser: update(): xml file exist
+02-01 15:10:22.315   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.365   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.398   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.432   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.482   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.515   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.565   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.599   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.632   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.682   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.715   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.767   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.799   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.833   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.882   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.916   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.966   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:22.999   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.032   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.083   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.116   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.166   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.199   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.233   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.283   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.316   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.367   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.400   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.433   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.483   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.517   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.566   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.600   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.633   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.666   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.717   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.750   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.783   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.833   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.866   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.917   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.950   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:23.984   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.033   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.068   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.117   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.151   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.184   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.234   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.267   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.317   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.351   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.384   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.434   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.468   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.517   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.551   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.585   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.634   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.669   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.718   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.751   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.785   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.835   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.870   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.918   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.951   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:24.985   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.035   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.071   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.118   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.152   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.185   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.235   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.268   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.318   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.352   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.385   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.435   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.468   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.518   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.552   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.585   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.635   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.669   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.719   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.752   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.785   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.835   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.869   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.919   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.952   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:25.986   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.036   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.069   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.119   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.153   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.188   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.236   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.269   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.319   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.353   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.387   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.436   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.466   528   528 E audit   : type=1400 audit(1769938826.461:69620): avc:  denied  { write } for  pid=2179 comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=12628 scontext=u:r:gmscore_app:s0:c662,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-N975F_12_0001 audit_filtered
+02-01 15:10:26.466   528   528 E audit   : type=1300 audit(1769938826.461:69620): arch=c00000b7 syscall=203 success=no exit=-13 a0=81 a1=729e135c00 a2=1e a3=ffffffff96824fd5 items=0 ppid=16968 pid=2179 auid=4294967295 uid=15010078 gid=15010078 euid=15010078 suid=15010078 fsuid=15010078 egid=15010078 sgid=15010078 fsgid=15010078 tty=(none) ses=4294967295 comm="ThreadPoolForeg" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c662,c768 key=(null)
+02-01 15:10:26.466   528   528 E audit   : type=1327 audit(1769938826.461:69620): proctitle="com.google.android.gms.persistent"
+02-01 15:10:26.469   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.519   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.553   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.590   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.636   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.670   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.719   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.753   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.791   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.837   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.870   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.920   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.954   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:26.987   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.036   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.070   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.120   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.137   528   528 E audit   : type=1400 audit(1769938827.133:69621): avc:  denied  { search } for  pid=17689 comm="IpClient.wlan0" name="net" dev="sysfs" ino=31903 scontext=u:r:network_stack:s0 tcontext=u:object_r:sysfs_net:s0 tclass=dir permissive=0 SEPF_SM-N975F_12_0001 audit_filtered
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: failed to read /sys/class/net/wlan0/mtu
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: java.nio.file.AccessDeniedException: /sys/class/net/wlan0/mtu
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:214)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at java.nio.file.Files.newByteChannel(Files.java:361)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at java.nio.file.Files.newByteChannel(Files.java:407)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at java.nio.file.spi.FileSystemProvider.newInputStream(FileSystemProvider.java:384)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at java.nio.file.Files.newInputStream(Files.java:152)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at java.nio.file.Files.newBufferedReader(Files.java:2784)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at com.android.networkstack.com.android.net.module.util.ProcfsParsingUtils.readFile(ProcfsParsingUtils.java:75)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at com.android.networkstack.com.android.net.module.util.ProcfsParsingUtils.getInterfaceMtu(ProcfsParsingUtils.java:350)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at com.android.networkstack.android.net.apf.ApfFilter$Dependencies.getInterfaceMtu(ApfFilter.java:823)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at com.android.networkstack.android.net.apf.ApfFilter.installNewProgram(ApfFilter.java:4004)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at com.android.networkstack.android.net.apf.ApfFilter.processRa(ApfFilter.java:4215)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at com.android.networkstack.android.net.apf.ApfFilter$RaPacketReader.handlePacket(ApfFilter.java:374)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at com.android.networkstack.android.net.apf.ApfFilter$RaPacketReader.handlePacket(ApfFilter.java:358)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at com.android.networkstack.com.android.net.module.util.FdEventsReader.handleInput(FdEventsReader.java:277)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at com.android.networkstack.com.android.net.module.util.FdEventsReader.lambda$createAndRegisterFd$0(FdEventsReader.java:233)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at com.android.networkstack.com.android.net.module.util.FdEventsReader.$r8$lambda$jjSC4hVD2AlVH3T-DbWnF2T3fK8(FdEventsReader.java:0)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at com.android.networkstack.com.android.net.module.util.FdEventsReader$$ExternalSyntheticLambda0.onFileDescriptorEvents(R8$$SyntheticClass:0)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at android.os.MessageQueue.dispatchEvents(MessageQueue.java:293)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at android.os.MessageQueue.nativePollOnce(Native Method)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at android.os.MessageQueue.next(MessageQueue.java:335)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at android.os.Looper.loopOnce(Looper.java:186)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at android.os.Looper.loop(Looper.java:313)
+02-01 15:10:27.138 17689  8770 E ProcfsParsingUtils: 	at android.os.HandlerThread.run(HandlerThread.java:67)
+02-01 15:10:27.154   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.187   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.237   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.271   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.320   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.354   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.387   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.437   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.471   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.521   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.554   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.587   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.637   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.671   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.721   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.754   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.787   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.838   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.871   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.921   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.954   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:27.988   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.038   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.071   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.121   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.154   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.188   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.238   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.271   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.321   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.355   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.388   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.438   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.471   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.522   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.555   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.588   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.638   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.672   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.722   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.755   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.789   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.838   528   528 E audit   : type=1400 audit(1769938828.833:69622): avc:  denied  { write } for  pid=19243 comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=12628 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-N975F_12_0001 audit_filtered
+02-01 15:10:28.838   528   528 E audit   : type=1300 audit(1769938828.833:69622): arch=c00000b7 syscall=203 success=no exit=-13 a0=66 a1=729e115b90 a2=1e a3=ffffffff96824fd5 items=0 ppid=16968 pid=19243 auid=4294967295 uid=10078 gid=10078 euid=10078 suid=10078 fsuid=10078 egid=10078 sgid=10078 fsgid=10078 tty=(none) ses=4294967295 comm="ThreadPoolForeg" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c512,c768 key=(null)
+02-01 15:10:28.838   528   528 E audit   : type=1327 audit(1769938828.833:69622): proctitle="com.google.android.gms"
+02-01 15:10:28.839   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.872   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.922   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.955   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:28.989   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.038   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.072   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.122   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.155   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.189   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.239   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.272   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.322   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.356   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.389   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.439   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.472   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.523   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.556   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.590   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.640   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.673   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.723   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.756   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.790   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.840   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.873   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.923   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.956   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.990   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:29.994 17438 17602 E CscParser: update(): xml file exist
+02-01 15:10:30.040   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.073   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.123   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.150 17111 17136 E Watchdog: !@Sync: 920 heap: 129 / 133 objects: 2570228 WaitTime: 18.347 GCcnt: 0 FD: 1271 [2026-02-01 15:10:30.149] sdogWay:softdog
+02-01 15:10:30.156   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.190   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.240   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.273   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.324   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.357   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.390   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.440   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.474   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.523   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.557   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.590   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.640   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.674   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.723   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.757   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.791   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.841   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.874   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.924   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.958   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:30.991   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.041   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.074   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.124   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.158   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.191   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.241   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.274   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.324   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.358   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.386 17204 17204 E android.hardware.health@2.1-service-samsung: Could not open /sys/class/power_supply/battery/lrp
+02-01 15:10:31.391   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.432 17438  7627 E PowerUI.Notification: no saved value, so we do nothing !!
+02-01 15:10:31.441   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.443 17438 17438 E IndicatorGardenAlgorithmBasicCutout: NOT MATCH !!!! resourceHeight:114, cutoutHeight:113 ([IndicatorGardenInputProperty]  Rotation(0-0,90-1,180-2,270-3)0, Density:3.5, ScreenWidthSize:1440, CoverSidePadding:0, mIndicatorGardenCenterOffset:15, mCameraCutoutCropSize:0, mGardenPaddingStart:28, mIndicatorCornerPadding:72, mCameraSidePadding:36, mCameraTopMargin:23, DpCutout:DisplayCutout{insets=Rect(0, 113 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(675, 0 - 765, 113), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1440 displayHeight=3040 density={3.5} cutoutSpec={M 0,0 H -12.85714285714286 V 32.28571428571429 H 12.85714285714286 V 0 H 0 Z @dp} rotation={0} scale={1.0}}}}) 
+02-01 15:10:31.444 17438 17438 E IndicatorGardenAlgorithmBasicCutout: NOT MATCH !!!! resourceHeight:114, cutoutHeight:113 ([IndicatorGardenInputProperty]  Rotation(0-0,90-1,180-2,270-3)0, Density:3.5, ScreenWidthSize:1440, CoverSidePadding:0, mIndicatorGardenCenterOffset:15, mCameraCutoutCropSize:0, mGardenPaddingStart:28, mIndicatorCornerPadding:72, mCameraSidePadding:36, mCameraTopMargin:23, DpCutout:DisplayCutout{insets=Rect(0, 113 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(675, 0 - 765, 113), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1440 displayHeight=3040 density={3.5} cutoutSpec={M 0,0 H -12.85714285714286 V 32.28571428571429 H 12.85714285714286 V 0 H 0 Z @dp} rotation={0} scale={1.0}}}}) 
+02-01 15:10:31.475   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.524   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.558   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.591   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.641   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.675   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.726   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.758   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.792   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.842   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.875   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.927   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.958   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:31.992   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.042   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.075   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.127   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.158   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.192   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.242   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.275   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.329   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.359   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.392   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.442   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.475   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.526   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.559   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.593   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.643   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.676   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.726   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.759   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.792   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.842   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.876   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.926   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.960   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:32.993   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.043   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.076   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.126   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.160   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.193   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.243   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.277   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.310   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.343   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.394   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.427   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.476   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.510   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.545   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.593   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.627   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.677   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.710   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.745   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.794   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.827   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.877   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.910   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.922   528   528 E audit   : type=1400 audit(1769938833.917:69623): avc:  denied  { write } for  pid=28390 comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=12628 scontext=u:r:gmscore_app:s0:c662,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-N975F_12_0001 audit_filtered
+02-01 15:10:33.922   528   528 E audit   : type=1300 audit(1769938833.917:69623): arch=c00000b7 syscall=203 success=no exit=-13 a0=5e a1=729e0a1f40 a2=1e a3=ffffffff96824fd5 items=0 ppid=16968 pid=28390 auid=4294967295 uid=15010078 gid=15010078 euid=15010078 suid=15010078 fsuid=15010078 egid=15010078 sgid=15010078 fsgid=15010078 tty=(none) ses=4294967295 comm="ThreadPoolForeg" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c662,c768 key=(null)
+02-01 15:10:33.922   528   528 E audit   : type=1327 audit(1769938833.917:69623): proctitle="com.google.android.gms"
+02-01 15:10:33.946   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:33.994   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.027   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.077   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.111   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.147   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.194   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.227   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.278   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.311   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.348   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.394   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.428   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.478   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.511   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.545   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.594   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.628   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.678   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.711   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.745   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.795   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.828   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.878   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.911   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.945   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:34.995   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.028   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.078   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.112   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.145   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.195   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.228   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.279   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.312   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.345   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.395   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.429   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.479   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.512   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.545   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.596   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.629   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.679   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.712   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.746   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.796   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.830   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.879   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.913   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.946   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:35.996   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.030   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.080   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.113   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.113   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.118   545   551 E statsd  : Predicate -7037417284711607308 dropping data for dimension key (10)0x2010101->10438[I] (10)0x30000->*launch*[S] 
+02-01 15:10:36.119   545   551 E statsd  : Predicate 5980654721335871649 dropping data for dimension key (10)0x2010101->10438[I] (10)0x30000->*launch*[S] 
+02-01 15:10:36.146   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.147   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.163   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.170 16972  5346 E TrafficController: FREECESS
+02-01 15:10:36.180   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.196   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.197   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.213   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.230   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.230   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.246   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.263   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.280   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.280   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.296   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.313   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.313   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.330   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.347   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.347   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.396   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.430   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.480   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.513   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.547   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.598   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.613   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.630   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.638  2584  2584 E pageboostd: Received HALT command code 2
+02-01 15:10:36.641 31537 31537 D PdfViewerActivity: English TTS fallback ready
+02-01 15:10:36.680   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.714   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.747   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.764   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.764   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.780   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.797   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.797   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.813   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.830   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.830   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.830   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.847   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.863   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.864   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.863   545   551 E statsd  : Predicate -7037417284711607308 dropping data for dimension key (10)0x2010101->10438[I] (10)0x30000->*launch*[S] 
+02-01 15:10:36.865   545   551 E statsd  : Predicate 5980654721335871649 dropping data for dimension key (10)0x2010101->10438[I] (10)0x30000->*launch*[S] 
+02-01 15:10:36.880   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.881   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.897   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.914   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.914   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.930   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.947   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.947   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.964   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.981   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.997   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:36.998   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:37.014   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:37.031   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:37.031   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:37.048   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:37.064   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:37.082   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:37.097   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:37.114   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:37.140 25245 25266 E DrmMediaResourceHelper: onRemove making Dpdrm to 0 second point 
+02-01 15:10:37.144 25245 25266 E DrmManagerClient: DRM_DISPLAYPORT_DISABLE
+02-01 15:10:37.234 17111 18071 E WindowManager: win=Window{a29ff7e u0 com.swamisachidanand/com.swamisachidanand.MainActivity} destroySurfaces: appStopped=true win.mWindowRemovalAllowed=false win.mRemoveOnExit=false win.mViewVisibility=8 caller=com.android.server.wm.ActivityRecord.destroySurfaces:5848 com.android.server.wm.ActivityRecord.destroySurfaces:5829 com.android.server.wm.ActivityRecord.notifyAppStopped:5893 com.android.server.wm.ActivityRecord.activityStopped:6519 com.android.server.wm.ActivityClientController.activityStopped:253 android.app.IActivityClientController$Stub.onTransact:596 com.android.server.wm.ActivityClientController.onTransact:129 
+02-01 15:10:37.247   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:37.265   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:37.297   545   551 E statsd  : Predicate -7037417284711607308 dropping data for dimension key (10)0x2010101->10438[I] (10)0x30000->AudioMix[S] 
+02-01 15:10:37.297   545   551 E statsd  : Predicate 5980654721335871649 dropping data for dimension key (10)0x2010101->10438[I] (10)0x30000->AudioMix[S] 
+02-01 15:10:37.430   573   573 E Sensors : AutoRotation::inject_sensor_data: size 31
+02-01 15:10:39.122 17111 18705 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+02-01 15:10:39.122 17111 18705 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+02-01 15:10:39.122 17111 18705 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+02-01 15:10:39.122 17111 18705 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+02-01 15:10:39.122 17111 18705 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+02-01 15:10:39.801   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:39.818   642   642 E SurfaceFlinger: Attempt to update InputPolicyFlags without permission ACCESS_SURFACE_FLINGER
+02-01 15:10:40.080   528   528 E audit   : type=1400 audit(1769938840.073:69624): avc:  denied  { write } for  pid=18519 comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=12628 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-N975F_12_0001 audit_filtered
+02-01 15:10:40.080   528   528 E audit   : type=1300 audit(1769938840.073:69624): arch=c00000b7 syscall=203 success=no exit=-13 a0=7b a1=729e179f40 a2=1e a3=ffffffff96824fd5 items=0 ppid=16968 pid=18519 auid=4294967295 uid=10078 gid=10078 euid=10078 suid=10078 fsuid=10078 egid=10078 sgid=10078 fsgid=10078 tty=(none) ses=4294967295 comm="ThreadPoolForeg" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c512,c768 key=(null)
+02-01 15:10:40.080   528   528 E audit   : type=1327 audit(1769938840.073:69624): proctitle="com.google.android.gms.persistent"
+adb : adb server version (41) doesn't match this client (40); killing...
+At C:\Users\davea\AppData\Local\Temp\ps-script-59c851cf-1951-4d14-91e3-1f707333e804.ps1:78 char:11
++ cd f:\ss; adb logcat -d -t 3000 *:E AndroidRuntime:E PdfViewerActivit ...
++           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (adb server vers...40); killing...:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+* daemon started successfully

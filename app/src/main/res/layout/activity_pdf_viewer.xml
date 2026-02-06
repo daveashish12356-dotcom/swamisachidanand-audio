@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#000000">
+
+    <!-- Top bar - Day/Night, Book name, More (Google Books style from photo) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/pdf_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/pdf_top_bar_margin_h"
+        android:layout_marginEnd="@dimen/pdf_top_bar_margin_h"
+        android:layout_marginTop="@dimen/pdf_top_bar_margin_v"
+        android:layout_marginBottom="@dimen/spacing_tiny"
+        app:cardBackgroundColor="#E8E8E8"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
+
+            <!-- Day/Night - toggle on/off -->
+            <ImageButton
+                android:id="@+id/day_night_toggle_btn"
+                android:layout_width="@dimen/pdf_toggle_btn_size"
+                android:layout_height="@dimen/pdf_toggle_btn_size"
+                android:minWidth="@dimen/pdf_toggle_btn_size"
+                android:minHeight="@dimen/pdf_toggle_btn_size"
+                android:src="@drawable/ic_toggle_on"
+                android:background="@android:color/transparent"
+                android:contentDescription="Day / Night mode"
+                android:scaleType="fitCenter"
+                android:padding="2dp"
+                android:elevation="0dp"
+                android:stateListAnimator="@null"
+                android:outlineProvider="none"
+                android:foreground="?attr/selectableItemBackground" />
+
+            <!-- Book name (center) - balanced size, single line -->
+            <TextView
+                android:id="@+id/pdf_book_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:minHeight="20dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:gravity="center"
+                android:textColor="#333333"
+                android:textSize="@dimen/pdf_book_title_size"
+                android:textStyle="bold"
+                android:letterSpacing="0.01"
+                android:text="Book name" />
+
+            <!-- 3-dot More menu -->
+            <ImageButton
+                android:id="@+id/pdf_top_more_btn"
+                android:layout_width="@dimen/pdf_more_btn_size"
+                android:layout_height="@dimen/pdf_more_btn_size"
+                android:src="@android:drawable/ic_menu_more"
+                android:background="@drawable/btn_more_menu"
+                android:contentDescription="More options"
+                app:tint="#FF9933"
+                android:padding="12dp"
+                android:elevation="1dp"
+                android:stateListAnimator="@null" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Main PDF area - black, only page visible -->
+    <FrameLayout
+        android:id="@+id/pdf_frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#000000"
+        android:clickable="true"
+        android:focusable="false">
+
+        <!-- Dim overlay - loading or scanning book to text -->
+        <View
+            android:id="@+id/pdf_dim_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#E6000000"
+            android:visibility="gone" />
+
+        <!-- Scanning progress: "Scanning book to text... Page 1/50" -->
+        <TextView
+            android:id="@+id/scanning_progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:visibility="gone"
+            android:text="Scanning book to text..." />
+
+        <!-- Single page ImageView - no ViewPager2 to avoid crash -->
+        <FrameLayout
+            android:id="@+id/pdf_content_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#000000"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/pdf_single_page_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:background="#000000"
+                android:contentDescription="PDF page" />
+        </FrameLayout>
+
+        <!-- Bottom Progress Bar (Google Play Books) - dark to match black scene -->
+        <LinearLayout
+            android:id="@+id/bottom_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            android:background="#2D2D2D"
+            android:padding="@dimen/pdf_bottom_bar_padding"
+            android:elevation="8dp"
+            android:gravity="center_vertical"
+            android:visibility="visible">
+
+            <ImageButton
+                android:id="@+id/chapters_menu_button"
+                android:layout_width="@dimen/pdf_chapter_btn_size"
+                android:layout_height="@dimen/pdf_chapter_btn_size"
+                android:src="@android:drawable/ic_menu_sort_by_size"
+                android:background="@drawable/btn_chapters"
+                android:contentDescription="Chapters"
+                app:tint="#FF9933"
+                android:padding="12dp"
+                android:elevation="1dp"
+                android:stateListAnimator="@null" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp">
+
+                <SeekBar
+                    android:id="@+id/progress_seekbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressTint="@color/bhagva"
+                    android:thumbTint="@color/bhagva_dark" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="4dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/pages_left_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:text="0 pages left"
+                            android:textSize="@dimen/pdf_progress_text_size"
+                            android:textColor="#B0B0B0" />
+
+                        <TextView
+                            android:id="@+id/page_number_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:text="0 / 0"
+                            android:textSize="@dimen/pdf_progress_text_size"
+                            android:textColor="#B0B0B0"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/progress_watermark"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="2dp"
+                        android:text="0%"
+                        android:textSize="10sp"
+                        android:textColor="#909090"
+                        android:alpha="0.8"
+                        android:visibility="visible" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Text overlay (hidden by default - no theme attr to avoid inflation crash) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/text_overlay_card"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/pdf_text_overlay_height"
+            android:layout_margin="@dimen/pdf_text_overlay_margin"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="12dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="15dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="વાંચી રહ્યા છીએ..."
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A1A1A"
+                    android:gravity="center"
+                    android:layout_marginBottom="8dp" />
+
+                <ScrollView
+                    android:id="@+id/text_scroll_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:scrollbars="vertical">
+
+                    <TextView
+                        android:id="@+id/extracted_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="#1A1A1A"
+                        android:lineSpacingMultiplier="1.3"
+                        android:padding="8dp" />
+
+                </ScrollView>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/close_text_overlay_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="બંધ કરો"
+                    android:layout_marginTop="8dp"
+                    app:backgroundTint="@color/bhagva" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </FrameLayout>
+
+</LinearLayout>
