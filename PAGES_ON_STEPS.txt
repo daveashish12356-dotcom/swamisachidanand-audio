@@ -1,0 +1,24 @@
+GitHub Pages ON karne ke steps (404 hatane ke liye):
+====================================================
+
+1. Browser me jao: https://github.com/swamisachidanand/swamisachidanand-audio
+
+2. Repo pehle banao agar nahi hai:
+   - https://github.com/new
+   - Repository name: swamisachidanand-audio
+   - Public choose karo
+   - "Add a README" mat choose karo (hamari files push karenge)
+   - Create repository
+
+3. Repo banane ke baad push karo:
+   - Open: f:\ss\audio-repo\PUSH_AFTER_CREATE_REPO.bat (double-click)
+   Ya terminal me: cd f:\ss\audio-repo   then   git push -u origin main
+
+4. Pages ON karo:
+   - Repo me Settings (top right) → left side "Pages"
+   - Build and deployment → Source: "Deploy from a branch"
+   - Branch: main, Folder: / (root)
+   - Save
+
+5. 1-2 minute wait karo, phir open karo:
+   https://swamisachidanand.github.io/swamisachidanand-audio/audio_list.json
