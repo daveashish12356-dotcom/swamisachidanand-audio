@@ -1,0 +1,57 @@
+========================================
+ સિર્ફ આ 2 કામ કરો (બહુ સરળ)
+========================================
+
+તમારો code GitHub પર push થઈ ગયો છે. હવે સિર્ફ 2 વસ્તુઓ બાકી છે.
+
+
+■■■ કામ 1: Pages ચાલુ કરો (2 મિનિટ) ■■■
+
+1. Browser માં આ link ખોલો:
+   https://github.com/daveashish12356-dotcom/swamisachidanand-audio
+
+2. પેજ ઉપર જમણી તરફ ઉપર "Settings" લખેલું હશે – તે પર ક્લિક કરો.
+
+3. ડાબી બાજુની સૂચિમાં "Pages" શોધો – તે પર ક્લિક કરો.
+
+4. "Build and deployment" નીચે:
+   - "Source" પાસે "Deploy from a branch" select કરો (dropdown માંથી).
+   - "Branch" માં "main" select કરો.
+   - "Folder" માં "/ (root)" select કરો.
+   - "Save" બટન પર ક્લિક કરો.
+
+5. 2–3 મિનિટ રાહ જુઓ. પછી આ link ખોલો:
+   https://daveashish12356-dotcom.github.io/swamisachidanand-audio/audio_list.json
+
+   જો પેજ પર JSON (books, parts વાળો ટેક્સ્ટ) દેખાય = લિસ્ટ તૈયાર. એપમાં ઓડિયો પુસ્તકો લિસ્ટ સર્વર પરથી આવશે.
+
+
+■■■ કામ 2: ઓડિયો સાંભળવા માટે – Release બનાવો (જ્યારે સાંભળવું હોય ત્યારે) ■■■
+
+1. ફરીથી આ repo ખોલો:
+   https://github.com/daveashish12356-dotcom/swamisachidanand-audio
+
+2. "Releases" પર ક્લિક કરો (જમણી બાજુ "About" ની નજીક).
+
+3. "Create a new release" બટન પર ક્લિક કરો.
+
+4. "Choose a tag" પાસે લખો:  amarakantak
+   પછી "Create new tag: amarakantak" પર ક્લિક કરો.
+
+5. નીચે "Publish release" બટન પર ક્લિક કરો.
+
+6. Release પેજ ખુલ્યા પછી, "Assets" વિભાગમાં "Attach binaries by dragging & dropping" પર જાઓ.
+   તમારા કમ્પ્યુટર પરથી 24 WAV ફાઇલો ખેંચીને (drag) અહીં છોડો (drop).
+   ફાઇલનાં નામ: part_01.wav, part_02.wav, … part_24.wav
+   કઈ ડેસ્કટોપ ફાઇલનું કયું નામ – તે RELEASE_UPLOAD_MAP.txt ફાઇલમાં લખેલું છે.
+
+7. બધી ફાઇલ અપલોડ થયા પછી સાચવી લો. પછી એપમાં કોઈ પણ ભાગ પર ટૅપ કરશો તો ઓનલાઇન ઓડિયો ચાલશે.
+
+
+========================================
+ સારાંશ
+========================================
+• કામ 1 (Pages) = એપને લિસ્ટ મળશે.
+• કામ 2 (Release + 24 WAV) = ઓડિયો પ્લે થશે.
+
+કામ 1 ચોક્કસ કરો. કામ 2 પછીથી પણ કરી શકાય.
