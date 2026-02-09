@@ -10,6 +10,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
+
 import java.util.List;
 
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder> {
@@ -63,24 +67,33 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
                     holder.bookYear.setVisibility(View.GONE);
                 }
             }
+            String pdfUrl = book.getPdfUrl();
+            if (holder.bookOnlineBadge != null) {
+                holder.bookOnlineBadge.setVisibility(pdfUrl != null && !pdfUrl.trim().isEmpty() ? View.VISIBLE : View.GONE);
+            }
             if (holder.bookThumbnail != null) {
                 holder.bookThumbnail.setImageBitmap(null);
                 holder.bookThumbnail.setImageDrawable(null);
                 holder.bookThumbnail.setBackgroundResource(R.drawable.book_placeholder);
-                if (thumbnailLoader != null && holder.itemView != null) {
-                    android.content.Context ctx = holder.itemView.getContext();
-                    String fileName = book.getFileName();
-                    if (ctx != null && fileName != null) {
-                        thumbnailLoader.loadThumbnail(ctx, fileName, thumbnail -> {
-                            if (holder.bookThumbnail == null) return;
-                            if (thumbnail != null && !thumbnail.isRecycled()) {
-                                holder.bookThumbnail.setImageBitmap(thumbnail);
-                                holder.bookThumbnail.setBackground(null);
-                            } else {
-                                holder.bookThumbnail.setBackgroundResource(R.drawable.book_placeholder);
-                            }
-                        });
-                    }
+                android.content.Context ctx = holder.itemView != null ? holder.itemView.getContext() : null;
+                String thumbnailUrl = book.getThumbnailUrl();
+                if (ctx != null && thumbnailUrl != null && !thumbnailUrl.isEmpty()) {
+                    Glide.with(ctx).load(thumbnailUrl)
+                            .apply(new RequestOptions().transform(new RoundedCorners(8)))
+                            .placeholder(R.drawable.book_placeholder)
+                            .error(R.drawable.book_placeholder)
+                            .into(holder.bookThumbnail);
+                    holder.bookThumbnail.setBackground(null);
+                } else if (thumbnailLoader != null && ctx != null && book.getFileName() != null) {
+                    thumbnailLoader.loadThumbnail(ctx, book.getFileName(), thumbnail -> {
+                        if (holder.bookThumbnail == null) return;
+                        if (thumbnail != null && !thumbnail.isRecycled()) {
+                            holder.bookThumbnail.setImageBitmap(thumbnail);
+                            holder.bookThumbnail.setBackground(null);
+                        } else {
+                            holder.bookThumbnail.setBackgroundResource(R.drawable.book_placeholder);
+                        }
+                    });
                 }
             }
             holder.itemView.setOnClickListener(v -> {
@@ -100,12 +113,14 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         ImageView bookThumbnail;
         TextView bookName;
         TextView bookYear;
+        TextView bookOnlineBadge;
 
         BookViewHolder(View itemView) {
             super(itemView);
             bookThumbnail = itemView.findViewById(R.id.book_thumbnail);
             bookName = itemView.findViewById(R.id.book_name);
             bookYear = itemView.findViewById(R.id.book_year);
+            bookOnlineBadge = itemView.findViewById(R.id.book_online_badge);
         }
     }
 }

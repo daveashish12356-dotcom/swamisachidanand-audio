@@ -645,40 +645,23 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             try {
                 android.app.Activity act = getActivity();
                 if (act == null) return;
+                List<Book> serverBooks = ServerBookLoader.load(act);
                 SharedPreferences prefs = act.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
                 String recentBooksList = prefs.getString(KEY_RECENT_BOOKS, "");
-                
                 List<Book> recentBooks = new ArrayList<>();
-                
-                // Parse recent books list (comma separated)
                 if (!recentBooksList.isEmpty()) {
-                    String[] bookFileNames = recentBooksList.split(",");
-                    for (String fileName : bookFileNames) {
-                        fileName = fileName.trim();
-                        if (!fileName.isEmpty()) {
-                            try {
-                                long size = 0;
-                                try {
-                                    size = act.getAssets().openFd(fileName).getLength();
-                                } catch (IOException e) {
-                                    try {
-                                        java.io.InputStream is = act.getAssets().open(fileName);
-                                        size = is.available();
-                                        is.close();
-                                    } catch (IOException e2) {
-                                        Log.e(TAG, "Could not get size for: " + fileName);
-                                    }
-                                }
-
-                                String displayName = fileName.replace(".pdf", "").replace(".PDF", "");
-                                Book book = new Book(displayName, fileName, size);
-                                recentBooks.add(book);
-
-                                if (recentBooks.size() >= 3) break;
-                            } catch (Exception e) {
-                                Log.e(TAG, "Error processing recent book: " + fileName, e);
+                    String[] recentNames = recentBooksList.split(",");
+                    for (String name : recentNames) {
+                        name = name.trim();
+                        if (name.isEmpty()) continue;
+                        for (Book b : serverBooks) {
+                            if (name.equals(b.getFileName()) || name.equals(b.getName()) ||
+                                name.equals(b.getFileName().replace(".pdf", "").replace(".PDF", ""))) {
+                                recentBooks.add(b);
+                                break;
                             }
                         }
+                        if (recentBooks.size() >= 3) break;
                     }
                 }
 
@@ -709,35 +692,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             try {
                 android.app.Activity act = getActivity();
                 if (act == null) return;
-                List<Book> bestBooks = new ArrayList<>();
-                String[] assetFiles = act.getAssets().list("");
-                
-                if (assetFiles != null) {
-                    for (String fileName : assetFiles) {
-                        if (fileName.endsWith(".pdf") || fileName.endsWith(".PDF")) {
-                            try {
-                                long size = 0;
-                                try {
-                                    size = act.getAssets().openFd(fileName).getLength();
-                                } catch (IOException e) {
-                                    try {
-                                        java.io.InputStream is = act.getAssets().open(fileName);
-                                        size = is.available();
-                                        is.close();
-                                    } catch (IOException e2) {
-                                        Log.e(TAG, "Could not get size for: " + fileName);
-                                    }
-                                }
-                                String displayName = fileName.replace(".pdf", "").replace(".PDF", "");
-                                Book book = new Book(displayName, fileName, size);
-                                bestBooks.add(book);
-                            } catch (Exception e) {
-                                Log.e(TAG, "Error processing book: " + fileName, e);
-                            }
-                        }
-                    }
-                }
-
+                List<Book> bestBooks = ServerBookLoader.load(act);
                 Collections.sort(bestBooks, (b1, b2) -> safeCompare(b1.getName(), b2.getName()));
                 final List<Book> bestBooksToShow = bestBooks.size() > BEST_BOOKS_COUNT
                     ? new ArrayList<>(bestBooks.subList(0, BEST_BOOKS_COUNT)) : bestBooks;
@@ -753,7 +708,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                         bestBooksRecycler.setAdapter(bestBooksAdapter);
                     });
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Log.e(TAG, "Error loading best books", e);
             }
         }).start();
@@ -764,36 +719,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             try {
                 android.app.Activity act = getActivity();
                 if (act == null) return;
-                List<Book> allBooks = new ArrayList<>();
-                String[] assetFiles = act.getAssets().list("");
-                
-                if (assetFiles != null) {
-                    for (String fileName : assetFiles) {
-                        if (fileName.endsWith(".pdf") || fileName.endsWith(".PDF")) {
-                            try {
-                                long size = 0;
-                                try {
-                                    size = act.getAssets().openFd(fileName).getLength();
-                                } catch (IOException e) {
-                                    try {
-                                        java.io.InputStream is = act.getAssets().open(fileName);
-                                        size = is.available();
-                                        is.close();
-                                    } catch (IOException e2) {
-                                        Log.e(TAG, "Could not get size for: " + fileName);
-                                    }
-                                }
-
-                                String displayName = fileName.replace(".pdf", "").replace(".PDF", "");
-                                Book book = new Book(displayName, fileName, size);
-                                book.setCategory(detectCategory(displayName));
-                                allBooks.add(book);
-                            } catch (Exception e) {
-                                Log.e(TAG, "Error processing book: " + fileName, e);
-                            }
-                        }
-                    }
-                }
+                List<Book> allBooks = ServerBookLoader.load(act);
 
                 // Separate books by category
                 List<Book> bhaktiBooks = new ArrayList<>();
@@ -853,7 +779,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                     jeevanBooksAdapter.setUseCompactLayout(true);
                     jeevanBooksRecycler.setAdapter(jeevanBooksAdapter);
                 });
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Log.e(TAG, "Error loading category books", e);
             }
         }).start();

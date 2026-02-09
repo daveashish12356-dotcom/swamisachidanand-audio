@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -362,120 +361,40 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
         }
     }
 
+    /** Load 56 books from server list (books_server_list.json). Thumbnail + PDF URLs point to server. Runs on UI thread so adapter/view are always valid. */
     private void loadBooks() {
-        new Thread(() -> {
-            try {
-                android.app.Activity act = getActivity();
-                if (act == null) return;
-                AssetManager assetManager = act.getAssets();
-                String[] assetFiles = assetManager.list("");
-                
-                if (assetFiles != null && assetFiles.length > 0) {
-                    for (String fileName : assetFiles) {
-                        String lowerFileName = fileName.toLowerCase();
-                        if (lowerFileName.endsWith(".pdf")) {
-                            try {
-                                long size = 0;
-                                try {
-                                    size = act.getAssets().openFd(fileName).getLength();
-                                } catch (IOException e) {
-                                    try {
-                                        java.io.InputStream is = act.getAssets().open(fileName);
-                                        size = is.available();
-                                        is.close();
-                                    } catch (IOException e2) {
-                                        Log.e(TAG, "Could not get size for: " + fileName);
-                                    }
-                                }
-                                
-                                String displayName = fileName.replace(".pdf", "").replace(".PDF", "");
-                                Book book = new Book(displayName, fileName, size);
-                                
-                                String year = PdfYearExtractor.extractYearSimple(fileName);
-                                if (year != null) {
-                                    book.setPublishYear(year);
-                                }
-                                
-                                String category = detectCategory(displayName);
-                                book.setCategory(category);
-                                
-                                books.add(book);
-                                allBooks.add(book);
-                                Log.d(TAG, "Added book: " + displayName);
-                            } catch (Exception e) {
-                                Log.e(TAG, "Error processing file: " + fileName, e);
-                            }
-                        }
-                    }
-                }
-                
-                Collections.sort(books, (b1, b2) -> (b1.getName() != null ? b1.getName() : "").compareToIgnoreCase(b2.getName() != null ? b2.getName() : ""));
-                Collections.sort(allBooks, (b1, b2) -> (b1.getName() != null ? b1.getName() : "").compareToIgnoreCase(b2.getName() != null ? b2.getName() : ""));
+        try {
+            android.content.Context ctx = getContext();
+            if (ctx == null) return;
+            List<Book> loaded = ServerBookLoader.load(ctx);
+            Log.d(TAG, "loadBooks: got " + loaded.size() + " books");
+            books.clear();
+            allBooks.clear();
+            books.addAll(loaded);
+            allBooks.addAll(loaded);
+            Collections.sort(books, (b1, b2) -> (b1.getName() != null ? b1.getName() : "").compareToIgnoreCase(b2.getName() != null ? b2.getName() : ""));
+            Collections.sort(allBooks, (b1, b2) -> (b1.getName() != null ? b1.getName() : "").compareToIgnoreCase(b2.getName() != null ? b2.getName() : ""));
 
-                if (act != null) {
-                    act.runOnUiThread(() -> {
-                        if (!isAdded() || getContext() == null) return;
-                        if (bookAdapter != null) bookAdapter.updateBooks(books);
-                        if (emptyText != null && booksRecyclerView != null) {
-                            if (books.isEmpty()) {
-                                emptyText.setVisibility(View.VISIBLE);
-                                booksRecyclerView.setVisibility(View.GONE);
-                                if (emptyTextMessage != null) emptyTextMessage.setText("No books available");
-                            } else {
-                                emptyText.setVisibility(View.GONE);
-                                booksRecyclerView.setVisibility(View.VISIBLE);
-                            }
-                        }
-                    });
-                }
-            } catch (IOException e) {
-                Log.e(TAG, "Error loading books", e);
-                android.app.Activity actErr = getActivity();
-                if (actErr != null) {
-                    actErr.runOnUiThread(() -> {
-                        if (emptyText != null) emptyText.setVisibility(View.VISIBLE);
-                        if (booksRecyclerView != null) booksRecyclerView.setVisibility(View.GONE);
-                        if (emptyTextMessage != null) emptyTextMessage.setText("Error loading books");
-                    });
+            List<Book> toShow = new ArrayList<>(books);
+            if (bookAdapter != null) {
+                bookAdapter.updateBooks(toShow);
+            }
+            if (emptyText != null && booksRecyclerView != null) {
+                if (toShow.isEmpty()) {
+                    emptyText.setVisibility(View.VISIBLE);
+                    booksRecyclerView.setVisibility(View.GONE);
+                    if (emptyTextMessage != null) emptyTextMessage.setText("પુસ્તકો લોડ થયા નહીં. ઇન્ટરનેટ ચેક કરો.");
+                } else {
+                    emptyText.setVisibility(View.GONE);
+                    booksRecyclerView.setVisibility(View.VISIBLE);
                 }
             }
-        }).start();
-    }
-
-    private String detectCategory(String bookName) {
-        String lowerName = bookName.toLowerCase();
-        
-        if (lowerName.contains("ભક્તિ") || lowerName.contains("bhakti") || 
-            lowerName.contains("ભજન") || lowerName.contains("bhajan") ||
-            lowerName.contains("ભાગવત") || lowerName.contains("bhagwat") ||
-            lowerName.contains("વિષ્ણુ") || lowerName.contains("vishnu") ||
-            lowerName.contains("રામાયણ") || lowerName.contains("ramayan") ||
-            lowerName.contains("રામ") || lowerName.contains("ram") ||
-            lowerName.contains("કૃષ્ણ") || lowerName.contains("krishna") ||
-            lowerName.contains("ભર્તૃહરિ") || lowerName.contains("bhartrihari") ||
-            lowerName.contains("શતક") || lowerName.contains("shata") ||
-            lowerName.contains("સહસ્રનામ") || lowerName.contains("sahasranam")) {
-            return "Bhakti";
-        } else if (lowerName.contains("યાત્રા") || lowerName.contains("yatra") ||
-                   lowerName.contains("પ્રવાસ") || lowerName.contains("travel") ||
-                   lowerName.contains("પ્રવાસનાં") || lowerName.contains("પ્રવાસની") ||
-                   lowerName.contains("તીર્થ") || lowerName.contains("tirth") ||
-                   lowerName.contains("મુલાકાત") || lowerName.contains("mulakat") ||
-                   lowerName.contains("આફ્રિકા") || lowerName.contains("africa") ||
-                   lowerName.contains("યુરોપ") || lowerName.contains("europe") ||
-                   lowerName.contains("ટર્કી") || lowerName.contains("turkey") ||
-                   lowerName.contains("ઈજિપ્ત") || lowerName.contains("egypt") ||
-                   lowerName.contains("આંદામાન") || lowerName.contains("andaman")) {
-            return "Yatra";
-        } else if (lowerName.contains("જીવન") || lowerName.contains("jeevan") ||
-                   lowerName.contains("ચરિત્ર") || lowerName.contains("charitra") ||
-                   lowerName.contains("જીવનકથા") || lowerName.contains("jeevankatha") ||
-                   lowerName.contains("અનુભવ") || lowerName.contains("anubhav") ||
-                   lowerName.contains("બાયપાસ") || lowerName.contains("bypass")) {
-            return "Jeevan";
+        } catch (Exception e) {
+            Log.e(TAG, "Error loading books", e);
+            if (emptyText != null) emptyText.setVisibility(View.VISIBLE);
+            if (booksRecyclerView != null) booksRecyclerView.setVisibility(View.GONE);
+            if (emptyTextMessage != null) emptyTextMessage.setText("પુસ્તકો લોડ થયા નહીં.");
         }
-        
-        return "Updesh";
     }
 
     @Override

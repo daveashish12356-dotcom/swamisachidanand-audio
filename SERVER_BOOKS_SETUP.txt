@@ -4,13 +4,20 @@ App loads 56 books from: strings.xml -> server_books_base_url
 
 Current URL: https://daveashish12356-dotcom.github.io/swamisachidanand-audio/
 
-For books and thumbnails to open in app:
-1. Upload folder "public/books" (56 PDFs) to that repo as "books/"
-2. Upload folder "public/thumbnails" (56 JPGs) to that repo as "thumbnails/"
-   So final URLs: .../swamisachidanand-audio/books/xxx.pdf and .../thumbnails/xxx.jpg
+MAKE ALL PDFs ONLINE (automatic deploy)
+--------------------------------------
+1. Push this repo to GitHub (repo name should be "swamisachidanand-audio" for the URL above).
+2. On GitHub: Repo > Settings > Pages > Build and deployment:
+   - Source: "GitHub Actions" (not "Deploy from a branch").
+3. Push again (or run Actions > "Deploy books and thumbnails to Pages" > Run workflow).
+4. After 1-2 minutes, run: python check_server_56_books.py
+   You should see: Thumbnails: 56/56 OK, Books (PDF): 56/56 OK.
 
-OR change server_books_base_url in app/src/main/res/values/strings.xml
-to your own URL where books/ and thumbnails/ are hosted (must end with /).
+The workflow .github/workflows/deploy-books-pages.yml copies public/books and public/thumbnails to the site root, so all 56 PDFs and thumbnails go online.
+
+If your repo name is different (e.g. "ss"), change server_books_base_url in app/src/main/res/values/strings.xml to:
+   https://YOUR_USERNAME.github.io/YOUR_REPO_NAME/
+(no trailing path, end with /)
 
 
 Verify server from app (check server se app se)
