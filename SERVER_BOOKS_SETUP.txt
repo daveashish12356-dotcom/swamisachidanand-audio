@@ -1,0 +1,28 @@
+Books/Thumbnails server setup
+----------------------------
+App loads 56 books from: strings.xml -> server_books_base_url
+
+Current URL: https://daveashish12356-dotcom.github.io/swamisachidanand-audio/
+
+For books and thumbnails to open in app:
+1. Upload folder "public/books" (56 PDFs) to that repo as "books/"
+2. Upload folder "public/thumbnails" (56 JPGs) to that repo as "thumbnails/"
+   So final URLs: .../swamisachidanand-audio/books/xxx.pdf and .../thumbnails/xxx.jpg
+
+OR change server_books_base_url in app/src/main/res/values/strings.xml
+to your own URL where books/ and thumbnails/ are hosted (must end with /).
+
+
+Verify server from app (check server se app se)
+-----------------------------------------------
+1. Run app, open "પુસ્તક" (Books) tab.
+2. In Android Studio Logcat, filter by "ServerBookLoader".
+   You will see:
+   - "loaded 56 books, baseUrl=..."
+   - "sample thumbnailUrl=..." and "sample pdfUrl=..." (copy these to browser to test)
+   - "Server check: OK (HTTP 200)" if server is reachable and first thumbnail exists
+   - "Server check: HTTP 404" or "Server check: failed" if server unreachable or file names don't match
+
+3. If Server check fails: paste the logged thumbnailUrl in browser. If 404, upload
+   public/thumbnails/ to repo as "thumbnails/" (file names must match app's books_server_list.json).
+   Same for books/ and PDFs.
