@@ -5,8 +5,12 @@ public class Book {
     private String fileName;
     private long size;
     private String publishYear;
-    private String category; // Bhakti, Yatra, Updesh, Jeevan
-    private String searchableText; // Original + English transliteration for search
+    private String category;
+    private String searchableText;
+    /** When set, PDF loads from this URL (server). */
+    private String pdfUrl;
+    /** When set, thumbnail loads from this URL (server). */
+    private String thumbnailUrl;
 
     public Book(String name, String fileName, long size) {
         this.name = name != null ? name : "";
@@ -52,6 +56,22 @@ public class Book {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getPdfUrl() {
+        return pdfUrl;
+    }
+
+    public void setPdfUrl(String pdfUrl) {
+        this.pdfUrl = pdfUrl;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public String getFormattedSize() {

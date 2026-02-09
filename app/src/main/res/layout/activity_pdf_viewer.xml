@@ -92,12 +92,23 @@
         android:focusable="false">
 
         <!-- Dim overlay - loading or scanning book to text -->
-        <View
+        <FrameLayout
             android:id="@+id/pdf_dim_overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#E6000000"
-            android:visibility="gone" />
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/pdf_loading_online_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:visibility="gone"
+                android:text="ઇન્ટરનેટથી લોડ થાય છે..." />
+        </FrameLayout>
 
         <!-- Scanning progress: "Scanning book to text... Page 1/50" -->
         <TextView

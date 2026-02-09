@@ -8,4 +8,22 @@
     <string name="nav_home">હોમ</string>
     <string name="nav_books">પુસ્તક</string>
     <string name="nav_about">વિશે</string>
+    <string name="nav_audio">ઓડિયો પુસ્તકો</string>
+    <string name="audio_server_title">સર્વર ઓડિયો</string>
+    <string name="audio_loading">લોડ થાય છે…</string>
+    <string name="audio_error">લિસ્ટ લોડ થઈ નહીં. ઇન્ટરનેટ ચેક કરો.</string>
+    <string name="audio_empty">ઓડિયો ઉપલબ્ધ નથી.</string>
+    <string name="audio_now_playing">ચાલુ છે</string>
+    <string name="audio_stop">બંધ કરો</string>
+    <string name="audio_books_title">ઓડિયો પુસ્તકો</string>
+    <string name="audio_play_error">ઓડિયો લોડ થઈ શક્યું નહીં. ઇન્ટરનેટ ચેક કરો.</string>
+    <string name="audio_online_hint">ઇન્ટરનેટ પરથી ઓનલાઇન સાંભળો (ડાઉનલોડ નહીં)</string>
+    <string name="audio_play">ચાલુ કરો</string>
+    <string name="audio_last_played">છેલ્લું સુનેલું: %s</string>
+    <string name="audio_chapters">ભાગો</string>
+    <string name="audio_not_played_yet">હજુ સુનેલું નથી</string>
+    <string name="audio_prev">પહેલાનો ભાગ</string>
+    <string name="audio_next">આગળનો ભાગ</string>
+    <string name="audio_pause">અટકાવો</string>
+    <string name="server_books_base_url">https://daveashish12356-dotcom.github.io/swamisachidanand-audio/</string>
 </resources>

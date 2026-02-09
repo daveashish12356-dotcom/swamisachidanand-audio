@@ -40,6 +40,11 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * PDF viewer - single page at a time (no ViewPager2/PdfPageAdapter to avoid crash).
@@ -53,12 +58,14 @@ public class PdfViewerActivity extends AppCompatActivity {
     private static final int MAX_BITMAP_HEIGHT = 1800;
 
     private String bookName;
+    private String pdfUrl;
     private File pdfFile;
     private PdfRenderer pdfRenderer;
     private ParcelFileDescriptor fileDescriptor;
     private View pdfContentContainer;
     private ImageView pdfSinglePageImage;
     private View pdfDimOverlay;
+    private TextView pdfLoadingOnlineText;
     private View pdfFrameLayout;
 
     private LinearLayout bottomProgressBar;
@@ -105,12 +112,15 @@ public class PdfViewerActivity extends AppCompatActivity {
             setContentView(R.layout.activity_pdf_viewer);
 
             bookName = getIntent().getStringExtra("book_name");
-            if (bookName == null || bookName.trim().isEmpty()) {
+            pdfUrl = getIntent().getStringExtra("pdf_url");
+            if (pdfUrl != null) pdfUrl = pdfUrl.trim();
+            if (bookName == null) bookName = "";
+            bookName = bookName.trim();
+            if (bookName.isEmpty() && (pdfUrl == null || pdfUrl.isEmpty())) {
                 Toast.makeText(this, "બુક મળી નહીં.", Toast.LENGTH_SHORT).show();
                 finish();
                 return;
             }
-            bookName = bookName.trim();
 
             readingProgressPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
             chapters = new ArrayList<>();
@@ -199,8 +209,15 @@ public class PdfViewerActivity extends AppCompatActivity {
                 pdfDimOverlay.setVisibility(View.VISIBLE);
                 pdfDimOverlay.setBackgroundColor(0xE6000000);
             }
+            pdfLoadingOnlineText = findViewById(R.id.pdf_loading_online_text);
+            if (pdfUrl != null && !pdfUrl.isEmpty() && pdfLoadingOnlineText != null) {
+                pdfLoadingOnlineText.setText("ઇન્ટરનેટથી લોડ થાય છે...");
+                pdfLoadingOnlineText.setVisibility(View.VISIBLE);
+            }
             pdfContentContainer.postDelayed(() -> {
-                if (!isFinishing() && !isDestroyed()) loadPdfFromAssets();
+                if (isFinishing() || isDestroyed()) return;
+                if (pdfUrl != null && !pdfUrl.isEmpty()) loadPdfFromUrl(pdfUrl);
+                else loadPdfFromAssets();
             }, 400);
         } catch (Exception e) {
             Log.e(TAG, "Fatal error in onCreate", e);
@@ -211,6 +228,7 @@ public class PdfViewerActivity extends AppCompatActivity {
 
     private void hideLoadingOverlay() {
         runOnUiThread(() -> {
+            if (pdfLoadingOnlineText != null) pdfLoadingOnlineText.setVisibility(View.GONE);
             if (pdfDimOverlay != null) pdfDimOverlay.setVisibility(View.GONE);
         });
     }
@@ -384,6 +402,59 @@ public class PdfViewerActivity extends AppCompatActivity {
     }
 
     private static final String CACHE_PDF_FILENAME = "current_book.pdf";
+
+    /** Download PDF from server URL and open. */
+    private void loadPdfFromUrl(String url) {
+        new Thread(() -> {
+            try {
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(30, TimeUnit.SECONDS)
+                        .readTimeout(60, TimeUnit.SECONDS)
+                        .build();
+                Request request = new Request.Builder().url(url).build();
+                try (Response response = client.newCall(request).execute()) {
+                    if (!response.isSuccessful() || response.body() == null) {
+                        runOnUiThread(() -> {
+                            hideLoadingOverlay();
+                            Toast.makeText(this, "બુક લોડ થઈ નહીં. ઇન્ટરનેટ ચેક કરો.", Toast.LENGTH_LONG).show();
+                            finish();
+                        });
+                        return;
+                    }
+                    File cacheDir = getCacheDir();
+                    if (cacheDir == null) {
+                        runOnUiThread(() -> { hideLoadingOverlay(); finish(); });
+                        return;
+                    }
+                    pdfFile = new File(cacheDir, CACHE_PDF_FILENAME);
+                    try (java.io.InputStream in = response.body().byteStream();
+                         FileOutputStream out = new FileOutputStream(pdfFile)) {
+                        byte[] buf = new byte[16384];
+                        int n;
+                        while ((n = in.read(buf)) != -1) out.write(buf, 0, n);
+                    }
+                    runOnUiThread(() -> {
+                        if (isFinishing() || isDestroyed()) return;
+                        try {
+                            openPdf();
+                        } catch (Throwable e) {
+                            Log.e(TAG, "Error opening PDF from URL", e);
+                            hideLoadingOverlay();
+                            Toast.makeText(this, "બુક ખોલતાં ભૂલ.", Toast.LENGTH_LONG).show();
+                            finish();
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading PDF from URL", e);
+                runOnUiThread(() -> {
+                    hideLoadingOverlay();
+                    Toast.makeText(this, "બુક લોડ થઈ નહીં: " + (e.getMessage() != null ? e.getMessage() : ""), Toast.LENGTH_LONG).show();
+                    finish();
+                });
+            }
+        }).start();
+    }
 
     private void loadPdfFromAssets() {
         final String assetName = bookName != null ? bookName.trim() : "";

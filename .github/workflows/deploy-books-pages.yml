@@ -1,0 +1,53 @@
+# Deploy public/books and public/thumbnails to GitHub Pages so all 56 PDFs are online.
+# After push: repo Settings > Pages > Source: "GitHub Actions". Then push again or run workflow.
+name: Deploy books and thumbnails to Pages
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'public/books/**'
+      - 'public/thumbnails/**'
+      - '.github/workflows/deploy-books-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Copy books and thumbnails to site root
+        run: |
+          mkdir -p _site
+          cp -r public/books _site/
+          cp -r public/thumbnails _site/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy-pages:
+    needs: deploy
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
