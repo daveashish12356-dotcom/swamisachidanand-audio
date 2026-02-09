@@ -6,14 +6,15 @@ Current URL: https://daveashish12356-dotcom.github.io/swamisachidanand-audio/
 
 MAKE ALL PDFs ONLINE (automatic deploy)
 --------------------------------------
-1. Push this repo to GitHub (repo name should be "swamisachidanand-audio" for the URL above).
-2. On GitHub: Repo > Settings > Pages > Build and deployment:
-   - Source: "GitHub Actions" (not "Deploy from a branch").
-3. Push again (or run Actions > "Deploy books and thumbnails to Pages" > Run workflow).
-4. After 1-2 minutes, run: python check_server_56_books.py
+1. Push this repo to GitHub (repo name = swamisachidanand-audio for the URL above).
+2. Workflow runs on push and deploys to gh-pages branch.
+3. On GitHub: Repo > Settings > Pages > Build and deployment:
+   - Source: "Deploy from a branch"
+   - Branch: "gh-pages" (folder / (root))
+4. Save. After 1-2 min run: python check_server_56_books.py
    You should see: Thumbnails: 56/56 OK, Books (PDF): 56/56 OK.
 
-The workflow .github/workflows/deploy-books-pages.yml copies public/books and public/thumbnails to the site root, so all 56 PDFs and thumbnails go online.
+The workflow copies public/books and public/thumbnails to gh-pages branch, so base URL serves books/ and thumbnails/.
 
 If your repo name is different (e.g. "ss"), change server_books_base_url in app/src/main/res/values/strings.xml to:
    https://YOUR_USERNAME.github.io/YOUR_REPO_NAME/
