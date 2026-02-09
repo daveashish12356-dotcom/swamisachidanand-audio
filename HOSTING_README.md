@@ -45,34 +45,62 @@ App me jab “server se connect” wala code add karoge, isi URL se `audio_list.
 
 ---
 
-## 3. Naya audio add karna (bina Firebase)
+## 3. Bade audio (500 MB+) – GitHub **Releases** use karo
 
-1. Repo me `public/audio_list.json` (ya root pe `audio_list.json`) edit karo. Format:
+Repo me 500 MB+ audio mat daalo (limit). **Releases** pe file upload karo – har file 2 GB tak allowed.
+
+**Important – files mix mat karo:**  
+Har book ke audio **alag release (alag tag)** me rakhna. Matlab:
+- Book 1 → ek release tag (e.g. `amarakantak`) → sirf usi book ki files usi release me.
+- Book 2 → **naya** release tag (e.g. `book2_slug`) → sirf Book 2 ki files us naye release me.
+- Aise hi har nayi book ke liye **naya release = alag folder** – sab files mix nahi honi chahiye.
+
+### પહેલી book (અમરકંટક – 24 parts, ~571 MB) add karna
+
+1. **Alag repo** banao: **swamisachidanand-audio** (app repo `f:\ss` me audio files mat daalo). Is naye repo me ye files push karo: `audio_list.json`, `public/audio_list.json`, `RELEASE_UPLOAD_MAP.txt`, aur ye README (copy from `f:\ss\HOSTING_README.md`). Matlab `f:\ss` se in files ko copy karke naye repo me commit + push karo.
+2. GitHub pe repo kholo → **Releases** → **Create a new release**.
+3. **Tag:** `amarakantak` (ya `v1.0`) type karo, **Publish release** click karo.
+4. Release page pe **Assets** → **Attach binaries** se 24 WAV files upload karo.  
+   **File names bilkul aise honi chahiye:** `part_01.wav`, `part_02.wav`, … `part_24.wav`.  
+   Kaunsi Desktop file ka kaunsa naam hai wo **RELEASE_UPLOAD_MAP.txt** me hai.
+5. Jab sab upload ho jaye, in URLs se audio chalegi:  
+   `https://github.com/swamisachidanand/swamisachidanand-audio/releases/download/amarakantak/part_01.wav` … `part_24.wav`.  
+   Ye URLs already `audio_list.json` me daal diye gaye hain.
+
+### Baaki books / naya audio (har book alag folder me)
+
+Jab **nayi book** ke audio add karne hon:
+
+1. **Alag release banao** – taaki us book ki files **sirf usi release me** rahein (dusri books se mix na hon):
+   - GitHub repo → **Releases** → **Create a new release**
+   - **Tag:** naya unique tag (e.g. `yatra_kashi`, `updesh_2`). Ye tag = us book ka “folder”.
+   - **Attach binaries:** sirf **us book** ki WAV files upload karo (part_01.wav, part_02.wav, …). Doosri book ki files yahan mat daalna.
+
+2. **audio_list.json** me nayi book add karo (purani books ko mat hatao). URLs me **us release tag** use karo:
 
 ```json
 {
   "version": 2,
   "updated": "2025-02-01T12:00:00Z",
-  "audio": [
+  "books": [
+    { "id": "amarakantak_madhyapradesh", "title": "અમરકંટક...", "parts": [ ... ] },
     {
-      "id": "1",
-      "title": "Audio 1",
-      "url": "https://example.com/audio1.mp3"
-    },
-    {
-      "id": "2",
-      "title": "Audio 2",
-      "url": "https://example.com/audio2.mp3"
+      "id": "nayi_book_id",
+      "title": "Nayi book title",
+      "parts": [
+        { "id": "1", "title": "Part 1", "url": "https://..../releases/download/NAYA_TAG/part_01.wav" },
+        { "id": "2", "title": "Part 2", "url": "https://..../releases/download/NAYA_TAG/part_02.wav" }
+      ]
     }
   ]
 }
 ```
 
-2. Audio file kahi bhi host ho sakti hai (GitHub repo me, ya koi free hosting). Sirf **url** sahi daalna hai.  
-3. Git me commit + push:
+3. **Har book ke liye alag map file** rakho (optional but clear): e.g. `RELEASE_UPLOAD_MAP_amarakantak.txt`, `RELEASE_UPLOAD_MAP_nayi_book.txt` – jis folder se kaunsi file upload karni hai, us hisaab se.  
+4. Git me commit + push:
 
 ```bash
-git add public/audio_list.json
+git add public/audio_list.json audio_list.json
 git commit -m "Add new audio to list"
 git push
 ```
