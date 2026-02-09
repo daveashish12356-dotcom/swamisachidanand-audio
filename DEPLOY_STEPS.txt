@@ -1,0 +1,19 @@
+56 books online karva mate (ek vaar karo)
+==========================================
+
+1. GitHub open karo: https://github.com/daveashish12356-dotcom/swamisachidanand-audio
+
+2. Actions tab > "Deploy books and thumbnails to Pages" workflow run thayo hovo joiye.
+   - Run thayo nathi to: "Run workflow" > "Run workflow" click karo.
+
+3. Workflow complete thay (green tick) pachi:
+   Settings > Pages (left side) > Build and deployment:
+   - Source: "Deploy from a branch"
+   - Branch: "gh-pages" select karo (folder: / (root))
+   - Save
+
+4. 1-2 minute wait karo, pachi check:
+   python check_server_56_books.py
+   Result: Thumbnails: 56/56 OK, Books (PDF): 56/56 OK aavvo joiye.
+
+Done. App ma Books tab ma sari 56 books online open thase.
