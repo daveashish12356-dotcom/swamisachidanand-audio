@@ -86,6 +86,7 @@ public class PdfViewerActivity extends AppCompatActivity {
     private SharedPreferences readingProgressPrefs;
     private static final String PREFS_NAME = "reading_progress";
     private static final String KEY_RECENT_BOOKS = "recent_books_list";
+    private static final String KEY_LAST_PDF_URL = "last_pdf_url";
     private static final int MAX_RECENT_BOOKS = 10;
     private List<Chapter> chapters;
     private final Object rendererLock = new Object();
@@ -214,11 +215,8 @@ public class PdfViewerActivity extends AppCompatActivity {
                 pdfLoadingOnlineText.setText("ઇન્ટરનેટથી લોડ થાય છે...");
                 pdfLoadingOnlineText.setVisibility(View.VISIBLE);
             }
-            pdfContentContainer.postDelayed(() -> {
-                if (isFinishing() || isDestroyed()) return;
-                if (pdfUrl != null && !pdfUrl.isEmpty()) loadPdfFromUrl(pdfUrl);
-                else loadPdfFromAssets();
-            }, 400);
+            if (pdfUrl != null && !pdfUrl.isEmpty()) loadPdfFromUrl(pdfUrl);
+            else loadPdfFromAssets();
         } catch (Exception e) {
             Log.e(TAG, "Fatal error in onCreate", e);
             Toast.makeText(this, "App error: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -365,10 +363,8 @@ public class PdfViewerActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Simple book-like page turn animation using 3D Y rotation.
-     * forward=true for next page, false for previous page.
-     */
+    /** Book-style page turn (Google Play Books style): page flips from spine edge with 3D rotation. */
+    private static final int PAGE_TURN_DURATION_MS = 320;
     private void animatePageTurn(boolean forward, Runnable onMidTurn) {
         if (pdfSinglePageImage == null) {
             if (onMidTurn != null) onMidTurn.run();
@@ -376,42 +372,102 @@ public class PdfViewerActivity extends AppCompatActivity {
         }
         try {
             final View v = pdfSinglePageImage;
+            int w = v.getWidth();
+            int h = v.getHeight();
+            if (w <= 0 || h <= 0) {
+                if (onMidTurn != null) onMidTurn.run();
+                return;
+            }
             float density = getResources().getDisplayMetrics().density;
-            v.setCameraDistance(8000f * density);
-            float dir = forward ? -1f : 1f;
+            v.setCameraDistance(12000f * density);
             v.animate().cancel();
-            v.animate()
-                    .rotationY(90f * dir)
-                    .translationX(v.getWidth() / 8f * dir)
-                    .setDuration(180)
-                    .withEndAction(() -> {
-                        if (onMidTurn != null) onMidTurn.run();
-                        v.setRotationY(-90f * dir);
-                        v.setTranslationX(-v.getWidth() / 8f * dir);
-                        v.animate()
-                                .rotationY(0f)
-                                .translationX(0f)
-                                .setDuration(180)
-                                .start();
-                    })
-                    .start();
+            v.setTranslationX(0f);
+            v.setTranslationZ(0f);
+            v.setPivotY(h * 0.5f);
+            if (forward) {
+                v.setPivotX(w);
+                v.setRotationY(0f);
+                v.animate()
+                        .rotationY(-90f)
+                        .setDuration(PAGE_TURN_DURATION_MS)
+                        .setInterpolator(new android.view.animation.DecelerateInterpolator(1.2f))
+                        .withEndAction(() -> {
+                            if (onMidTurn != null) onMidTurn.run();
+                            v.setPivotX(0f);
+                            v.setRotationY(90f);
+                            v.animate()
+                                    .rotationY(0f)
+                                    .setDuration(PAGE_TURN_DURATION_MS)
+                                    .setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator())
+                                    .withEndAction(() -> {
+                                        v.setPivotX(w * 0.5f);
+                                        v.setPivotY(h * 0.5f);
+                                    })
+                                    .start();
+                        })
+                        .start();
+            } else {
+                v.setPivotX(0f);
+                v.setRotationY(0f);
+                v.animate()
+                        .rotationY(90f)
+                        .setDuration(PAGE_TURN_DURATION_MS)
+                        .setInterpolator(new android.view.animation.DecelerateInterpolator(1.2f))
+                        .withEndAction(() -> {
+                            if (onMidTurn != null) onMidTurn.run();
+                            v.setPivotX(w);
+                            v.setRotationY(-90f);
+                            v.animate()
+                                    .rotationY(0f)
+                                    .setDuration(PAGE_TURN_DURATION_MS)
+                                    .setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator())
+                                    .withEndAction(() -> {
+                                        v.setPivotX(w * 0.5f);
+                                        v.setPivotY(h * 0.5f);
+                                    })
+                                    .start();
+                        })
+                        .start();
+            }
         } catch (Throwable t) {
-            // Fallback: no animation
             if (onMidTurn != null) onMidTurn.run();
         }
     }
 
     private static final String CACHE_PDF_FILENAME = "current_book.pdf";
 
-    /** Download PDF from server URL and open. */
+    /** Download PDF from server URL and open. Uses cache if same URL was just opened (instant reopen). */
     private void loadPdfFromUrl(String url) {
+        final long t0 = System.currentTimeMillis();
+        Log.d(TAG, "[perf] loadPdfFromUrl start url=" + url);
+        File cacheDir = getCacheDir();
+        if (cacheDir != null) {
+            String lastUrl = readingProgressPrefs != null ? readingProgressPrefs.getString(KEY_LAST_PDF_URL, "") : "";
+            File cached = new File(cacheDir, CACHE_PDF_FILENAME);
+            if (url != null && url.equals(lastUrl) && cached.exists() && cached.length() > 0) {
+                Log.d(TAG, "[perf] using cached file, skip download");
+                pdfFile = cached;
+                runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    try { openPdf(); } catch (Throwable e) {
+                        Log.e(TAG, "Error opening cached PDF", e);
+                        hideLoadingOverlay();
+                        finish();
+                    }
+                });
+                return;
+            }
+        }
         new Thread(() -> {
             try {
                 OkHttpClient client = new OkHttpClient.Builder()
                         .connectTimeout(30, TimeUnit.SECONDS)
                         .readTimeout(60, TimeUnit.SECONDS)
                         .build();
-                Request request = new Request.Builder().url(url).build();
+                Request request = new Request.Builder()
+                        .url(url)
+                        .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
+                        .build();
                 try (Response response = client.newCall(request).execute()) {
                     if (!response.isSuccessful() || response.body() == null) {
                         runOnUiThread(() -> {
@@ -421,18 +477,22 @@ public class PdfViewerActivity extends AppCompatActivity {
                         });
                         return;
                     }
-                    File cacheDir = getCacheDir();
-                    if (cacheDir == null) {
+                    File dir = getCacheDir();
+                    if (dir == null) {
                         runOnUiThread(() -> { hideLoadingOverlay(); finish(); });
                         return;
                     }
-                    pdfFile = new File(cacheDir, CACHE_PDF_FILENAME);
+                    pdfFile = new File(dir, CACHE_PDF_FILENAME);
                     try (java.io.InputStream in = response.body().byteStream();
                          FileOutputStream out = new FileOutputStream(pdfFile)) {
-                        byte[] buf = new byte[16384];
+                        byte[] buf = new byte[65536];
                         int n;
                         while ((n = in.read(buf)) != -1) out.write(buf, 0, n);
                     }
+                    if (readingProgressPrefs != null && url != null) {
+                        try { readingProgressPrefs.edit().putString(KEY_LAST_PDF_URL, url).apply(); } catch (Exception ignored) {}
+                    }
+                    Log.d(TAG, "[perf] download done in " + (System.currentTimeMillis() - t0) + " ms");
                     runOnUiThread(() -> {
                         if (isFinishing() || isDestroyed()) return;
                         try {
@@ -456,7 +516,53 @@ public class PdfViewerActivity extends AppCompatActivity {
         }).start();
     }
 
+    /** Load PDF from a specific asset file (e.g. mahabharat_chintan.pdf). */
+    private void loadPdfFromAssetName(String assetFileName) {
+        final long t0 = System.currentTimeMillis();
+        Log.d(TAG, "[perf] loadPdfFromAssetName start: " + assetFileName);
+        new Thread(() -> {
+            InputStream inputStream = null;
+            FileOutputStream outputStream = null;
+            try {
+                File cacheDir = getCacheDir();
+                if (cacheDir == null) {
+                    runOnUiThread(() -> { hideLoadingOverlay(); finish(); });
+                    return;
+                }
+                inputStream = getAssets().open(assetFileName);
+                pdfFile = new File(cacheDir, CACHE_PDF_FILENAME);
+                outputStream = new FileOutputStream(pdfFile);
+                byte[] buffer = new byte[65536];
+                int n;
+                while ((n = inputStream.read(buffer)) != -1) outputStream.write(buffer, 0, n);
+                outputStream.close();
+                inputStream.close();
+                Log.d(TAG, "[perf] asset copy done in " + (System.currentTimeMillis() - t0) + " ms");
+                runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    try { openPdf(); } catch (Throwable e) {
+                        Log.e(TAG, "Error opening PDF from asset", e);
+                        hideLoadingOverlay();
+                        Toast.makeText(this, "બુક ખોલતાં ભૂલ.", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                });
+            } catch (Throwable e) {
+                Log.e(TAG, "Error loading asset: " + assetFileName, e);
+                try { if (outputStream != null) outputStream.close(); } catch (IOException ignored) {}
+                try { if (inputStream != null) inputStream.close(); } catch (IOException ignored) {}
+                runOnUiThread(() -> {
+                    hideLoadingOverlay();
+                    Toast.makeText(this, "બુક લોડ થઈ નહીં.", Toast.LENGTH_LONG).show();
+                    finish();
+                });
+            }
+        }).start();
+    }
+
     private void loadPdfFromAssets() {
+        final long t0 = System.currentTimeMillis();
+        Log.d(TAG, "[perf] loadPdfFromAssets start");
         final String assetName = bookName != null ? bookName.trim() : "";
         if (assetName.isEmpty()) {
             hideLoadingOverlay();
@@ -474,10 +580,9 @@ public class PdfViewerActivity extends AppCompatActivity {
                     return;
                 }
                 inputStream = getAssets().open(assetName);
-                File tempFile = new File(cacheDir, "temp_book_" + System.currentTimeMillis() + ".pdf");
                 pdfFile = new File(cacheDir, CACHE_PDF_FILENAME);
-                outputStream = new FileOutputStream(tempFile);
-                byte[] buffer = new byte[16384];
+                outputStream = new FileOutputStream(pdfFile);
+                byte[] buffer = new byte[65536];
                 int bytesRead;
                 while ((bytesRead = inputStream.read(buffer)) != -1) {
                     outputStream.write(buffer, 0, bytesRead);
@@ -486,16 +591,7 @@ public class PdfViewerActivity extends AppCompatActivity {
                 inputStream.close();
                 outputStream = null;
                 inputStream = null;
-                // Copy temp to final (no nio.file - works on all devices)
-                if (tempFile.exists() && tempFile.length() > 0) {
-                    try (InputStream in = new java.io.FileInputStream(tempFile);
-                         FileOutputStream out = new FileOutputStream(pdfFile)) {
-                        byte[] buf = new byte[16384];
-                        int n;
-                        while ((n = in.read(buf)) != -1) out.write(buf, 0, n);
-                    }
-                }
-                tempFile.delete();
+                Log.d(TAG, "[perf] assets copy done in " + (System.currentTimeMillis() - t0) + " ms");
                 runOnUiThread(() -> {
                     if (isFinishing() || isDestroyed()) return;
                     try {
@@ -521,6 +617,8 @@ public class PdfViewerActivity extends AppCompatActivity {
     }
 
     private void openPdf() {
+        final long tOpen = System.currentTimeMillis();
+        Log.d(TAG, "[perf] openPdf start");
         try {
             if (pdfFile == null || !pdfFile.exists()) {
                 hideLoadingOverlay();
@@ -566,10 +664,25 @@ public class PdfViewerActivity extends AppCompatActivity {
                 progressSeekBar.setMax(100);
             }
             updateBottomProgressBar();
-            if (!loadChaptersFromCache(bookName)) {
-                createDefaultChapters();
-            }
+            Log.d(TAG, "[perf] openPdf ready to render in " + (System.currentTimeMillis() - tOpen) + " ms");
             renderCurrentPage();
+            final String chapterKey = getIntent().getStringExtra("book_file_name") != null
+                    ? getIntent().getStringExtra("book_file_name").trim() : (bookName != null ? bookName : "");
+            final String key = chapterKey.isEmpty() ? bookName : chapterKey;
+            new Thread(() -> {
+                List<Chapter> list = loadChaptersFromAssetsAsList(key);
+                if (list == null) list = loadChaptersFromCacheAsList(key);
+                if (list == null) list = createDefaultChaptersList();
+                if (list == null) return;
+                List<Chapter> finalList = list;
+                runOnUiThread(() -> {
+                    if (chapters != null && !isFinishing() && !isDestroyed()) {
+                        chapters.clear();
+                        chapters.addAll(finalList);
+                        if (pdfFile != null && pdfFile.exists()) loadChaptersFromDownloadedFileAsync();
+                    }
+                });
+            }).start();
         } catch (Throwable t) {
             Log.e(TAG, "openPdf error", t);
             hideLoadingOverlay();
@@ -596,6 +709,7 @@ public class PdfViewerActivity extends AppCompatActivity {
         final int finalMaxW = maxW;
         final int finalMaxH = maxH;
         rendering = true;
+        final long tRender = System.currentTimeMillis();
         new Thread(() -> {
             Bitmap bitmap = null;
             try {
@@ -634,6 +748,7 @@ public class PdfViewerActivity extends AppCompatActivity {
                 if (toShow != bitmap && bitmap != null && !bitmap.isRecycled()) bitmap.recycle();
                 runOnUiThread(() -> {
                     rendering = false;
+                    Log.d(TAG, "[perf] first page on screen in " + (System.currentTimeMillis() - tRender) + " ms (render)");
                     if (isFinishing() || isDestroyed() || pdfSinglePageImage == null) return;
                     if (currentPageIndex != pageIndex) return;
                     try {
@@ -859,8 +974,17 @@ public class PdfViewerActivity extends AppCompatActivity {
             String json = readFileToString(cacheFile);
             if (json == null || json.isEmpty()) return false;
             JSONObject root = new JSONObject(json);
-            if (!root.has(bookFileName)) return false;
-            JSONArray arr = root.getJSONArray(bookFileName);
+            // Cache is keyed by asset PDF filename (e.g. "નામ.pdf"). Server books pass display name without .pdf.
+            String cacheKey = bookFileName;
+            if (!root.has(cacheKey)) {
+                String withPdf = bookFileName.trim();
+                if (!withPdf.endsWith(".pdf") && !withPdf.endsWith(".PDF")) withPdf = withPdf + ".pdf";
+                if (root.has(withPdf)) cacheKey = withPdf;
+                else if (bookFileName.endsWith(".pdf") && root.has(bookFileName.replace(".pdf", "").trim())) cacheKey = bookFileName.replace(".pdf", "").trim();
+                else if (bookFileName.endsWith(".PDF") && root.has(bookFileName.replace(".PDF", "").trim())) cacheKey = bookFileName.replace(".PDF", "").trim();
+            }
+            if (!root.has(cacheKey)) return false;
+            JSONArray arr = root.getJSONArray(cacheKey);
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject o = arr.getJSONObject(i);
                 String title = o.optString("t", o.optString("title", ""));
@@ -878,6 +1002,78 @@ public class PdfViewerActivity extends AppCompatActivity {
         } catch (Throwable t) {
             Log.d(TAG, "No cache or no entry for " + bookFileName, t);
             return false;
+        }
+    }
+
+    /** Load chapters from assets/book_chapters.json (override for server books). Returns null if not found. */
+    private List<Chapter> loadChaptersFromAssetsAsList(String bookFileName) {
+        if (bookFileName == null || bookFileName.isEmpty() || pageCount <= 0) return null;
+        try (InputStream is = getAssets().open("book_chapters.json")) {
+            StringBuilder sb = new StringBuilder();
+            try (BufferedReader r = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = r.readLine()) != null) sb.append(line);
+            }
+            JSONObject root = new JSONObject(sb.toString());
+            String key = bookFileName.trim();
+            if (!root.has(key)) {
+                if (!key.endsWith(".pdf") && !key.endsWith(".PDF")) key = key + ".pdf";
+                if (!root.has(key)) return null;
+            }
+            JSONArray arr = root.getJSONArray(key);
+            if (arr == null || arr.length() == 0) return null;
+            List<Chapter> out = new ArrayList<>();
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.getJSONObject(i);
+                String title = o.optString("t", o.optString("title", ""));
+                int page = o.optInt("p", o.optInt("page", 0));
+                if (page < 0) page = 0;
+                if (page >= pageCount) continue;
+                out.add(new Chapter(title, page));
+            }
+            if (out.isEmpty()) return null;
+            if (out.get(0).pageNumber > 0) out.add(0, new Chapter("અધ્યાય ૧", 0));
+            return out;
+        } catch (Throwable t) {
+            Log.d(TAG, "No assets chapters for " + bookFileName, t);
+            return null;
+        }
+    }
+
+    /** Same as loadChaptersFromCache but returns a new list (for background loading). */
+    private List<Chapter> loadChaptersFromCacheAsList(String bookFileName) {
+        if (bookFileName == null || pageCount <= 0) return null;
+        try {
+            File cacheFile = BookChapterScanner.getCacheFile(this);
+            if (cacheFile == null || !cacheFile.exists()) return null;
+            String json = readFileToString(cacheFile);
+            if (json == null || json.isEmpty()) return null;
+            JSONObject root = new JSONObject(json);
+            String cacheKey = bookFileName;
+            if (!root.has(cacheKey)) {
+                String withPdf = bookFileName.trim();
+                if (!withPdf.endsWith(".pdf") && !withPdf.endsWith(".PDF")) withPdf = withPdf + ".pdf";
+                if (root.has(withPdf)) cacheKey = withPdf;
+                else if (bookFileName.endsWith(".pdf") && root.has(bookFileName.replace(".pdf", "").trim())) cacheKey = bookFileName.replace(".pdf", "").trim();
+                else if (bookFileName.endsWith(".PDF") && root.has(bookFileName.replace(".PDF", "").trim())) cacheKey = bookFileName.replace(".PDF", "").trim();
+            }
+            if (!root.has(cacheKey)) return null;
+            JSONArray arr = root.getJSONArray(cacheKey);
+            List<Chapter> out = new ArrayList<>();
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.getJSONObject(i);
+                String title = o.optString("t", o.optString("title", ""));
+                int page = o.optInt("p", o.optInt("page", 0));
+                if (page < 0) page = 0;
+                if (page >= pageCount) continue;
+                out.add(new Chapter(title, page));
+            }
+            if (out.isEmpty()) return null;
+            if (out.get(0).pageNumber > 0) out.add(0, new Chapter("અધ્યાય ૧", 0));
+            return out;
+        } catch (Throwable t) {
+            Log.d(TAG, "No cache for " + bookFileName, t);
+            return null;
         }
     }
 
@@ -905,6 +1101,55 @@ public class PdfViewerActivity extends AppCompatActivity {
         if (chapters.isEmpty()) {
             chapters.add(new Chapter("અધ્યાય ૧", 0));
         }
+    }
+
+    /** Returns default chapter list without modifying this.chapters (for background use). */
+    private List<Chapter> createDefaultChaptersList() {
+        if (pageCount <= 0) return new ArrayList<>();
+        List<Chapter> out = new ArrayList<>();
+        int numChapters = Math.min(50, Math.max(5, (pageCount + 4) / 5));
+        int chapterSize = Math.max(1, pageCount / numChapters);
+        for (int i = 0; i < numChapters; i++) {
+            int pageNum = i * chapterSize;
+            if (pageNum >= pageCount) break;
+            out.add(new Chapter("અધ્યાય " + toGujaratiNumeral(i + 1), pageNum));
+        }
+        if (out.isEmpty()) out.add(new Chapter("અધ્યાય ૧", 0));
+        return out;
+    }
+
+    /** Load real adhyayas from downloaded PDF (server book) - runs in background, updates chapters on UI thread. */
+    private void loadChaptersFromDownloadedFileAsync() {
+        if (pdfFile == null || !pdfFile.exists() || pageCount <= 0 || chapters == null) return;
+        final File file = pdfFile;
+        final int totalPages = pageCount;
+        new Thread(() -> {
+            try {
+                JSONArray arr = BookChapterScanner.getOutlineFromFile(PdfViewerActivity.this, file);
+                if (arr == null || arr.length() == 0) return;
+                List<Chapter> list = new ArrayList<>();
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject o = arr.getJSONObject(i);
+                    String title = o.optString("t", o.optString("title", ""));
+                    int page = o.optInt("p", o.optInt("page", 0));
+                    if (page < 0) page = 0;
+                    if (page >= totalPages) continue;
+                    list.add(new Chapter(title, page));
+                }
+                if (list.isEmpty()) return;
+                runOnUiThread(() -> {
+                    if (chapters != null && !isFinishing() && !isDestroyed()) {
+                        chapters.clear();
+                        chapters.addAll(list);
+                        if (chapters.get(0).pageNumber > 0) {
+                            chapters.add(0, new Chapter("અધ્યાય ૧", 0));
+                        }
+                    }
+                });
+            } catch (Throwable t) {
+                Log.d(TAG, "Outline from downloaded file failed", t);
+            }
+        }).start();
     }
 
     private static String toGujaratiNumeral(int n) {

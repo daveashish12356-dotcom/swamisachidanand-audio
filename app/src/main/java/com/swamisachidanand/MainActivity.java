@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
             if (pdfUrl != null && !pdfUrl.trim().isEmpty()) {
                 intent.putExtra("pdf_url", pdfUrl.trim());
                 intent.putExtra("book_name", book.getName() != null ? book.getName() : "");
+                intent.putExtra("book_file_name", book.getFileName() != null ? book.getFileName() : "");
             } else {
                 String fileName = book.getFileName();
                 if (fileName == null || (fileName = fileName.trim()).isEmpty()) return;
