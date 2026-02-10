@@ -47,10 +47,17 @@ public final class ServerBookLoader {
                 if (fileName.isEmpty() || !fileName.toLowerCase(Locale.ROOT).endsWith(".pdf")) continue;
                 String displayName = fileName.replace(".pdf", "").replace(".PDF", "");
                 String thumbName = fileName.replace(".pdf", ".jpg").replace(".PDF", ".jpg");
-                String encodedPdf = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name()).replace("+", "%20");
-                String encodedThumb = URLEncoder.encode(thumbName, StandardCharsets.UTF_8.name()).replace("+", "%20");
-                String pdfUrl = booksBase + encodedPdf;
-                String thumbnailUrl = thumbBase + encodedThumb;
+                String pdfUrl;
+                String thumbnailUrl;
+                if ("મહાભારતનું ચિંતન.pdf".equals(fileName)) {
+                    pdfUrl = booksBase + "mahabharat_chintan.pdf";
+                    thumbnailUrl = thumbBase + "mahabharat_chintan.jpg";
+                } else {
+                    String encodedPdf = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name()).replace("+", "%20");
+                    String encodedThumb = URLEncoder.encode(thumbName, StandardCharsets.UTF_8.name()).replace("+", "%20");
+                    pdfUrl = booksBase + encodedPdf;
+                    thumbnailUrl = thumbBase + encodedThumb;
+                }
                 Book book = new Book(displayName, fileName, 0);
                 book.setPdfUrl(pdfUrl);
                 book.setThumbnailUrl(thumbnailUrl);
