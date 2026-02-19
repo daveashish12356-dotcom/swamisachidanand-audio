@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "updated": "2026-02-19T10:34:36.798Z",
+  "updated": "2026-02-19T10:35:26.542Z",
   "books": [
     {
       "id": "amarakantak_madhyapradesh",
@@ -5709,7 +5709,7 @@
     {
       "id": "dharm",
       "title": "ધર્મ",
-      "thumbnailUrl": "https://raw.githubusercontent.com/daveashish12356-dotcom/swamisachidanand-audio/gh-pages/thumbnails/dharm.jpg",
+      "thumbnailUrl": "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/thumbnails/dharm.jpg",
       "parts": [
         {
           "id": "1",
