@@ -34,8 +34,8 @@ if (partsContent.charCodeAt(0) === 0xFEFF) {
 }
 const parts = JSON.parse(partsContent);
 
-// Thumbnail URL (raw.githubusercontent.com from gh-pages branch - works immediately)
-const thumbnailUrl = 'https://raw.githubusercontent.com/daveashish12356-dotcom/swamisachidanand-audio/gh-pages/thumbnails/dharm.jpg';
+// Thumbnail URL (raw.githubusercontent.com from gh-pages branch - use Gujarati filename to match PDF)
+const thumbnailUrl = 'https://raw.githubusercontent.com/daveashish12356-dotcom/swamisachidanand-audio/gh-pages/thumbnails/ધર્મ.jpg';
 
 // New book entry
 const newBook = {
