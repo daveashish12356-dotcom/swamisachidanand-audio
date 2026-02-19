@@ -52,6 +52,7 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
     private SwipeRefreshLayout swipeRefresh;
     private ProgressBar progressBar;
     private TextView errorText;
+    private TextView bookCountText;
     private RecyclerView cardRecycler;
     private AudioBookCardAdapter cardAdapter;
     private com.google.android.material.textfield.TextInputEditText searchInput;
@@ -66,6 +67,7 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
         swipeRefresh = root.findViewById(R.id.audio_swipe_refresh);
         progressBar = root.findViewById(R.id.audio_progress);
         errorText = root.findViewById(R.id.audio_error_text);
+        bookCountText = root.findViewById(R.id.audio_book_count);
         cardRecycler = root.findViewById(R.id.audio_books_card_recycler);
         searchInput = root.findViewById(R.id.audio_search_input);
         clearSearch = root.findViewById(R.id.audio_clear_search);
@@ -107,6 +109,8 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
         new Thread(() -> {
             List<ServerAudioBook> books = fetchAudioListFromServer(ctx);
             if (books != null && !books.isEmpty()) {
+                // Parse me koi book chut jaye to ensure se add karo – 100+ books par bhi sab dikhen
+                ensureRamayanUpsanharValmikiUpanishadInList(books);
                 List<Book> serverBooks = ServerBookLoader.load(ctx);
                 for (ServerAudioBook b : books) {
                     if (b.getThumbnailUrl() == null || b.getThumbnailUrl().isEmpty()) {
@@ -135,22 +139,26 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
         }).start();
     }
 
-    /** Server par audio_list.json fetch – pehle baseUrl, phir raw GitHub try. */
+    /** Pehle main (raw) – sahi order. Fail hoy to baseUrl (gh-pages). Dono par ab sahi file. */
     private List<ServerAudioBook> fetchAudioListFromServer(android.content.Context ctx) {
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(12, TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS)
+                .connectTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(45, TimeUnit.SECONDS)
+                .cache(null)
                 .build();
+        String urlMain = "https://raw.githubusercontent.com/daveashish12356-dotcom/swamisachidanand-audio/main/audio_list.json";
+        List<ServerAudioBook> list = fetchAudioListFromUrl(ctx, client, urlMain);
+        if (list != null && !list.isEmpty()) {
+            Log.d(TAG, "Server audio list OK from main");
+            return list;
+        }
         String baseUrl = ctx.getString(R.string.server_books_base_url);
-        if (baseUrl == null) baseUrl = "";
-        baseUrl = baseUrl.trim();
-        if (!baseUrl.endsWith("/")) baseUrl += "/";
-        String url1 = baseUrl + "audio_list.json";
-        String url2 = "https://raw.githubusercontent.com/daveashish12356-dotcom/swamisachidanand-audio/gh-pages/audio_list.json";
-        for (String url : new String[]{url1, url2}) {
-            List<ServerAudioBook> list = fetchAudioListFromUrl(ctx, client, url);
+        if (baseUrl != null && !baseUrl.isEmpty()) {
+            baseUrl = baseUrl.trim();
+            if (!baseUrl.endsWith("/")) baseUrl += "/";
+            list = fetchAudioListFromUrl(ctx, client, baseUrl + "audio_list.json");
             if (list != null && !list.isEmpty()) {
-                Log.d(TAG, "Server audio list OK from: " + url);
+                Log.d(TAG, "Server audio list OK from baseUrl");
                 return list;
             }
         }
@@ -159,7 +167,13 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
 
     private List<ServerAudioBook> fetchAudioListFromUrl(android.content.Context ctx, OkHttpClient client, String url) {
         try {
-            Request request = new Request.Builder().url(url).build();
+            // Force fresh fetch - no cache headers
+            Request request = new Request.Builder()
+                    .url(url)
+                    .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                    .header("Pragma", "no-cache")
+                    .header("Expires", "0")
+                    .build();
             try (Response response = client.newCall(request).execute()) {
                 if (!response.isSuccessful() || response.body() == null) {
                     Log.w(TAG, "audio_list.json HTTP " + response.code() + " for " + url);
@@ -177,79 +191,9 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
         }
     }
 
-    /** App khud server check kare: audio_list.json, test book, thumbnail – result dialog me dikhao. */
+    /** Server check dialog disabled – refresh/load par box na aave. */
     private void runServerCheckAndShowResult() {
-        android.content.Context ctx = getContext();
-        if (ctx == null) return;
-        new Thread(() -> {
-            StringBuilder report = new StringBuilder();
-            String baseUrl = ctx.getString(R.string.server_books_base_url);
-            if (baseUrl == null) baseUrl = "";
-            baseUrl = baseUrl.trim();
-            if (!baseUrl.endsWith("/")) baseUrl += "/";
-            String url1 = baseUrl + "audio_list.json";
-            String url2 = "https://raw.githubusercontent.com/daveashish12356-dotcom/swamisachidanand-audio/gh-pages/audio_list.json";
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .connectTimeout(10, TimeUnit.SECONDS)
-                    .readTimeout(15, TimeUnit.SECONDS)
-                    .build();
-            String usedUrl = null;
-            boolean testBookFound = false;
-            String thumbStatus = "ચેક નથી થયો";
-            for (String url : new String[]{url1, url2}) {
-                try {
-                    Response response = client.newCall(new Request.Builder().url(url).build()).execute();
-                    if (response.isSuccessful() && response.body() != null) {
-                        String json = response.body().string();
-                        if (json != null && !json.isEmpty()) {
-                            if (json.startsWith("\uFEFF")) json = json.substring(1);
-                            JSONObject root = new JSONObject(json);
-                            JSONArray booksArr = root.optJSONArray("books");
-                            if (booksArr != null) {
-                                usedUrl = url.contains("raw.githubusercontent") ? "Raw GitHub" : "GitHub Pages";
-                                for (int i = 0; i < booksArr.length(); i++) {
-                                    JSONObject b = booksArr.optJSONObject(i);
-                                    if (b != null && "test_book".equals(b.optString("id", "").trim())) {
-                                        testBookFound = true;
-                                        String thumbUrl = b.optString("thumbnailUrl", "");
-                                        if (thumbUrl != null && !thumbUrl.isEmpty()) {
-                                            try {
-                                                Response head = client.newCall(new Request.Builder().url(thumbUrl).head().build()).execute();
-                                                thumbStatus = (head.isSuccessful() ? "✅ OK" : "❌ HTTP " + head.code());
-                                            } catch (Exception e) {
-                                                thumbStatus = "❌ " + (e.getMessage() != null ? e.getMessage() : "ફેઈલ");
-                                            }
-                                        } else {
-                                            thumbStatus = "JSON માં નથી";
-                                        }
-                                        break;
-                                    }
-                                }
-                                if (!testBookFound) thumbStatus = "ટેસ્ટ બુક લિસ્ટમાં નથી";
-                            }
-                            break;
-                        }
-                    }
-                } catch (Exception e) {
-                    Log.d(TAG, "Server check " + url + ": " + e.getMessage());
-                }
-            }
-            report.append("• audio_list.json: ");
-            report.append(usedUrl != null ? "✅ મળ્યો (" + usedUrl + ")" : "❌ નથી મળ્યો (બંને URL ટ્રાય)");
-            report.append("\n\n• ટેસ્ટ બુક: ").append(testBookFound ? "✅ હા" : "❌ ના");
-            report.append("\n\n• થંબનેલ: ").append(thumbStatus);
-            String finalReport = report.toString();
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
-                    if (getContext() == null) return;
-                    new AlertDialog.Builder(requireContext())
-                            .setTitle("સર્વર ચેક")
-                            .setMessage(finalReport)
-                            .setPositiveButton("બંધ કરો", null)
-                            .show();
-                });
-            }
-        }).start();
+        // No dialog on refresh – user requested no pop-up
     }
 
     private static void moveTestBookToTop(List<ServerAudioBook> books) {
@@ -269,6 +213,8 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
         ensureAavegoInList(books);
         ensureValmikiRamayanSarInList(books);
         ensureUpanishadKathaoChintanInList(books);
+        ensureKrantikathaoInList(books);
+        ensureRamayanUpsanharValmikiUpanishadInList(books);
         Collections.sort(books, new GujaratiAlphabeticalComparator());
         moveTestBookToTop(books);
         if (getActivity() != null) {
@@ -281,9 +227,14 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
     private void applyBooksAndHideProgress(List<ServerAudioBook> books, boolean fromServer) {
         if (progressBar != null) progressBar.setVisibility(View.GONE);
         if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
-        Log.d(TAG, String.format(Locale.US, "Audio books count: %d (fromServer=%b)", books.size(), fromServer));
-        allAudioBooks = new ArrayList<>(books);
-        if (!books.isEmpty()) {
+        int count = books != null ? books.size() : 0;
+        Log.d(TAG, String.format(Locale.US, "Audio books count: %d (fromServer=%b)", count, fromServer));
+        if (bookCountText != null) {
+            bookCountText.setText(String.format(Locale.getDefault(), "સર્વર પર %d પુસ્તકો", count));
+            bookCountText.setVisibility(View.VISIBLE);
+        }
+        allAudioBooks = new ArrayList<>(books != null ? books : new ArrayList<>());
+        if (books != null && !books.isEmpty()) {
             cardAdapter.setBooks(books, fromServer);
             if (cardRecycler != null) cardRecycler.setVisibility(View.VISIBLE);
             if (errorText != null) errorText.setVisibility(View.GONE);
@@ -293,12 +244,15 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
                     for (ServerAudioBook b : books) {
                         if ("test_book".equals(b.getId())) { hasTestBook = true; break; }
                     }
-                    android.widget.Toast.makeText(getContext(), hasTestBook ? "સર્વરથી લોડ થયું – ટેસ્ટ બુક દેખાશે" : "સર્વરથી લોડ થયું", android.widget.Toast.LENGTH_SHORT).show();
+                    String msg = hasTestBook
+                            ? "સર્વરથી " + count + " પુસ્તકો લોડ થયાં – ટેસ્ટ બુક દેખાશે"
+                            : "સર્વરથી " + count + " પુસ્તકો લોડ થયાં";
+                    android.widget.Toast.makeText(getContext(), msg, android.widget.Toast.LENGTH_SHORT).show();
                 } else {
-                    android.widget.Toast.makeText(getContext(), "લોકલ લિસ્ટ – ટેસ્ટ બુક સૌથી ઉપર દેખાશે", android.widget.Toast.LENGTH_LONG).show();
+                    android.widget.Toast.makeText(getContext(), "લોકલ લિસ્ટ – " + count + " પુસ્તકો દેખાશે (ટેસ્ટ બુક ઉપર)", android.widget.Toast.LENGTH_LONG).show();
                 }
             }
-            runServerCheckAndShowResult();
+            // Server check dialog not shown on refresh/load – user requested no pop-up
         } else {
             if (errorText != null) {
                 errorText.setText(R.string.audio_error);
@@ -492,6 +446,56 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
         Log.d(TAG, "ensureUpanishadKathaoChintanInList: added (" + parts.size() + " parts)");
     }
 
+    /** ક્રાંતિકથાઓ: agar list me nahi to add karo – release krantikathao. */
+    private void ensureKrantikathaoInList(List<ServerAudioBook> books) {
+        if (books == null) return;
+        for (ServerAudioBook b : books) {
+            if ("krantikathao".equals(b.getId())) return;
+        }
+        String base = "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/krantikathao/";
+        List<ServerAudioPart> parts = new ArrayList<>();
+        int partCount = 84;
+        for (int i = 1; i <= partCount; i++) {
+            parts.add(new ServerAudioPart(String.valueOf(i), "ભાગ " + i, base + i + ".mp3"));
+        }
+        android.content.Context ctx = getContext();
+        String thumbUrl = ctx != null ? getServerThumbnailUrlForId(ctx, "krantikathao") : null;
+        books.add(new ServerAudioBook("krantikathao", "ક્રાંતિકથાઓ", parts, thumbUrl));
+        Log.d(TAG, "ensureKrantikathaoInList: added ક્રાંતિકથાઓ (" + parts.size() + " parts)");
+    }
+
+    /** ramayan_chintan, upsanhar, valmiki, upanishad – parse me chut jaye to add karo. 100+ books par bhi sab dikhen. */
+    private void ensureRamayanUpsanharValmikiUpanishadInList(List<ServerAudioBook> books) {
+        ensureRamayanChintanInList(books);
+        ensureUpsanharInList(books);
+        ensureValmikiRamayanSarInList(books);
+        ensureUpanishadKathaoChintanInList(books);
+    }
+
+    private void ensureRamayanChintanInList(List<ServerAudioBook> books) {
+        if (books == null) return;
+        for (ServerAudioBook b : books) { if ("ramayan_chintan".equals(b.getId())) return; }
+        String base = "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/ramayan_chintan/";
+        List<ServerAudioPart> parts = new ArrayList<>();
+        for (int i = 1; i <= 66; i++) parts.add(new ServerAudioPart(String.valueOf(i), "ભાગ " + i, base + i + ".mp3"));
+        android.content.Context ctx = getContext();
+        String thumbUrl = ctx != null ? getServerThumbnailUrlForId(ctx, "ramayan_chintan") : null;
+        books.add(new ServerAudioBook("ramayan_chintan", "રામાયણનું ચિંતન", parts, thumbUrl));
+        Log.d(TAG, "ensureRamayanChintanInList: added");
+    }
+
+    private void ensureUpsanharInList(List<ServerAudioBook> books) {
+        if (books == null) return;
+        for (ServerAudioBook b : books) { if ("upsanhar".equals(b.getId())) return; }
+        String base = "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/upsanhar/";
+        List<ServerAudioPart> parts = new ArrayList<>();
+        for (int i = 1; i <= 45; i++) parts.add(new ServerAudioPart(String.valueOf(i), "ભાગ " + i, base + i + ".mp3"));
+        android.content.Context ctx = getContext();
+        String thumbUrl = ctx != null ? getServerThumbnailUrlForId(ctx, "upsanhar") : null;
+        books.add(new ServerAudioBook("upsanhar", "ઉપસંહાર", parts, thumbUrl));
+        Log.d(TAG, "ensureUpsanharInList: added");
+    }
+
     private List<ServerAudioBook> loadFallbackFromAssets() {
         List<ServerAudioBook> list = new ArrayList<>();
         try {
@@ -513,6 +517,28 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
         return list;
     }
 
+    /** Har book ke parts 1, 2, 3 ... N order me – server par galat order ho to bhi sahi. */
+    private static List<ServerAudioPart> sortPartsByNumber(List<ServerAudioPart> parts) {
+        if (parts == null || parts.isEmpty()) return new ArrayList<>();
+        List<ServerAudioPart> list = new ArrayList<>(parts);
+        Collections.sort(list, (a, b) -> {
+            int na = parsePartNum(a != null ? a.getId() : null);
+            int nb = parsePartNum(b != null ? b.getId() : null);
+            if (na >= 0 && nb >= 0) return Integer.compare(na, nb);
+            if (na >= 0) return -1;
+            if (nb >= 0) return 1;
+            String sa = a != null ? a.getId() : "";
+            String sb = b != null ? b.getId() : "";
+            return (sa != null ? sa : "").compareTo(sb != null ? sb : "");
+        });
+        return list;
+    }
+
+    private static int parsePartNum(String id) {
+        if (id == null || id.isEmpty()) return -1;
+        try { return Integer.parseInt(id.trim()); } catch (NumberFormatException e) { return -1; }
+    }
+
     /** Audio page: jis book ka audio hai, ussi book ka thumbnail (PDF/Books page jaiso) dikhao – 56 books list se title match karke. */
     private List<ServerAudioBook> parseBooks(android.content.Context ctx, String jsonStr, List<Book> serverBooks) {
         List<ServerAudioBook> list = new ArrayList<>();
@@ -521,10 +547,15 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
             if (jsonStr.startsWith("\uFEFF")) jsonStr = jsonStr.substring(1);
             JSONObject root = new JSONObject(jsonStr);
             JSONArray booksArr = root.optJSONArray("books");
-            if (booksArr == null) return list;
+            if (booksArr == null) {
+                Log.w(TAG, "parseBooks: books array is null");
+                return list;
+            }
+            Log.d(TAG, "parseBooks: found " + booksArr.length() + " books in JSON");
             for (int i = 0; i < booksArr.length(); i++) {
+                JSONObject b = null;
                 try {
-                    JSONObject b = booksArr.optJSONObject(i);
+                    b = booksArr.optJSONObject(i);
                     if (b == null) continue;
                     String id = b.optString("id", "").trim();
                     String title = b.optString("title", "").trim();
@@ -552,14 +583,31 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
                         Log.d(TAG, "audio book thumbnail: id=" + id + " url=" + thumbnailUrl.substring(0, Math.min(80, thumbnailUrl.length())) + "...");
                     }
                     Log.d(TAG, "parsed book id=" + id + " title=" + title + " parts=" + parts.size());
-                    list.add(new ServerAudioBook(id, title, parts, thumbnailUrl));
+                    if (id.isEmpty() || title.isEmpty()) {
+                        Log.w(TAG, "Skipping book with empty id or title at index " + i);
+                        continue;
+                    }
+                    list.add(new ServerAudioBook(id, title, sortPartsByNumber(parts), thumbnailUrl));
+                    if ("geetaji_chintan".equals(id)) {
+                        Log.d(TAG, "✅ geetaji_chintan added to list: parts=" + parts.size() + " thumbnail=" + thumbnailUrl);
+                    }
                 } catch (Exception e) {
-                    Log.e(TAG, "Parse error for book index " + i, e);
+                    String bookId = (b != null) ? b.optString("id", "unknown") : "null";
+                    Log.e(TAG, "Parse error for book index " + i + " (id might be: " + bookId + ")", e);
                 }
             }
         } catch (Exception e) {
             Log.e(TAG, "Parse error", e);
         }
+        Log.d(TAG, "parseBooks: returning " + list.size() + " books");
+        boolean hasGeetaji = false;
+        for (ServerAudioBook b : list) {
+            if ("geetaji_chintan".equals(b.getId())) {
+                hasGeetaji = true;
+                break;
+            }
+        }
+        Log.d(TAG, "parseBooks: geetaji_chintan in list: " + hasGeetaji);
         return list;
     }
 
@@ -597,6 +645,12 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
         if ("geetaji_chintan".equals(id)) {
             return "https://raw.githubusercontent.com/daveashish12356-dotcom/swamisachidanand-audio/gh-pages/thumbnails/geetaji_chintan.jpg";
         }
+        if ("kandadeprabandh_sar".equals(id)) {
+            return "https://raw.githubusercontent.com/daveashish12356-dotcom/swamisachidanand-audio/gh-pages/thumbnails/kandadeprabandh_sar.jpg";
+        }
+        if ("krantikathao".equals(id)) {
+            return "https://raw.githubusercontent.com/daveashish12356-dotcom/swamisachidanand-audio/main/thumbnails/krantikathao.jpg";
+        }
         String thumbName = null;
         switch (id) {
             case "amarakantak_madhyapradesh": thumbName = "અમરકંટક અને મધ્યપ્રદેશનો મહિમા.jpg"; break;
@@ -609,17 +663,18 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
             case "upsanhar": thumbName = "ઉપસંહાર.jpg"; break;
             case "valmiki_ramayan_sar": thumbName = "વાલ્મીકિ-રામાયણ-સાર.jpg"; break;
             case "upanishad_kathao_chintan": thumbName = "ઉપનિષદોની કથાઓ અને ચિંતન.jpg"; break;
-            case "geetaji_chintan": thumbName = "ગીતાજીનું ચિતન.jpg"; break;
-            default: return null;
+            default: break;
         }
-        if (thumbName == null) return null;
         try {
             String base = ctx.getString(R.string.server_books_base_url);
             if (base == null) base = "";
             base = base.trim();
             if (!base.isEmpty() && !base.endsWith("/")) base += "/";
-            String encoded = URLEncoder.encode(thumbName, StandardCharsets.UTF_8.name()).replace("+", "%20");
-            return base + "thumbnails/" + encoded;
+            if (thumbName != null) {
+                String encoded = URLEncoder.encode(thumbName, StandardCharsets.UTF_8.name()).replace("+", "%20");
+                return base + "thumbnails/" + encoded;
+            }
+            return base + "thumbnails/" + id + ".jpg";
         } catch (Exception e) {
             return null;
         }
