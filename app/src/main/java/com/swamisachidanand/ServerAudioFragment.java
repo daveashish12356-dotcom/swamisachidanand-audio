@@ -214,6 +214,7 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
         ensureValmikiRamayanSarInList(books);
         ensureUpanishadKathaoChintanInList(books);
         ensureKrantikathaoInList(books);
+        ensureMariBypassSurgeryInList(books);
         ensureRamayanUpsanharValmikiUpanishadInList(books);
         Collections.sort(books, new GujaratiAlphabeticalComparator());
         moveTestBookToTop(books);
@@ -496,6 +497,23 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
         Log.d(TAG, "ensureUpsanharInList: added");
     }
 
+    /** મારી બાયપાસ સર્જરી: fallback par na ho to add karo – name, thumbnail, 14 parts. */
+    private void ensureMariBypassSurgeryInList(List<ServerAudioBook> books) {
+        if (books == null) return;
+        for (ServerAudioBook b : books) {
+            if ("mari_bypass_surgery".equals(b.getId())) return;
+        }
+        String base = "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/mari_bypass_surgery/";
+        List<ServerAudioPart> parts = new ArrayList<>();
+        for (int i = 1; i <= 14; i++) {
+            parts.add(new ServerAudioPart(String.valueOf(i), "ભાગ " + i, base + i + ".mp3"));
+        }
+        android.content.Context ctx = getContext();
+        String thumbUrl = ctx != null ? getServerThumbnailUrlForId(ctx, "mari_bypass_surgery") : null;
+        books.add(new ServerAudioBook("mari_bypass_surgery", "મારી બાયપાસ સર્જરી", parts, thumbUrl));
+        Log.d(TAG, "ensureMariBypassSurgeryInList: added");
+    }
+
     private List<ServerAudioBook> loadFallbackFromAssets() {
         List<ServerAudioBook> list = new ArrayList<>();
         try {
@@ -650,6 +668,9 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
         }
         if ("krantikathao".equals(id)) {
             return "https://raw.githubusercontent.com/daveashish12356-dotcom/swamisachidanand-audio/main/thumbnails/krantikathao.jpg";
+        }
+        if ("mari_bypass_surgery".equals(id)) {
+            return "https://raw.githubusercontent.com/daveashish12356-dotcom/swamisachidanand-audio/main/thumbnails/mari_bypass_surgery.jpg";
         }
         String thumbName = null;
         switch (id) {
