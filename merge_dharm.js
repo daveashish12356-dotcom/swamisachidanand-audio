@@ -34,8 +34,8 @@ if (partsContent.charCodeAt(0) === 0xFEFF) {
 }
 const parts = JSON.parse(partsContent);
 
-// Thumbnail URL (GitHub Pages)
-const thumbnailUrl = 'https://daveashish12356-dotcom.github.io/swamisachidanand-audio/thumbnails/dharm.jpg';
+// Thumbnail URL (raw.githubusercontent.com format like other books)
+const thumbnailUrl = 'https://raw.githubusercontent.com/daveashish12356-dotcom/swamisachidanand-audio/gh-pages/thumbnails/dharm.jpg';
 
 // New book entry
 const newBook = {
