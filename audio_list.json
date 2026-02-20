@@ -1,6 +1,6 @@
 {
   "version": 6,
-  "updated": "2026-02-20T20:57:50Z",
+  "updated": "2026-02-20T16:32:53.834Z",
   "books": [
     {
       "id": "amarakantak_madhyapradesh",
@@ -5971,6 +5971,182 @@
           "id": "52",
           "title": "21.અધ્યાય સત્તરમો (2)",
           "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/52.mp3"
+        }
+      ]
+    },
+    {
+      "id": "dharm",
+      "title": "ધર્મ",
+      "parts": [
+        {
+          "id": "1",
+          "title": "1.ધર્મ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/1.mp3"
+        },
+        {
+          "id": "2",
+          "title": "2.સમર્પણ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/2.mp3"
+        },
+        {
+          "id": "3",
+          "title": "3.પ્રકાશકીય",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/3.mp3"
+        },
+        {
+          "id": "4",
+          "title": "4.ત્રીજી આવૃત્તિ સમવે",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/4.mp3"
+        },
+        {
+          "id": "5",
+          "title": "5.આવકાર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/5.mp3"
+        },
+        {
+          "id": "6",
+          "title": "6.ભૂમિકા (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/6.mp3"
+        },
+        {
+          "id": "7",
+          "title": "6.ભૂમિકા (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/7.mp3"
+        },
+        {
+          "id": "8",
+          "title": "7.સાચા ધર્મદર્શનની અંતરખોજ (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/8.mp3"
+        },
+        {
+          "id": "9",
+          "title": "7.સાચા ધર્મદર્શનની અંતરખોજ (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/9.mp3"
+        },
+        {
+          "id": "10",
+          "title": "8.ગુણવિકાસધર્મ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/10.mp3"
+        },
+        {
+          "id": "11",
+          "title": "9.“સત્યેન જાયતે ધર્મ” (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/11.mp3"
+        },
+        {
+          "id": "12",
+          "title": "9.“સત્યેન જાયતે ધર્મ” (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/12.mp3"
+        },
+        {
+          "id": "13",
+          "title": "9.“સત્યેન જાયતે ધર્મ” (3)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/13.mp3"
+        },
+        {
+          "id": "14",
+          "title": "10.“કેન સ્થાપ્યતે ધર્મઃ ' (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/14.mp3"
+        },
+        {
+          "id": "15",
+          "title": "10.“કેન સ્થાપ્યતે ધર્મઃ ' (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/15.mp3"
+        },
+        {
+          "id": "16",
+          "title": "11.ક્ષમાની સીમા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/16.mp3"
+        },
+        {
+          "id": "17",
+          "title": "12. 'દયયા ચ' (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/17.mp3"
+        },
+        {
+          "id": "18",
+          "title": "12. 'દયયા ચ' (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/18.mp3"
+        },
+        {
+          "id": "19",
+          "title": "13.દવાની સીમા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/19.mp3"
+        },
+        {
+          "id": "20",
+          "title": "14.“કેન વર્ધ્યતે ધર્મ ' (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/20.mp3"
+        },
+        {
+          "id": "21",
+          "title": "14.“કેન વર્ધ્યતે ધર્મ ' (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/21.mp3"
+        },
+        {
+          "id": "22",
+          "title": "15.“પરમાથેણ ચ'",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/22.mp3"
+        },
+        {
+          "id": "23",
+          "title": "16.કેન ધમો. વિનશ્યતિ.'",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/23.mp3"
+        },
+        {
+          "id": "24",
+          "title": "17. સ્વાથેણ ચ'“",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/24.mp3"
+        },
+        {
+          "id": "25",
+          "title": "18.સંપ્રદાય (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/25.mp3"
+        },
+        {
+          "id": "26",
+          "title": "18.સંપ્રદાય (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/26.mp3"
+        },
+        {
+          "id": "27",
+          "title": "18.સંપ્રદાય (3)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/27.mp3"
+        },
+        {
+          "id": "28",
+          "title": "18.સંપ્રદાય (4)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/28.mp3"
+        },
+        {
+          "id": "29",
+          "title": "19.સંસ્કૃતિ (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/29.mp3"
+        },
+        {
+          "id": "30",
+          "title": "19.સંસ્કૃતિ (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/30.mp3"
+        },
+        {
+          "id": "31",
+          "title": "19.સંસ્કૃતિ (3)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/31.mp3"
+        },
+        {
+          "id": "32",
+          "title": "19.સંસ્કૃતિ (4)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/32.mp3"
+        },
+        {
+          "id": "33",
+          "title": "20.ઉપસંહાર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/33.mp3"
+        },
+        {
+          "id": "34",
+          "title": "21.પુરવણી",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/dharm/34.mp3"
         }
       ]
     }
