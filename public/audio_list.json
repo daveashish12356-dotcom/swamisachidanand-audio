@@ -1,6 +1,6 @@
 {
-  "version": 2,
-  "updated": "2025-01-31T00:00:00Z",
+  "version": 5,
+  "updated": "2026-02-20T20:53:52Z",
   "books": [
     {
       "id": "amarakantak_madhyapradesh",
@@ -5704,6 +5704,273 @@
           "id": "14",
           "title": "14.મારી બાયપાસ સર્જરી (14)",
           "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/mari_bypass_surgery/14.mp3"
+        }
+      ]
+    },
+    {
+      "id": "chanakya_vyavaharniti",
+      "title": "ચાણક્યની વ્યવહારનીતિ",
+      "thumbnailUrl": "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/thumbnails/chanakya_vyavaharniti.jpg",
+      "parts": [
+        {
+          "id": "1",
+          "title": "1.ચાણક્યની વ્યવહારનીતિ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/1.mp3"
+        },
+        {
+          "id": "2",
+          "title": "2.અર્પણ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/2.mp3"
+        },
+        {
+          "id": "3",
+          "title": "3.ભૂમિકા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/3.mp3"
+        },
+        {
+          "id": "4",
+          "title": "4.4થા પૂઠાનું મેટર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/4.mp3"
+        },
+        {
+          "id": "5",
+          "title": "5.અધ્યાય પહેલો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/5.mp3"
+        },
+        {
+          "id": "6",
+          "title": "5.અધ્યાય પહેલો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/6.mp3"
+        },
+        {
+          "id": "7",
+          "title": "5.અધ્યાય પહેલો (3)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/7.mp3"
+        },
+        {
+          "id": "8",
+          "title": "5.અધ્યાય પહેલો (4)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/8.mp3"
+        },
+        {
+          "id": "9",
+          "title": "6.અધ્યાય બીજો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/9.mp3"
+        },
+        {
+          "id": "10",
+          "title": "6.અધ્યાય બીજો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/10.mp3"
+        },
+        {
+          "id": "11",
+          "title": "6.અધ્યાય બીજો (3)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/11.mp3"
+        },
+        {
+          "id": "12",
+          "title": "7.અધ્યાય ત્રીજો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/12.mp3"
+        },
+        {
+          "id": "13",
+          "title": "7.અધ્યાય ત્રીજો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/13.mp3"
+        },
+        {
+          "id": "14",
+          "title": "8.અધ્યાય ચોથો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/14.mp3"
+        },
+        {
+          "id": "15",
+          "title": "8.અધ્યાય ચોથો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/15.mp3"
+        },
+        {
+          "id": "16",
+          "title": "8.અધ્યાય ચોથો (3)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/16.mp3"
+        },
+        {
+          "id": "17",
+          "title": "9.અધ્યાય પાંચમો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/17.mp3"
+        },
+        {
+          "id": "18",
+          "title": "9.અધ્યાય પાંચમો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/18.mp3"
+        },
+        {
+          "id": "19",
+          "title": "9.અધ્યાય પાંચમો (3)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/19.mp3"
+        },
+        {
+          "id": "20",
+          "title": "9.અધ્યાય પાંચમો (4)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/20.mp3"
+        },
+        {
+          "id": "21",
+          "title": "10. અધ્યાય છઠ્ઠો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/21.mp3"
+        },
+        {
+          "id": "22",
+          "title": "10. અધ્યાય છઠ્ઠો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/22.mp3"
+        },
+        {
+          "id": "23",
+          "title": "10. અધ્યાય છઠ્ઠો (3)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/23.mp3"
+        },
+        {
+          "id": "24",
+          "title": "10. અધ્યાય છઠ્ઠો (4)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/24.mp3"
+        },
+        {
+          "id": "25",
+          "title": "11.અધ્યાય સાતમો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/25.mp3"
+        },
+        {
+          "id": "26",
+          "title": "11.અધ્યાય સાતમો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/26.mp3"
+        },
+        {
+          "id": "27",
+          "title": "11.અધ્યાય સાતમો (3)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/27.mp3"
+        },
+        {
+          "id": "28",
+          "title": "12.અધ્યાય આઠમો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/28.mp3"
+        },
+        {
+          "id": "29",
+          "title": "12.અધ્યાય આઠમો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/29.mp3"
+        },
+        {
+          "id": "30",
+          "title": "12.અધ્યાય આઠમો (3)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/30.mp3"
+        },
+        {
+          "id": "31",
+          "title": "13.અધ્યાય નવમો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/31.mp3"
+        },
+        {
+          "id": "32",
+          "title": "13.અધ્યાય નવમો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/32.mp3"
+        },
+        {
+          "id": "33",
+          "title": "14.અધ્યાય દસમો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/33.mp3"
+        },
+        {
+          "id": "34",
+          "title": "14.અધ્યાય દસમો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/34.mp3"
+        },
+        {
+          "id": "35",
+          "title": "14.અધ્યાય દસમો (3)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/35.mp3"
+        },
+        {
+          "id": "36",
+          "title": "14.અધ્યાય દસમો (4)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/36.mp3"
+        },
+        {
+          "id": "37",
+          "title": "15.અધ્યાય અગિયારમો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/37.mp3"
+        },
+        {
+          "id": "38",
+          "title": "15.અધ્યાય અગિયારમો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/38.mp3"
+        },
+        {
+          "id": "39",
+          "title": "16.અધ્યાય બારમો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/39.mp3"
+        },
+        {
+          "id": "40",
+          "title": "16.અધ્યાય બારમો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/40.mp3"
+        },
+        {
+          "id": "41",
+          "title": "16.અધ્યાય બારમો (3)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/41.mp3"
+        },
+        {
+          "id": "42",
+          "title": "17.અધ્યાય તેરમો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/42.mp3"
+        },
+        {
+          "id": "43",
+          "title": "17.અધ્યાય તેરમો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/43.mp3"
+        },
+        {
+          "id": "44",
+          "title": "17.અધ્યાય તેરમો (3)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/44.mp3"
+        },
+        {
+          "id": "45",
+          "title": "18.અધ્યાય ચૌદમો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/45.mp3"
+        },
+        {
+          "id": "46",
+          "title": "18.અધ્યાય ચૌદમો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/46.mp3"
+        },
+        {
+          "id": "47",
+          "title": "19.અધ્યાય પંદરમો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/47.mp3"
+        },
+        {
+          "id": "48",
+          "title": "19.અધ્યાય પંદરમો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/48.mp3"
+        },
+        {
+          "id": "49",
+          "title": "20.અધ્યાય સોળમો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/49.mp3"
+        },
+        {
+          "id": "50",
+          "title": "20.અધ્યાય સોળમો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/50.mp3"
+        },
+        {
+          "id": "51",
+          "title": "21.અધ્યાય સત્તરમો (1)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/51.mp3"
+        },
+        {
+          "id": "52",
+          "title": "21.અધ્યાય સત્તરમો (2)",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_vyavaharniti/52.mp3"
         }
       ]
     }
