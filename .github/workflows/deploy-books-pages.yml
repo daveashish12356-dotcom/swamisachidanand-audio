@@ -22,9 +22,10 @@ jobs:
           mkdir -p _site
           cp -r public/books _site/
           cp -r public/thumbnails _site/
-          cp server_suvichar/suvichar_config.json _site/
-          cp server_suvichar/suvichar_control.html _site/
+          cp public/suvichar_config.json _site/ 2>/dev/null || true
+          cp public/suvichar_control.html _site/ 2>/dev/null || true
           echo "56 books + 56 thumbnails" > _site/index.html
+          ls -la _site/
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
