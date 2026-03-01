@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>સુવિચાર ON / OFF</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 420px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f0e8;
+      color: #333;
+    }
+    h1 {
+      font-size: 1.4rem;
+      color: #8B4513;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .sub {
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+    .buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    a.btn {
+      display: inline-block;
+      padding: 16px 28px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-decoration: none;
+      min-width: 140px;
+      text-align: center;
+    }
+    a.btn-on {
+      background: #2e7d32;
+      color: #fff;
+      border: 2px solid #1b5e20;
+    }
+    a.btn-on:hover { background: #1b5e20; }
+    a.btn-off {
+      background: #c62828;
+      color: #fff;
+      border: 2px solid #b71c1c;
+    }
+    a.btn-off:hover { background: #b71c1c; }
+    .note {
+      margin-top: 24px;
+      padding: 12px;
+      background: #fff;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #555;
+    }
+    .link {
+      word-break: break-all;
+      color: #1565c0;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>ભાર્ગવ સુવિચાર – ON / OFF</h1>
+  <p class="sub">એપમાં સુવિચાર દેખાશે કે નહીં તે અહીંથી કંટ્રોલ કરો.</p>
+
+  <div class="buttons">
+    <a href="https://github.com/daveashish12356-dotcom/swamisachidanand-audio/edit/main/suvichar_config.json" class="btn btn-on" target="_blank" rel="noopener">સુવિચાર ON</a>
+    <a href="https://github.com/daveashish12356-dotcom/swamisachidanand-audio/edit/main/suvichar_config.json" class="btn btn-off" target="_blank" rel="noopener">સુવિચાર OFF</a>
+  </div>
+
+  <div class="note">
+    <strong>કેવી રીતે ચાલુ/બંધ કરવું:</strong><br>
+    • <b>ON</b> – ઉપર "સુવિચાર ON" દબાવો, GitHub પર ફાઇલ ખુલશે. <code>"suvicharEnabled": false</code> ને <code>"suvicharEnabled": true</code> કરો, પછી Commit કરો.<br>
+    • <b>OFF</b> – "સુવિચાર OFF" દબાવો, ફાઇલમાં <code>"suvicharEnabled": true</code> ને <code>"suvicharEnabled": false</code> કરો, પછી Commit કરો.
+    <br><br>
+    <span class="link">લિંક: https://daveashish12356-dotcom.github.io/swamisachidanand-audio/suvichar_config.json</span>
+  </div>
+</body>
+</html>
