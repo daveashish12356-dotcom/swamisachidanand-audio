@@ -42,6 +42,10 @@
     .token-row { margin-top: 14px; }
     .token-row label { font-size: 0.85rem; color: #555; display: block; margin-bottom: 4px; }
     .token-row input { width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; }
+    .token-saved { margin-top: 12px; padding: 10px 12px; background: #e8f5e9; color: #1b5e20; border-radius: 8px; font-size: 0.9rem; }
+    .token-saved a { color: #1565c0; font-size: 0.85rem; }
+    .token-link { display: inline-block; margin-top: 8px; padding: 8px 14px; background: #f5f5f5; color: #333; border-radius: 8px; text-decoration: none; font-size: 0.9rem; }
+    .token-link:hover { background: #eee; }
 
     .note { background: #fff; border-radius: 12px; padding: 16px; font-size: 0.88rem; color: #555; line-height: 1.6; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-top: 20px; }
     .note strong { color: #333; }
@@ -73,17 +77,19 @@
       <button type="button" class="primary" id="btnSave">સેવ કરો (એપમાં લાગુ થશે)</button>
       <button type="button" class="secondary" id="btnCopy">કોપી કરો</button>
     </div>
-    <div class="token-row">
-      <label for="token">GitHub token (ફક્ત એક વાર — સેવ કરવા માટે જરૂરી)</label>
-      <input type="password" id="token" placeholder="ghp_xxxx... અહીં પેસ્ટ કરો" autocomplete="off" />
+    <div id="tokenSection">
+      <div id="tokenRow" class="token-row">
+        <label for="token">GitHub token (ફક્ત એક વાર લગાવો — પછી સ્વચાલિત સેવ થશે)</label>
+        <a href="https://github.com/settings/tokens/new?scopes=repo&description=Suvichar+control" target="_blank" rel="noopener" class="token-link">GitHub પર token બનાવો (એક ક્લિક)</a>
+        <input type="password" id="token" placeholder="Token અહીં પેસ્ટ કરો → પછી સેવ કરો દબાવો" autocomplete="off" style="margin-top:8px;" />
+      </div>
+      <div id="tokenSaved" class="token-saved" style="display:none;">Token સેવ થઈ ગયું. ફક્ત ON/OFF અને «સેવ કરો» દબાવો — ફરીથી token લગાવવાની જરૂર નથી. <a href="#" id="linkNewToken">નવો token લગાવો</a></div>
     </div>
     <div id="msg" class="msg"></div>
   </div>
 
   <div class="note">
-    <strong>Token કેવી રીતે લગાવવો:</strong> GitHub પર જાઓ → તમારા પ્રોફાઇલ → Settings → Developer settings → Personal access tokens → Generate new token (classic) → <code>repo</code> ચેક કરો → Generate → token કોપી કરીને ઉપરના ભાગમાં પેસ્ટ કરો. એક વાર લગાવ્યા પછી "સેવ કરો" દબાવો તો એપમાં લાગુ થશે.<br><br>
-    <strong>એપ:</strong> સેવ પછી એપમાં વિડિઓ ટેબ ખોલો અથવા નીચે ખેંચી રિફ્રેશ કરો.<br>
-    <strong>જો ON/OFF બટન ન દેખાય:</strong> પેજ ફરી લોડ કરો (Ctrl+Shift+R અથવા પેજ રિફ્રેશ).
+    <strong>એપ:</strong> સેવ પછી એપમાં વિડિઓ ટેબ ખોલો/રિફ્રેશ કરો.
     <div class="link-box">
       <a href="https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/suvichar_config.json" target="_blank" rel="noopener">Config લિંક</a>
     </div>
@@ -121,6 +127,28 @@
 
     var ta = document.getElementById('jsonText');
     ta.value = JSON.stringify(defaultJson, null, 2);
+
+    function updateTokenUI() {
+      var saved = false;
+      try { saved = !!localStorage.getItem(TOKEN_KEY); } catch (e) {}
+      var row = document.getElementById('tokenRow');
+      var msg = document.getElementById('tokenSaved');
+      if (saved && row && msg) {
+        row.style.display = 'none';
+        msg.style.display = 'block';
+      } else if (row && msg) {
+        row.style.display = 'block';
+        msg.style.display = 'none';
+      }
+    }
+    updateTokenUI();
+
+    document.getElementById('linkNewToken').onclick = function(e) {
+      e.preventDefault();
+      try { localStorage.removeItem(TOKEN_KEY); } catch (e) {}
+      document.getElementById('token').value = '';
+      updateTokenUI();
+    };
 
     fetch(CONFIG_URL).then(function(r) {
       if (!r.ok) throw new Error('Load failed');
@@ -206,6 +234,7 @@
         var el = document.getElementById('status');
         el.textContent = json.suvicharEnabled ? 'સુવિચાર ચાલુ (ON)' : 'સુવિચાર બંધ (OFF)';
         el.className = 'status-value ' + (json.suvicharEnabled ? 'on' : 'off');
+        updateTokenUI();
       }).catch(function(e) {
         showMsg('ભૂલ: ' + (e.message || 'Token ચેક કરો.'), true);
       });
