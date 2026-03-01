@@ -214,10 +214,10 @@
       if (!json) json = { suvicharEnabled: true, suvichar: [] };
       if (typeof json.suvicharEnabled === 'undefined') json.suvicharEnabled = true;
       if (!Array.isArray(json.suvichar)) json.suvichar = [];
-      json.suvichar.push({ text: text, author: author });
+      json.suvichar = [{ text: text, author: author }];
       setJsonInBox(json);
       document.getElementById('pasteArea').value = '';
-      showPasteMsg('ઉમેરાઈ ગયું. હવે નીચે «સેવ કરો» દબાવો.', false);
+      showPasteMsg('લગાવ્યું. હવે «સેવ કરો» દબાવો — પુરાનું હટી જશે, ફક્ત આ નવું રહેશે.', false);
     };
 
     var ta = document.getElementById('jsonText');
