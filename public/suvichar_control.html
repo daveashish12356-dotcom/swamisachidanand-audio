@@ -3,33 +3,87 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>સુવિચાર ON / OFF</title>
+  <title>સુવિચાર ON / OFF – કંટ્રોલ</title>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; max-width: 420px; margin: 40px auto; padding: 20px; background: #f5f0e8; color: #333; }
-    h1 { font-size: 1.4rem; color: #8B4513; text-align: center; margin-bottom: 8px; }
-    .sub { text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 24px; }
-    .buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-    a.btn { display: inline-block; padding: 16px 28px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; text-decoration: none; min-width: 140px; text-align: center; }
+    body { font-family: system-ui, sans-serif; max-width: 460px; margin: 24px auto; padding: 20px; background: linear-gradient(#f8f4ee, #efe8dc); color: #333; min-height: 100vh; }
+    .back { display: inline-block; margin-bottom: 16px; color: #E85D04; text-decoration: none; font-size: 0.9rem; }
+    .back:hover { text-decoration: underline; }
+    h1 { font-size: 1.35rem; color: #8B4513; text-align: center; margin-bottom: 6px; }
+    .sub { text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 20px; }
+
+    .status-box { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); text-align: center; border: 2px solid #eee; }
+    .status-label { font-size: 0.85rem; color: #666; margin-bottom: 6px; }
+    .status-value { font-size: 1.4rem; font-weight: bold; }
+    .status-value.on { color: #2e7d32; }
+    .status-value.off { color: #c62828; }
+    .status-value.loading { color: #888; font-size: 1rem; }
+
+    .buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+    a.btn { display: inline-block; padding: 18px 32px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; text-decoration: none; min-width: 150px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
     a.btn-on { background: #2e7d32; color: #fff; border: 2px solid #1b5e20; }
+    a.btn-on:hover { background: #1b5e20; }
     a.btn-off { background: #c62828; color: #fff; border: 2px solid #b71c1c; }
-    .note { margin-top: 24px; padding: 12px; background: #fff; border-radius: 8px; font-size: 0.85rem; color: #555; }
-    .link { word-break: break-all; color: #1565c0; font-size: 0.8rem; }
+    a.btn-off:hover { background: #b71c1c; }
+
+    .note { background: #fff; border-radius: 12px; padding: 16px; font-size: 0.88rem; color: #555; line-height: 1.6; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    .note strong { color: #333; }
+    .note code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.85em; }
+    .link-box { margin-top: 14px; padding: 10px; background: #f8f8f8; border-radius: 8px; }
+    .link-box a { word-break: break-all; color: #1565c0; font-size: 0.8rem; }
   </style>
 </head>
 <body>
-  <h1>ભાર્ગવ સુવિચાર – ON / OFF</h1>
+  <a href="../index.html" class="back">← મુખ્ય પેજ પર પાછા</a>
+
+  <h1>ભાર્ગવ સુવિચાર – કંટ્રોલ</h1>
   <p class="sub">એપમાં સુવિચાર દેખાશે કે નહીં તે અહીંથી કંટ્રોલ કરો.</p>
+
+  <div class="status-box">
+    <div class="status-label">હાલની સ્થિતિ (એપમાં શું દેખાશે)</div>
+    <div id="status" class="status-value loading">ચેક થાય છે...</div>
+  </div>
+
   <div class="buttons">
-    <a href="https://github.com/daveashish12356-dotcom/swamisachidanand-audio/edit/main/public/suvichar_config.json" class="btn btn-on" target="_blank" rel="noopener">સુવિચાર ON</a>
-    <a href="https://github.com/daveashish12356-dotcom/swamisachidanand-audio/edit/main/public/suvichar_config.json" class="btn btn-off" target="_blank" rel="noopener">સુવિચાર OFF</a>
+    <a href="https://github.com/daveashish12356-dotcom/swamisachidanand-audio/edit/main/public/suvichar_config.json" class="btn btn-on" target="_blank" rel="noopener">સુવિચાર ON કરો</a>
+    <a href="https://github.com/daveashish12356-dotcom/swamisachidanand-audio/edit/main/public/suvichar_config.json" class="btn btn-off" target="_blank" rel="noopener">સુવિચાર OFF કરો</a>
   </div>
+
   <div class="note">
-    <strong>કેવી રીતે ચાલુ/બંધ કરવું:</strong><br>
-    • <b>ON</b> – ઉપર બટન દબાવો, GitHub પર ફાઇલ ખુલશે. <code>"suvicharEnabled": false</code> ને <code>"suvicharEnabled": true</code> કરો, પછી Commit કરો.<br>
-    • <b>OFF</b> – <code>"suvicharEnabled": true</code> ને <code>"suvicharEnabled": false</code> કરો, પછી Commit કરો.
+    <strong>એક ક્લિકથી શું થાય:</strong><br>
+    • <b>ON કરો</b> દબાવો → GitHub પર ફાઇલ ખુલશે → <code>"suvicharEnabled": false</code> ને <code>true</code> કરો → નીચે "Commit changes" દબાવો. એપમાં સુવિચાર દેખાશે.<br>
+    • <b>OFF કરો</b> દબાવો → ફાઇલમાં <code>"suvicharEnabled": true</code> ને <code>false</code> કરો → Commit કરો. એપમાં સુવિચાર છુપાઈ જશે.
     <br><br>
-    <span class="link">લિંક: https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/suvichar_config.json</span>
+    <strong>એપ સાથે:</strong> આ પેજ પર જે બદલાવ કરો (Commit પછી) એપમાં ઓટોમેટિક લાગુ થશે. વિડિઓ ટેબ ખોલો અથવા નીચે ખેંચી રિફ્રેશ કરો.
+    <div class="link-box">
+      <a href="https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/suvichar_config.json" target="_blank" rel="noopener">Config લિંક (એપ આ લિંકથી લોડ કરે છે)</a>
+    </div>
   </div>
+
+  <script>
+    var configUrl = 'suvichar_config.json';
+    if (window.location.pathname.indexOf('/public/') !== -1) configUrl = 'public/suvichar_config.json';
+    else if (window.location.pathname.indexOf('public') === -1 && !window.location.pathname.endsWith('/')) configUrl = 'public/suvichar_config.json';
+
+    fetch(configUrl).then(function(r) {
+      if (!r.ok) throw new Error('Load failed');
+      return r.json();
+    }).then(function(data) {
+      var el = document.getElementById('status');
+      el.classList.remove('loading');
+      if (data.suvicharEnabled) {
+        el.textContent = 'સુવિચાર ચાલુ (ON)';
+        el.className = 'status-value on';
+      } else {
+        el.textContent = 'સુવિચાર બંધ (OFF)';
+        el.className = 'status-value off';
+      }
+    }).catch(function() {
+      var el = document.getElementById('status');
+      el.classList.remove('loading');
+      el.textContent = 'સ્ટેટસ લોડ થયો નહીં (નેટ ચેક કરો)';
+      el.className = 'status-value off';
+    });
+  </script>
 </body>
 </html>
