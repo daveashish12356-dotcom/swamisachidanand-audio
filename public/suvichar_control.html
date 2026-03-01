@@ -211,7 +211,7 @@
         author = 'સ્વામી શ્રીસચ્ચિદાનંદજી';
       }
       var json = getJsonFromBox();
-      if (!json) json = JSON.parse(JSON.stringify(defaultJson));
+      if (!json) json = { suvicharEnabled: true, suvichar: [] };
       if (typeof json.suvicharEnabled === 'undefined') json.suvicharEnabled = true;
       if (!Array.isArray(json.suvichar)) json.suvichar = [];
       json.suvichar.push({ text: text, author: author });
@@ -221,7 +221,7 @@
     };
 
     var ta = document.getElementById('jsonText');
-    ta.value = JSON.stringify(defaultJson, null, 2);
+    ta.value = '';
 
     function updateTokenUI() {
       var saved = false;
@@ -263,9 +263,9 @@
 
     document.getElementById('btnOn').onclick = function() {
       var obj = getJsonFromBox();
-      if (!obj) obj = defaultJson;
+      if (!obj) obj = { suvicharEnabled: true, suvichar: [] };
       obj.suvicharEnabled = true;
-      if (!obj.suvichar) obj.suvichar = defaultJson.suvichar;
+      if (!Array.isArray(obj.suvichar)) obj.suvichar = [];
       setJsonInBox(obj);
       document.getElementById('status').textContent = 'સુવિચાર ચાલુ (ON)';
       document.getElementById('status').className = 'status-value on';
@@ -273,9 +273,9 @@
     };
     document.getElementById('btnOff').onclick = function() {
       var obj = getJsonFromBox();
-      if (!obj) obj = defaultJson;
+      if (!obj) obj = { suvicharEnabled: false, suvichar: [] };
       obj.suvicharEnabled = false;
-      if (!obj.suvichar) obj.suvichar = defaultJson.suvichar;
+      if (!Array.isArray(obj.suvichar)) obj.suvichar = [];
       setJsonInBox(obj);
       document.getElementById('status').textContent = 'સુવિચાર બંધ (OFF)';
       document.getElementById('status').className = 'status-value off';
@@ -324,13 +324,13 @@
           setJsonInBox(json);
           showMsg('પેસ્ટ ટેક્સ્ટ ઓટો લગાવ્યું. સેવ થઈ રહ્યું...', false);
         } else {
-          setJsonInBox(defaultJson);
-          showMsg('પહેલા ઉપર સુવિચાર પેસ્ટ કરી «ઉમેરો» દબાવો, પછી સેવ કરો.', true);
+          setJsonInBox({ suvicharEnabled: true, suvichar: [] });
+          showMsg('પહેલા સુવિચાર પેસ્ટ કરો, પછી સેવ કરો.', true);
           return;
         }
       }
       if (typeof json.suvicharEnabled === 'undefined') json.suvicharEnabled = true;
-      if (!Array.isArray(json.suvichar)) json.suvichar = defaultJson.suvichar || [];
+      if (!Array.isArray(json.suvichar)) json.suvichar = [];
       setToken(token);
       var content = JSON.stringify(json);
       var enc = btoa(unescape(encodeURIComponent(content)));
