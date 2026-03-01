@@ -3,26 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>સુવિચાર ON / OFF – કંટ્રોલ</title>
+  <title>સુવિચાર કંટ્રોલ</title>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; max-width: 520px; margin: 24px auto; padding: 20px; background: linear-gradient(#f8f4ee, #efe8dc); color: #333; min-height: 100vh; }
+    body { font-family: system-ui, sans-serif; max-width: 540px; margin: 24px auto; padding: 20px; background: linear-gradient(#f8f4ee, #efe8dc); color: #333; min-height: 100vh; }
     .back { display: inline-block; margin-bottom: 16px; color: #E85D04; text-decoration: none; font-size: 0.9rem; }
     .back:hover { text-decoration: underline; }
     h1 { font-size: 1.35rem; color: #8B4513; text-align: center; margin-bottom: 6px; }
     .sub { text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 20px; }
 
-    .status-box { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); text-align: center; border: 2px solid #eee; }
+    .status-box { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); text-align: center; border: 2px solid #eee; }
     .status-label { font-size: 0.85rem; color: #666; margin-bottom: 6px; }
     .status-value { font-size: 1.4rem; font-weight: bold; }
     .status-value.on { color: #2e7d32; }
     .status-value.off { color: #c62828; }
     .status-value.loading { color: #888; font-size: 1rem; }
 
+    .quick-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+    button.quick { padding: 14px 24px; border-radius: 10px; font-size: 1rem; font-weight: bold; border: none; cursor: pointer; }
+    button.quick-on { background: #2e7d32; color: #fff; }
+    button.quick-on:hover { background: #1b5e20; }
+    button.quick-off { background: #c62828; color: #fff; }
+    button.quick-off:hover { background: #b71c1c; }
+
     .edit-box { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
-    .edit-box h3 { font-size: 1rem; color: #5d4e37; margin: 0 0 10px 0; }
+    .edit-box h3 { font-size: 1rem; color: #5d4e37; margin: 0 0 8px 0; }
     .edit-box p { font-size: 0.82rem; color: #666; margin: 0 0 10px 0; line-height: 1.4; }
-    textarea { width: 100%; min-height: 180px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: monospace; font-size: 13px; resize: vertical; }
+    textarea { width: 100%; min-height: 200px; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-family: monospace; font-size: 13px; resize: vertical; display: block; }
     .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
     button { padding: 12px 20px; border-radius: 10px; font-size: 1rem; font-weight: bold; border: none; cursor: pointer; }
     button.primary { background: #2e7d32; color: #fff; }
@@ -47,44 +54,49 @@
   <a href="../index.html" class="back">← મુખ્ય પેજ પર પાછા</a>
 
   <h1>ભાર્ગવ સુવિચાર – કંટ્રોલ</h1>
-  <p class="sub">એપમાં સુવિચાર દેખાશે કે નહીં તે અહીંથી કંટ્રોલ કરો.</p>
+  <p class="sub">એપમાં સુવિચાર દેખાશે કે નહીં અહીંથી કંટ્રોલ કરો. GitHub ખોલવું પડશે નહીં.</p>
 
   <div class="status-box">
-    <div class="status-label">હાલની સ્થિતિ (એપમાં શું દેખાશે)</div>
+    <div class="status-label">હાલની સ્થિતિ</div>
     <div id="status" class="status-value loading">ચેક થાય છે...</div>
   </div>
 
+  <div class="quick-btns">
+    <button type="button" class="quick quick-on" id="btnOn">સુવિચાર ON</button>
+    <button type="button" class="quick quick-off" id="btnOff">સુવિચાર OFF</button>
+  </div>
+  <p style="text-align:center;font-size:0.85rem;color:#666;margin:-8px 0 16px 0;">ઉપર ON/OFF દબાવો, નીચે "સેવ કરો" દબાવો — GitHub નહીં ખુલે.</p>
+
   <div class="edit-box">
-    <h3>સુવિચાર અહીં કોપી-પેસ્ટ કરો</h3>
-    <p>નીચેનો JSON એડિટ કરો અથવા નવો પેસ્ટ કરો. <code>suvicharEnabled: true</code> = ચાલુ, <code>false</code> = બંધ. "સેવ કરો" દબાવો — GitHub પર જવાની જરૂર નથી.</p>
-    <textarea id="jsonText" placeholder='{"suvicharEnabled":true,"suvichar":[{"text":"...","author":"..."}]}'></textarea>
+    <h3>સુવિચાર અહીં કોપી-પેસ્ટ કરો (અથવા એડિટ કરો)</h3>
+    <p>નીચેનો JSON બદલો. <code>suvicharEnabled: true</code> = ચાલુ, <code>false</code> = બંધ. પછી "સેવ કરો" દબાવો.</p>
+    <textarea id="jsonText"></textarea>
     <div class="btn-row">
       <button type="button" class="primary" id="btnSave">સેવ કરો (એપમાં લાગુ થશે)</button>
       <button type="button" class="secondary" id="btnCopy">કોપી કરો</button>
     </div>
     <div class="token-row">
-      <label for="token">GitHub token (ફક્ત એક વાર લગાવો — પછી અહીંથી જ સેવ થશે, GitHub ખોલવું પડશે નહીં)</label>
+      <label for="token">GitHub token (ફક્ત એક વાર લગાવો — પછી અહીંથી જ સેવ થશે)</label>
       <input type="password" id="token" placeholder="ghp_xxxx..." autocomplete="off" />
     </div>
     <div id="msg" class="msg"></div>
   </div>
 
   <div class="note">
-    <strong>Token (એક વાર):</strong> GitHub → તમારા પ્રોફાઇલ → Settings → Developer settings → Personal access tokens → Generate new token (classic). <code>repo</code> ચેક કરો, token કોપી કરીને ઉપર પેસ્ટ કરો. પછી "સેવ કરો" દબાવો — GitHub પેજ ખોલવું પડશે નહીં.<br><br>
-    <strong>એપ સાથે:</strong> "સેવ કરો" પછી એપમાં ઓટોમેટિક લાગુ થશે. વિડિઓ ટેબ ખોલો અથવા નીચે ખેંચી રિફ્રેશ કરો.
+    <strong>Token (એક વાર):</strong> GitHub → Settings → Developer settings → Personal access tokens → Generate new token (classic), <code>repo</code> ચેક કરો. Token ઉપર પેસ્ટ કરો, પછી "સેવ કરો" દબાવો.<br><br>
+    <strong>એપ:</strong> સેવ પછી એપમાં વિડિઓ ટેબ ખોલો/રિફ્રેશ કરો.
     <div class="link-box">
-      <a href="https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/suvichar_config.json" target="_blank" rel="noopener">Config લિંક (એપ આ લિંકથી લોડ કરે છે)</a>
+      <a href="https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/suvichar_config.json" target="_blank" rel="noopener">Config લિંક</a>
     </div>
   </div>
 
   <script>
-    var configUrl = 'suvichar_config.json';
-    if (window.location.pathname.indexOf('/public/') !== -1) configUrl = 'public/suvichar_config.json';
-    else if (window.location.pathname.indexOf('public') === -1 && !window.location.pathname.endsWith('/')) configUrl = 'public/suvichar_config.json';
-
+    var CONFIG_URL = 'https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/suvichar_config.json';
     var REPO = 'daveashish12356-dotcom/swamisachidanand-audio';
     var FILE_PATH = 'public/suvichar_config.json';
     var TOKEN_KEY = 'suvichar_gh_token';
+
+    var defaultJson = {"suvicharEnabled":true,"suvichar":[{"text":"ભાવનામાં જ પરમાત્મા વસે છે.","author":"સ્વામી શ્રીસચ્ચિદાનંદજી"},{"text":"સત્ય અને પ્રેમથી જીવન સાર્થક થાય છે.","author":"સ્વામી શ્રીસચ્ચિદાનંદજી"}]};
 
     function getToken() {
       var t = document.getElementById('token').value.trim();
@@ -99,8 +111,19 @@
       m.textContent = text;
       m.className = 'msg ' + (isErr ? 'err' : 'ok');
     }
+    function setJsonInBox(obj) {
+      document.getElementById('jsonText').value = JSON.stringify(obj, null, 2);
+    }
+    function getJsonFromBox() {
+      var raw = document.getElementById('jsonText').value.trim();
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch (e) { return null; }
+    }
 
-    fetch(configUrl).then(function(r) {
+    var ta = document.getElementById('jsonText');
+    ta.value = JSON.stringify(defaultJson, null, 2);
+
+    fetch(CONFIG_URL).then(function(r) {
       if (!r.ok) throw new Error('Load failed');
       return r.json();
     }).then(function(data) {
@@ -113,38 +136,51 @@
         el.textContent = 'સુવિચાર બંધ (OFF)';
         el.className = 'status-value off';
       }
-      document.getElementById('jsonText').value = JSON.stringify(data, null, 2);
+      setJsonInBox(data);
     }).catch(function() {
       var el = document.getElementById('status');
       el.classList.remove('loading');
-      el.textContent = 'સ્ટેટસ લોડ થયો નહીં';
+      el.textContent = 'સ્ટેટસ લોડ થયો નહીં (નેટ ચેક કરો)';
       el.className = 'status-value off';
-      document.getElementById('jsonText').placeholder = '{"suvicharEnabled":true,"suvichar":[{"text":"ભાવનામાં જ પરમાત્મા વસે છે.","author":"સ્વામી શ્રીસચ્ચિદાનંદજી"}]}';
     });
 
+    document.getElementById('btnOn').onclick = function() {
+      var obj = getJsonFromBox();
+      if (!obj) obj = defaultJson;
+      obj.suvicharEnabled = true;
+      if (!obj.suvichar) obj.suvichar = defaultJson.suvichar;
+      setJsonInBox(obj);
+      document.getElementById('status').textContent = 'સુવિચાર ચાલુ (ON)';
+      document.getElementById('status').className = 'status-value on';
+      showMsg('ON થયું. હવે "સેવ કરો" દબાવો.', false);
+    };
+    document.getElementById('btnOff').onclick = function() {
+      var obj = getJsonFromBox();
+      if (!obj) obj = defaultJson;
+      obj.suvicharEnabled = false;
+      if (!obj.suvichar) obj.suvichar = defaultJson.suvichar;
+      setJsonInBox(obj);
+      document.getElementById('status').textContent = 'સુવિચાર બંધ (OFF)';
+      document.getElementById('status').className = 'status-value off';
+      showMsg('OFF થયું. હવે "સેવ કરો" દબાવો.', false);
+    };
+
     document.getElementById('btnCopy').onclick = function() {
-      var ta = document.getElementById('jsonText');
       ta.select();
       document.execCommand('copy');
       showMsg('કોપી થઈ ગયું.', false);
-      setTimeout(function() { showMsg('', false); document.getElementById('msg').className = 'msg'; }, 2000);
+      setTimeout(function() { document.getElementById('msg').className = 'msg'; document.getElementById('msg').textContent = ''; }, 2000);
     };
 
     document.getElementById('btnSave').onclick = function() {
       var token = getToken();
       if (!token) {
-        showMsg('પહેલા ઉપર GitHub token લગાવો. (Settings → Developer settings → Personal access tokens → Generate)', true);
+        showMsg('પહેલા ઉપર GitHub token લગાવો.', true);
         return;
       }
-      var raw = document.getElementById('jsonText').value.trim();
-      var json;
-      try {
-        json = JSON.parse(raw);
-        if (typeof json.suvicharEnabled === 'undefined' || !Array.isArray(json.suvichar)) {
-          throw new Error('suvicharEnabled અને suvichar array જોઈએ');
-        }
-      } catch (e) {
-        showMsg('અમાન્ય JSON: ' + (e.message || 'ફોર્મેટ ચેક કરો'), true);
+      var json = getJsonFromBox();
+      if (!json || typeof json.suvicharEnabled === 'undefined' || !Array.isArray(json.suvichar)) {
+        showMsg('અમાન્ય JSON. suvicharEnabled અને suvichar array જોઈએ.', true);
         return;
       }
       setToken(token);
@@ -170,7 +206,7 @@
         el.textContent = json.suvicharEnabled ? 'સુવિચાર ચાલુ (ON)' : 'સુવિચાર બંધ (OFF)';
         el.className = 'status-value ' + (json.suvicharEnabled ? 'on' : 'off');
       }).catch(function(e) {
-        showMsg('ભૂલ: ' + (e.message || 'ફરી પ્રયાસ કરો. Token સાચો છે?'), true);
+        showMsg('ભૂલ: ' + (e.message || 'Token ચેક કરો.'), true);
       });
     };
   </script>
