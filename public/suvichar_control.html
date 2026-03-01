@@ -73,7 +73,7 @@
   <a href="../index.html" class="back">← મુખ્ય પેજ પર પાછા</a>
 
   <h1>ભાર્ગવ સુવિચાર – કંટ્રોલ</h1>
-  <p class="sub">૧) Token એક વાર લગાવો &nbsp; ૨) ON અથવા OFF દબાવો &nbsp; ૩) સેવ કરો દબાવો</p>
+  <p class="sub">ફક્ત આ કરો: પેસ્ટ કરો → ઉમેરો → સેવ કરો. બાકી ઓટો. (Token એક વાર લગાવો, પછી ફરી નહીં.)</p>
 
   <div class="status-box">
     <div class="status-label">હાલની સ્થિતિ (એપમાં શું દેખાશે)</div>
@@ -85,11 +85,21 @@
   </div>
 
   <div class="edit-box">
-    <h3>સુવિચાર અહીં કોપી-પેસ્ટ કરો (અથવા એડિટ કરો)</h3>
-    <p>નીચેનો JSON બદલો. <code>suvicharEnabled: true</code> = ચાલુ, <code>false</code> = બંધ. પછી "સેવ કરો" દબાવો.</p>
-    <textarea id="jsonText"></textarea>
+    <h3>૧. અહીં પેસ્ટ કરો — જે લખ્યું એમ જ (ટાઇટલ, વાક્ય, 📚 સ્રોત)</h3>
+    <p>શ્રી જે લખે છે એ સંપૂર્ણ કોપી કરી અહીં પેસ્ટ કરો. 📚 વાળી લાઇન ઓટોમેટિક સ્રોત બનશે. પછી «ઉમેરો» દબાવો.</p>
+    <textarea id="pasteArea" placeholder="અહીં પેસ્ટ કરો... (કોઈ ફોર્મેટ જોઈએ નહીં, જેમ છે તેમ)" style="min-height:160px;"></textarea>
     <div class="btn-row">
-      <button type="button" class="primary" id="btnSave">સેવ કરો (એપમાં લાગુ થશે)</button>
+      <button type="button" class="primary" id="btnAddPaste">ઉમેરો</button>
+    </div>
+    <div id="pasteMsg" class="msg" style="margin-top:8px;"></div>
+  </div>
+
+  <div class="edit-box">
+    <h3>૨. સેવ કરો</h3>
+    <p>ઉમેરો દબાવ્યા પછી નીચે «સેવ કરો» દબાવો. JSON સ્વચાલિત ભરાઈ જશે — કંઈ એડિટ કરવું પડશે નહીં.</p>
+    <textarea id="jsonText" style="min-height:120px;" title="ઓટો ભરાય છે, જોઈશો તો ઠીક"></textarea>
+    <div class="btn-row">
+      <button type="button" class="primary" id="btnSave">સેવ કરો</button>
       <button type="button" class="secondary" id="btnCopy">કોપી કરો</button>
     </div>
     <div id="tokenSection">
@@ -173,6 +183,40 @@
       if (!raw) return null;
       try { return JSON.parse(raw); } catch (e) { return null; }
     }
+    function showPasteMsg(text, isErr) {
+      var m = document.getElementById('pasteMsg');
+      m.textContent = text;
+      m.className = 'msg ' + (isErr ? 'err' : 'ok');
+    }
+
+    document.getElementById('btnAddPaste').onclick = function() {
+      var pasted = document.getElementById('pasteArea').value.trim();
+      if (!pasted) {
+        showPasteMsg('કંઈ પેસ્ટ નથી. પહેલા સુવિચાર પેસ્ટ કરો.', true);
+        return;
+      }
+      var lines = pasted.split(/\r?\n/);
+      var idx = -1;
+      for (var i = 0; i < lines.length; i++) {
+        if (lines[i].indexOf('📚') !== -1) { idx = i; break; }
+      }
+      var text, author;
+      if (idx >= 0) {
+        text = lines.slice(0, idx).join('\n').trim();
+        author = lines.slice(idx).join(' ').replace(/\s+/g, ' ').trim();
+      } else {
+        text = pasted;
+        author = 'સ્વામી શ્રીસચ્ચિદાનંદજી';
+      }
+      var json = getJsonFromBox();
+      if (!json) json = JSON.parse(JSON.stringify(defaultJson));
+      if (typeof json.suvicharEnabled === 'undefined') json.suvicharEnabled = true;
+      if (!Array.isArray(json.suvichar)) json.suvichar = [];
+      json.suvichar.push({ text: text, author: author });
+      setJsonInBox(json);
+      document.getElementById('pasteArea').value = '';
+      showPasteMsg('ઉમેરાઈ ગયું. હવે નીચે «સેવ કરો» દબાવો.', false);
+    };
 
     var ta = document.getElementById('jsonText');
     ta.value = JSON.stringify(defaultJson, null, 2);
@@ -250,10 +294,13 @@
         return;
       }
       var json = getJsonFromBox();
-      if (!json || typeof json.suvicharEnabled === 'undefined' || !Array.isArray(json.suvichar)) {
-        showMsg('અમાન્ય JSON. suvicharEnabled અને suvichar array જોઈએ.', true);
+      if (!json) {
+        setJsonInBox(defaultJson);
+        showMsg('પહેલા ઉપર સુવિચાર પેસ્ટ કરી «ઉમેરો» દબાવો, પછી સેવ કરો.', true);
         return;
       }
+      if (typeof json.suvicharEnabled === 'undefined') json.suvicharEnabled = true;
+      if (!Array.isArray(json.suvichar)) json.suvichar = defaultJson.suvichar || [];
       setToken(token);
       var content = JSON.stringify(json);
       var enc = btoa(unescape(encodeURIComponent(content)));

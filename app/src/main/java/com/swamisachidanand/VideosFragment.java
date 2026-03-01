@@ -39,6 +39,9 @@ import com.bumptech.glide.Glide;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -110,10 +113,20 @@ public class VideosFragment extends Fragment {
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable;
 
+    private static final long SUVICHAR_DISPLAY_MS = 10_000L;
+    private static final long SUVICHAR_FETCH_TIMEOUT_MS = 8_000L;
+
     private View suvicharContainer;
     private RecyclerView suvicharRecycler;
     private final List<SuvicharItem> suvicharList = new ArrayList<>();
     private SuvicharAdapter suvicharAdapter;
+    private final Handler suvicharHandler = new Handler(Looper.getMainLooper());
+    private Runnable suvicharHideRunnable;
+    private Runnable suvicharTimeoutRunnable;
+    /** True while suvichar is shown for 10 sec; keep video list hidden until then. */
+    private boolean suvicharShowingFirstTime = false;
+    /** True after suvichar config fetch is done (show or hide). Don't show videos until this is true so suvichar shows first. */
+    private boolean suvicharConfigProcessed = false;
 
     @Override
     public @Nullable View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -169,10 +182,46 @@ public class VideosFragment extends Fragment {
             suvicharAdapter = new SuvicharAdapter(suvicharList);
             suvicharRecycler.setAdapter(suvicharAdapter);
         }
-        loadSuvichar();
-
-        loadVideos();
+        List<SuvicharItem> localSuvichar = loadSuvicharFromAssets();
+        if (localSuvichar != null && !localSuvichar.isEmpty()) {
+            suvicharConfigProcessed = true;
+            setLoading(false);
+            suvicharList.clear();
+            suvicharList.addAll(localSuvichar);
+            if (suvicharAdapter != null) suvicharAdapter.notifyDataSetChanged();
+            if (suvicharContainer != null) suvicharContainer.setVisibility(View.VISIBLE);
+            if (recyclerView != null) recyclerView.setVisibility(View.GONE);
+            suvicharShowingFirstTime = true;
+            suvicharHandler.removeCallbacks(suvicharHideRunnable);
+            suvicharHideRunnable = () -> {
+                suvicharShowingFirstTime = false;
+                hideSuvichar();
+                updateVideoListVisibility();
+            };
+            suvicharHandler.postDelayed(suvicharHideRunnable, SUVICHAR_DISPLAY_MS);
+            loadVideos();
+            loadSuvichar();
+        } else {
+            setLoading(true);
+            loadSuvichar();
+            suvicharTimeoutRunnable = () -> {
+                if (!suvicharConfigProcessed) {
+                    suvicharConfigProcessed = true;
+                    updateVideoListVisibility();
+                    loadVideos();
+                }
+            };
+            suvicharHandler.postDelayed(suvicharTimeoutRunnable, SUVICHAR_FETCH_TIMEOUT_MS);
+        }
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        suvicharHandler.removeCallbacks(suvicharHideRunnable);
+        suvicharHandler.removeCallbacks(suvicharTimeoutRunnable);
+        suvicharShowingFirstTime = false;
+        super.onDestroyView();
     }
 
     @Override
@@ -184,9 +233,16 @@ public class VideosFragment extends Fragment {
         }
     }
 
+    /** Show video list only after suvichar config is processed and we're not in the 10s suvichar display. */
+    private void updateVideoListVisibility() {
+        if (recyclerView == null) return;
+        boolean show = suvicharConfigProcessed && !suvicharShowingFirstTime;
+        recyclerView.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
     private void setLoading(boolean loading) {
         if (loadingView != null) loadingView.setVisibility(loading ? View.VISIBLE : View.GONE);
-        if (recyclerView != null) recyclerView.setVisibility(loading ? View.GONE : View.VISIBLE);
+        if (recyclerView != null) recyclerView.setVisibility(loading ? View.GONE : (suvicharConfigProcessed && !suvicharShowingFirstTime ? View.VISIBLE : View.GONE));
         if (swipeRefresh != null) swipeRefresh.setRefreshing(loading);
     }
 
@@ -332,7 +388,7 @@ public class VideosFragment extends Fragment {
                     } else {
                         showMessage("");
                         if (errorLayout != null) errorLayout.setVisibility(View.GONE);
-                        recyclerView.setVisibility(View.VISIBLE);
+                        updateVideoListVisibility();
                         adapter.setItems(result);
                     }
                 });
@@ -351,7 +407,7 @@ public class VideosFragment extends Fragment {
         if (adapter == null) return;
         adapter.setItems(list);
         if (errorLayout != null) errorLayout.setVisibility(View.GONE);
-        if (recyclerView != null) recyclerView.setVisibility(View.VISIBLE);
+        updateVideoListVisibility();
         showMessage("");
     }
 
@@ -387,7 +443,7 @@ public class VideosFragment extends Fragment {
         final android.app.Activity activity = getActivity();
         if (activity == null || activity.isFinishing()) return;
 
-        setLoading(true);
+        if (!suvicharShowingFirstTime) setLoading(true);
         showMessage("");
 
         new Thread(() -> {
@@ -607,7 +663,7 @@ public class VideosFragment extends Fragment {
                     if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
                     showMessage("");
                     if (errorLayout != null) errorLayout.setVisibility(View.GONE);
-                    if (recyclerView != null) recyclerView.setVisibility(View.VISIBLE);
+                    updateVideoListVisibility();
                     allVideos.clear();
                     allVideos.addAll(result);
                     if (!isSearchMode) applyDisplayVideos(new ArrayList<>(allVideos));
@@ -1580,16 +1636,51 @@ public class VideosFragment extends Fragment {
         }
     }
 
+    /** Load suvichar from assets/suvichar.json (array of {text, author}). Returns null on error. */
+    private List<SuvicharItem> loadSuvicharFromAssets() {
+        try {
+            android.content.res.AssetManager am = getContext() != null ? getContext().getAssets() : null;
+            if (am == null) return null;
+            StringBuilder sb = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(am.open("suvichar.json"), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = br.readLine()) != null) sb.append(line);
+            }
+            JSONArray arr = new JSONArray(sb.toString());
+            List<SuvicharItem> list = new ArrayList<>();
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.optJSONObject(i);
+                if (o != null)
+                    list.add(new SuvicharItem(o.optString("text", ""), o.optString("author", "")));
+            }
+            return list;
+        } catch (Exception e) {
+            Log.e(TAG, "loadSuvicharFromAssets failed", e);
+            return null;
+        }
+    }
+
     /** Fetch suvichar from server. Tries Pages URL first; on 404 tries raw GitHub URL. */
     private void loadSuvichar() {
         android.app.Activity activity = getActivity();
         if (activity == null || activity.isFinishing()) return;
-        String baseUrl = getString(R.string.server_books_base_url);
-        if (baseUrl == null) baseUrl = "";
-        baseUrl = baseUrl.trim();
-        if (!baseUrl.isEmpty() && !baseUrl.endsWith("/")) baseUrl += "/";
-        String primaryUrl = baseUrl + "public/suvichar_config.json";
-        String fallbackUrl = buildSuvicharRawUrl(baseUrl);
+        final String baseUrl;
+        try {
+            String b = getString(R.string.server_books_base_url);
+            b = b != null ? b.trim() : "";
+            baseUrl = b.isEmpty() ? "" : (b.endsWith("/") ? b : b + "/");
+        } catch (Exception e) {
+            activity.runOnUiThread(() -> {
+                suvicharConfigProcessed = true;
+                setLoading(false);
+                updateVideoListVisibility();
+                loadVideos();
+            });
+            return;
+        }
+        final String primaryUrl = baseUrl + "public/suvichar_config.json";
+        final String fallbackUrl = buildSuvicharRawUrl(baseUrl);
+        Log.d(TAG, "suvichar fetch start primaryUrl=" + primaryUrl);
 
         new Thread(() -> {
             try {
@@ -1600,21 +1691,36 @@ public class VideosFragment extends Fragment {
                 String body = null;
                 Request req1 = new Request.Builder().url(primaryUrl).build();
                 try (Response response = client.newCall(req1).execute()) {
+                    Log.d(TAG, "suvichar primary response code=" + response.code());
                     if (response.isSuccessful() && response.body() != null) {
                         body = response.body().string();
+                        Log.d(TAG, "suvichar primary body len=" + (body != null ? body.length() : 0));
                     }
+                } catch (Exception e) {
+                    Log.e(TAG, "suvichar primary request failed", e);
                 }
                 if (body == null && fallbackUrl != null) {
+                    Log.d(TAG, "suvichar trying fallback " + fallbackUrl);
                     Request req2 = new Request.Builder().url(fallbackUrl).build();
                     try (Response response = client.newCall(req2).execute()) {
+                        Log.d(TAG, "suvichar fallback response code=" + response.code());
                         if (response.isSuccessful() && response.body() != null) {
                             body = response.body().string();
-                            Log.d(TAG, "suvichar loaded from raw fallback");
+                            Log.d(TAG, "suvichar loaded from raw fallback body len=" + (body != null ? body.length() : 0));
                         }
+                    } catch (Exception e) {
+                            Log.e(TAG, "suvichar fallback request failed", e);
                     }
                 }
                 if (body == null) {
-                    activity.runOnUiThread(this::hideSuvichar);
+                    Log.w(TAG, "suvichar body null after both URLs -> skip suvichar");
+                    activity.runOnUiThread(() -> {
+                        suvicharConfigProcessed = true;
+                        hideSuvichar();
+                        setLoading(false);
+                        updateVideoListVisibility();
+                        loadVideos();
+                    });
                     return;
                 }
                 JSONObject root = new JSONObject(body);
@@ -1629,20 +1735,55 @@ public class VideosFragment extends Fragment {
                         }
                     }
                 }
+                Log.d(TAG, "suvichar parsed enabled=" + enabled + " arrLen=" + (arr != null ? arr.length() : 0) + " listSize=" + list.size());
                 List<SuvicharItem> finalList = list;
                 activity.runOnUiThread(() -> {
+                    if (suvicharShowingFirstTime) {
+                        if (!finalList.isEmpty()) {
+                            suvicharList.clear();
+                            suvicharList.addAll(finalList);
+                            if (suvicharAdapter != null) suvicharAdapter.notifyDataSetChanged();
+                        }
+                        return;
+                    }
+                    suvicharConfigProcessed = true;
+                    setLoading(false);
                     suvicharList.clear();
                     if (finalList.isEmpty()) {
+                        Log.d(TAG, "suvichar UI: empty list -> hide suvichar show videos");
                         hideSuvichar();
+                        updateVideoListVisibility();
                     } else {
+                        Log.d(TAG, "suvichar UI: show " + finalList.size() + " items container=" + (suvicharContainer != null) + " adapter=" + (suvicharAdapter != null));
                         suvicharList.addAll(finalList);
                         if (suvicharAdapter != null) suvicharAdapter.notifyDataSetChanged();
-                        if (suvicharContainer != null) suvicharContainer.setVisibility(View.VISIBLE);
+                        if (suvicharContainer != null) {
+                            suvicharContainer.setVisibility(View.VISIBLE);
+                            Log.d(TAG, "suvichar container set VISIBLE");
+                        } else {
+                            Log.e(TAG, "suvichar container is NULL cannot show");
+                        }
+                        if (recyclerView != null) recyclerView.setVisibility(View.GONE);
+                        suvicharShowingFirstTime = true;
+                        suvicharHandler.removeCallbacks(suvicharHideRunnable);
+                        suvicharHideRunnable = () -> {
+                            suvicharShowingFirstTime = false;
+                            hideSuvichar();
+                            updateVideoListVisibility();
+                        };
+                        suvicharHandler.postDelayed(suvicharHideRunnable, SUVICHAR_DISPLAY_MS);
                     }
+                    loadVideos();
                 });
             } catch (Throwable t) {
                 Log.e(TAG, "loadSuvichar error", t);
-                activity.runOnUiThread(this::hideSuvichar);
+                activity.runOnUiThread(() -> {
+                    suvicharConfigProcessed = true;
+                    hideSuvichar();
+                    setLoading(false);
+                    updateVideoListVisibility();
+                    loadVideos();
+                });
             }
         }).start();
     }
