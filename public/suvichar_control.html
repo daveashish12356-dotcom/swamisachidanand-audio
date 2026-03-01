@@ -287,6 +287,27 @@
       setTimeout(function() { document.getElementById('msg').className = 'msg'; document.getElementById('msg').textContent = ''; }, 2000);
     };
 
+    function parsePastedTextAsSuvichar(raw) {
+      if (!raw || typeof raw !== 'string') return null;
+      var t = raw.trim();
+      if (t.indexOf('{') === 0) return null;
+      var lines = t.split(/\r?\n/);
+      var idx = -1;
+      for (var i = 0; i < lines.length; i++) {
+        if (lines[i].indexOf('📚') !== -1) { idx = i; break; }
+      }
+      var text, author;
+      if (idx >= 0) {
+        text = lines.slice(0, idx).join('\n').trim();
+        author = lines.slice(idx).join(' ').replace(/\s+/g, ' ').trim();
+      } else {
+        text = t;
+        author = 'સ્વામી શ્રીસચ્ચિદાનંદજી';
+      }
+      if (!text) return null;
+      return { suvicharEnabled: true, suvichar: [{ text: text, author: author }] };
+    }
+
     document.getElementById('btnSave').onclick = function() {
       var token = getToken();
       if (!token) {
@@ -295,9 +316,16 @@
       }
       var json = getJsonFromBox();
       if (!json) {
-        setJsonInBox(defaultJson);
-        showMsg('પહેલા ઉપર સુવિચાર પેસ્ટ કરી «ઉમેરો» દબાવો, પછી સેવ કરો.', true);
-        return;
+        var raw = document.getElementById('jsonText').value.trim();
+        json = parsePastedTextAsSuvichar(raw);
+        if (json) {
+          setJsonInBox(json);
+          showMsg('પેસ્ટ ટેક્સ્ટ ઓટો લગાવ્યું. સેવ થઈ રહ્યું...', false);
+        } else {
+          setJsonInBox(defaultJson);
+          showMsg('પહેલા ઉપર સુવિચાર પેસ્ટ કરી «ઉમેરો» દબાવો, પછી સેવ કરો.', true);
+          return;
+        }
       }
       if (typeof json.suvicharEnabled === 'undefined') json.suvicharEnabled = true;
       if (!Array.isArray(json.suvichar)) json.suvichar = defaultJson.suvichar || [];
