@@ -79,17 +79,17 @@
     </div>
     <div id="tokenSection">
       <div id="tokenRow" class="token-row">
-        <label for="token">GitHub token (ફક્ત એક વાર લગાવો — પછી સ્વચાલિત સેવ થશે)</label>
+        <label for="token">GitHub token (ફક્ત એક વાર પેસ્ટ કરો, સેવ કરો દબાવો — પછી ફરીથી કદી લગાવવું પડશે નહીં)</label>
         <a href="https://github.com/settings/tokens/new?scopes=repo&description=Suvichar+control" target="_blank" rel="noopener" class="token-link">GitHub પર token બનાવો (એક ક્લિક)</a>
         <input type="password" id="token" placeholder="Token અહીં પેસ્ટ કરો → પછી સેવ કરો દબાવો" autocomplete="off" style="margin-top:8px;" />
       </div>
-      <div id="tokenSaved" class="token-saved" style="display:none;">Token સેવ થઈ ગયું. ફક્ત ON/OFF અને «સેવ કરો» દબાવો — ફરીથી token લગાવવાની જરૂર નથી. <a href="#" id="linkNewToken">નવો token લગાવો</a></div>
+      <div id="tokenSaved" class="token-saved" style="display:none;">Token લગાવાઈ ગયું. ફરીથી કંઈ લગાવવું પડશે નહીં — ફક્ત ON/OFF બદલો અને «સેવ કરો» દબાવો.</div>
     </div>
     <div id="msg" class="msg"></div>
   </div>
 
   <div class="note">
-    <strong>એપ:</strong> સેવ પછી એપમાં વિડિઓ ટેબ ખોલો/રિફ્રેશ કરો.
+    <strong>એપ:</strong> સેવ પછી એપમાં વિડિઓ ટેબ ખોલો/રિફ્રેશ કરો. Token એક વાર લગાવ્યા પછી સ્વચાલિત સેવ થઈ જશે, ફરી લગાવવું પડશે નહીં.
     <div class="link-box">
       <a href="https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/suvichar_config.json" target="_blank" rel="noopener">Config લિંક</a>
     </div>
@@ -142,13 +142,6 @@
       }
     }
     updateTokenUI();
-
-    document.getElementById('linkNewToken').onclick = function(e) {
-      e.preventDefault();
-      try { localStorage.removeItem(TOKEN_KEY); } catch (e) {}
-      document.getElementById('token').value = '';
-      updateTokenUI();
-    };
 
     fetch(CONFIG_URL).then(function(r) {
       if (!r.ok) throw new Error('Load failed');
