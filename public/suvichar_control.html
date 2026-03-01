@@ -6,7 +6,7 @@
   <title>સુવિચાર ON / OFF – કંટ્રોલ</title>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; max-width: 460px; margin: 24px auto; padding: 20px; background: linear-gradient(#f8f4ee, #efe8dc); color: #333; min-height: 100vh; }
+    body { font-family: system-ui, sans-serif; max-width: 520px; margin: 24px auto; padding: 20px; background: linear-gradient(#f8f4ee, #efe8dc); color: #333; min-height: 100vh; }
     .back { display: inline-block; margin-bottom: 16px; color: #E85D04; text-decoration: none; font-size: 0.9rem; }
     .back:hover { text-decoration: underline; }
     h1 { font-size: 1.35rem; color: #8B4513; text-align: center; margin-bottom: 6px; }
@@ -19,14 +19,24 @@
     .status-value.off { color: #c62828; }
     .status-value.loading { color: #888; font-size: 1rem; }
 
-    .buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
-    a.btn { display: inline-block; padding: 18px 32px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; text-decoration: none; min-width: 150px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-    a.btn-on { background: #2e7d32; color: #fff; border: 2px solid #1b5e20; }
-    a.btn-on:hover { background: #1b5e20; }
-    a.btn-off { background: #c62828; color: #fff; border: 2px solid #b71c1c; }
-    a.btn-off:hover { background: #b71c1c; }
+    .edit-box { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    .edit-box h3 { font-size: 1rem; color: #5d4e37; margin: 0 0 10px 0; }
+    .edit-box p { font-size: 0.82rem; color: #666; margin: 0 0 10px 0; line-height: 1.4; }
+    textarea { width: 100%; min-height: 180px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: monospace; font-size: 13px; resize: vertical; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    button { padding: 12px 20px; border-radius: 10px; font-size: 1rem; font-weight: bold; border: none; cursor: pointer; }
+    button.primary { background: #2e7d32; color: #fff; }
+    button.primary:hover { background: #1b5e20; }
+    button.secondary { background: #f0f0f0; color: #333; }
+    button.secondary:hover { background: #e0e0e0; }
+    .msg { margin-top: 10px; font-size: 0.9rem; padding: 8px; border-radius: 6px; display: none; }
+    .msg.ok { background: #e8f5e9; color: #1b5e20; display: block; }
+    .msg.err { background: #ffebee; color: #c62828; display: block; }
+    .token-row { margin-top: 14px; }
+    .token-row label { font-size: 0.85rem; color: #555; display: block; margin-bottom: 4px; }
+    .token-row input { width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; }
 
-    .note { background: #fff; border-radius: 12px; padding: 16px; font-size: 0.88rem; color: #555; line-height: 1.6; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    .note { background: #fff; border-radius: 12px; padding: 16px; font-size: 0.88rem; color: #555; line-height: 1.6; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-top: 20px; }
     .note strong { color: #333; }
     .note code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.85em; }
     .link-box { margin-top: 14px; padding: 10px; background: #f8f8f8; border-radius: 8px; }
@@ -44,17 +54,24 @@
     <div id="status" class="status-value loading">ચેક થાય છે...</div>
   </div>
 
-  <div class="buttons">
-    <a href="https://github.com/daveashish12356-dotcom/swamisachidanand-audio/edit/main/public/suvichar_config.json" class="btn btn-on" target="_blank" rel="noopener">સુવિચાર ON કરો</a>
-    <a href="https://github.com/daveashish12356-dotcom/swamisachidanand-audio/edit/main/public/suvichar_config.json" class="btn btn-off" target="_blank" rel="noopener">સુવિચાર OFF કરો</a>
+  <div class="edit-box">
+    <h3>સુવિચાર અહીં કોપી-પેસ્ટ કરો</h3>
+    <p>નીચેનો JSON એડિટ કરો અથવા નવો પેસ્ટ કરો. <code>suvicharEnabled: true</code> = ચાલુ, <code>false</code> = બંધ. "સેવ કરો" દબાવો — GitHub પર જવાની જરૂર નથી.</p>
+    <textarea id="jsonText" placeholder='{"suvicharEnabled":true,"suvichar":[{"text":"...","author":"..."}]}'></textarea>
+    <div class="btn-row">
+      <button type="button" class="primary" id="btnSave">સેવ કરો (એપમાં લાગુ થશે)</button>
+      <button type="button" class="secondary" id="btnCopy">કોપી કરો</button>
+    </div>
+    <div class="token-row">
+      <label for="token">GitHub token (ફક્ત એક વાર લગાવો — પછી અહીંથી જ સેવ થશે, GitHub ખોલવું પડશે નહીં)</label>
+      <input type="password" id="token" placeholder="ghp_xxxx..." autocomplete="off" />
+    </div>
+    <div id="msg" class="msg"></div>
   </div>
 
   <div class="note">
-    <strong>એક ક્લિકથી શું થાય:</strong><br>
-    • <b>ON કરો</b> દબાવો → GitHub પર ફાઇલ ખુલશે → <code>"suvicharEnabled": false</code> ને <code>true</code> કરો → નીચે "Commit changes" દબાવો. એપમાં સુવિચાર દેખાશે.<br>
-    • <b>OFF કરો</b> દબાવો → ફાઇલમાં <code>"suvicharEnabled": true</code> ને <code>false</code> કરો → Commit કરો. એપમાં સુવિચાર છુપાઈ જશે.
-    <br><br>
-    <strong>એપ સાથે:</strong> આ પેજ પર જે બદલાવ કરો (Commit પછી) એપમાં ઓટોમેટિક લાગુ થશે. વિડિઓ ટેબ ખોલો અથવા નીચે ખેંચી રિફ્રેશ કરો.
+    <strong>Token (એક વાર):</strong> GitHub → તમારા પ્રોફાઇલ → Settings → Developer settings → Personal access tokens → Generate new token (classic). <code>repo</code> ચેક કરો, token કોપી કરીને ઉપર પેસ્ટ કરો. પછી "સેવ કરો" દબાવો — GitHub પેજ ખોલવું પડશે નહીં.<br><br>
+    <strong>એપ સાથે:</strong> "સેવ કરો" પછી એપમાં ઓટોમેટિક લાગુ થશે. વિડિઓ ટેબ ખોલો અથવા નીચે ખેંચી રિફ્રેશ કરો.
     <div class="link-box">
       <a href="https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/suvichar_config.json" target="_blank" rel="noopener">Config લિંક (એપ આ લિંકથી લોડ કરે છે)</a>
     </div>
@@ -64,6 +81,24 @@
     var configUrl = 'suvichar_config.json';
     if (window.location.pathname.indexOf('/public/') !== -1) configUrl = 'public/suvichar_config.json';
     else if (window.location.pathname.indexOf('public') === -1 && !window.location.pathname.endsWith('/')) configUrl = 'public/suvichar_config.json';
+
+    var REPO = 'daveashish12356-dotcom/swamisachidanand-audio';
+    var FILE_PATH = 'public/suvichar_config.json';
+    var TOKEN_KEY = 'suvichar_gh_token';
+
+    function getToken() {
+      var t = document.getElementById('token').value.trim();
+      if (t) return t;
+      try { return localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { return ''; }
+    }
+    function setToken(t) {
+      try { if (t) localStorage.setItem(TOKEN_KEY, t); } catch (e) {}
+    }
+    function showMsg(text, isErr) {
+      var m = document.getElementById('msg');
+      m.textContent = text;
+      m.className = 'msg ' + (isErr ? 'err' : 'ok');
+    }
 
     fetch(configUrl).then(function(r) {
       if (!r.ok) throw new Error('Load failed');
@@ -78,12 +113,66 @@
         el.textContent = 'સુવિચાર બંધ (OFF)';
         el.className = 'status-value off';
       }
+      document.getElementById('jsonText').value = JSON.stringify(data, null, 2);
     }).catch(function() {
       var el = document.getElementById('status');
       el.classList.remove('loading');
-      el.textContent = 'સ્ટેટસ લોડ થયો નહીં (નેટ ચેક કરો)';
+      el.textContent = 'સ્ટેટસ લોડ થયો નહીં';
       el.className = 'status-value off';
+      document.getElementById('jsonText').placeholder = '{"suvicharEnabled":true,"suvichar":[{"text":"ભાવનામાં જ પરમાત્મા વસે છે.","author":"સ્વામી શ્રીસચ્ચિદાનંદજી"}]}';
     });
+
+    document.getElementById('btnCopy').onclick = function() {
+      var ta = document.getElementById('jsonText');
+      ta.select();
+      document.execCommand('copy');
+      showMsg('કોપી થઈ ગયું.', false);
+      setTimeout(function() { showMsg('', false); document.getElementById('msg').className = 'msg'; }, 2000);
+    };
+
+    document.getElementById('btnSave').onclick = function() {
+      var token = getToken();
+      if (!token) {
+        showMsg('પહેલા ઉપર GitHub token લગાવો. (Settings → Developer settings → Personal access tokens → Generate)', true);
+        return;
+      }
+      var raw = document.getElementById('jsonText').value.trim();
+      var json;
+      try {
+        json = JSON.parse(raw);
+        if (typeof json.suvicharEnabled === 'undefined' || !Array.isArray(json.suvichar)) {
+          throw new Error('suvicharEnabled અને suvichar array જોઈએ');
+        }
+      } catch (e) {
+        showMsg('અમાન્ય JSON: ' + (e.message || 'ફોર્મેટ ચેક કરો'), true);
+        return;
+      }
+      setToken(token);
+      var content = JSON.stringify(json);
+      var enc = btoa(unescape(encodeURIComponent(content)));
+
+      fetch('https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH, {
+        method: 'GET',
+        headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': 'token ' + token }
+      }).then(function(r) {
+        if (!r.ok) throw new Error('Get sha failed');
+        return r.json();
+      }).then(function(info) {
+        return fetch('https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH, {
+          method: 'PUT',
+          headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: 'Update suvichar from control page', content: enc, sha: info.sha })
+        });
+      }).then(function(r) {
+        if (!r.ok) return r.json().then(function(e) { throw new Error(e.message || 'Save failed'); });
+        showMsg('સેવ થઈ ગયું. એપમાં રિફ્રેશ કરો.', false);
+        var el = document.getElementById('status');
+        el.textContent = json.suvicharEnabled ? 'સુવિચાર ચાલુ (ON)' : 'સુવિચાર બંધ (OFF)';
+        el.className = 'status-value ' + (json.suvicharEnabled ? 'on' : 'off');
+      }).catch(function(e) {
+        showMsg('ભૂલ: ' + (e.message || 'ફરી પ્રયાસ કરો. Token સાચો છે?'), true);
+      });
+    };
   </script>
 </body>
 </html>
