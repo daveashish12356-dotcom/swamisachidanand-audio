@@ -19,7 +19,7 @@
     .status-value.off { color: #c62828; }
     .status-value.loading { color: #888; font-size: 1rem; }
 
-    .quick-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+    .quick-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
     button.quick { padding: 14px 24px; border-radius: 10px; font-size: 1rem; font-weight: bold; border: none; cursor: pointer; }
     button.quick-on { background: #2e7d32; color: #fff; }
     button.quick-on:hover { background: #1b5e20; }
@@ -54,18 +54,16 @@
   <a href="../index.html" class="back">← મુખ્ય પેજ પર પાછા</a>
 
   <h1>ભાર્ગવ સુવિચાર – કંટ્રોલ</h1>
-  <p class="sub">એપમાં સુવિચાર દેખાશે કે નહીં અહીંથી કંટ્રોલ કરો. GitHub ખોલવું પડશે નહીં.</p>
+  <p class="sub">૧) Token એક વાર લગાવો &nbsp; ૨) ON અથવા OFF દબાવો &nbsp; ૩) સેવ કરો દબાવો</p>
 
   <div class="status-box">
-    <div class="status-label">હાલની સ્થિતિ</div>
+    <div class="status-label">હાલની સ્થિતિ (એપમાં શું દેખાશે)</div>
     <div id="status" class="status-value loading">ચેક થાય છે...</div>
+    <div class="quick-btns" style="margin-top:14px;">
+      <button type="button" class="quick quick-on" id="btnOn">સુવિચાર ON</button>
+      <button type="button" class="quick quick-off" id="btnOff">સુવિચાર OFF</button>
+    </div>
   </div>
-
-  <div class="quick-btns">
-    <button type="button" class="quick quick-on" id="btnOn">સુવિચાર ON</button>
-    <button type="button" class="quick quick-off" id="btnOff">સુવિચાર OFF</button>
-  </div>
-  <p style="text-align:center;font-size:0.85rem;color:#666;margin:-8px 0 16px 0;">ઉપર ON/OFF દબાવો, નીચે "સેવ કરો" દબાવો — GitHub નહીં ખુલે.</p>
 
   <div class="edit-box">
     <h3>સુવિચાર અહીં કોપી-પેસ્ટ કરો (અથવા એડિટ કરો)</h3>
@@ -76,15 +74,16 @@
       <button type="button" class="secondary" id="btnCopy">કોપી કરો</button>
     </div>
     <div class="token-row">
-      <label for="token">GitHub token (ફક્ત એક વાર લગાવો — પછી અહીંથી જ સેવ થશે)</label>
-      <input type="password" id="token" placeholder="ghp_xxxx..." autocomplete="off" />
+      <label for="token">GitHub token (ફક્ત એક વાર — સેવ કરવા માટે જરૂરી)</label>
+      <input type="password" id="token" placeholder="ghp_xxxx... અહીં પેસ્ટ કરો" autocomplete="off" />
     </div>
     <div id="msg" class="msg"></div>
   </div>
 
   <div class="note">
-    <strong>Token (એક વાર):</strong> GitHub → Settings → Developer settings → Personal access tokens → Generate new token (classic), <code>repo</code> ચેક કરો. Token ઉપર પેસ્ટ કરો, પછી "સેવ કરો" દબાવો.<br><br>
-    <strong>એપ:</strong> સેવ પછી એપમાં વિડિઓ ટેબ ખોલો/રિફ્રેશ કરો.
+    <strong>Token કેવી રીતે લગાવવો:</strong> GitHub પર જાઓ → તમારા પ્રોફાઇલ → Settings → Developer settings → Personal access tokens → Generate new token (classic) → <code>repo</code> ચેક કરો → Generate → token કોપી કરીને ઉપરના ભાગમાં પેસ્ટ કરો. એક વાર લગાવ્યા પછી "સેવ કરો" દબાવો તો એપમાં લાગુ થશે.<br><br>
+    <strong>એપ:</strong> સેવ પછી એપમાં વિડિઓ ટેબ ખોલો અથવા નીચે ખેંચી રિફ્રેશ કરો.<br>
+    <strong>જો ON/OFF બટન ન દેખાય:</strong> પેજ ફરી લોડ કરો (Ctrl+Shift+R અથવા પેજ રિફ્રેશ).
     <div class="link-box">
       <a href="https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/suvichar_config.json" target="_blank" rel="noopener">Config લિંક</a>
     </div>
@@ -140,8 +139,10 @@
     }).catch(function() {
       var el = document.getElementById('status');
       el.classList.remove('loading');
-      el.textContent = 'સ્ટેટસ લોડ થયો નહીં (નેટ ચેક કરો)';
-      el.className = 'status-value off';
+      var obj = getJsonFromBox();
+      var on = obj && obj.suvicharEnabled;
+      el.textContent = on ? 'સુવિચાર ચાલુ (ON)' : 'સુવિચાર બંધ (OFF)';
+      el.className = 'status-value ' + (on ? 'on' : 'off');
     });
 
     document.getElementById('btnOn').onclick = function() {
