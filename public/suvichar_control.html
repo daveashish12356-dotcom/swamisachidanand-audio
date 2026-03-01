@@ -96,7 +96,7 @@
 
   <div class="edit-box">
     <h3>૨. સેવ કરો</h3>
-    <p><strong>ટિપ:</strong> ફક્ત સુવિચાર ટેક્સ્ટ (જેમ છે તેમ) અહીં પેસ્ટ કરી «સેવ કરો» દબાવો — ઓટો લગાવશે. JSON લખવું પડશે નહીં.</p>
+    <p><strong>ટિપ:</strong> ફક્ત સુવિચાર ટેક્સ્ટ અહીં પેસ્ટ કરી «સેવ કરો» દબાવો — ઓટો લગાવશે. <br><small>પુરાનો સુવિચાર દેખાય તો <b>Ctrl+Shift+R</b> દબાવી પેજ ફરી લોડ કરો.</small></p>
     <textarea id="jsonText" style="min-height:120px;" placeholder="અહીં સુવિચાર પેસ્ટ કરો અથવા JSON જુઓ" title="પેસ્ટ અથવા JSON"></textarea>
     <div class="btn-row">
       <button type="button" class="primary" id="btnSave">સેવ કરો</button>
@@ -238,7 +238,7 @@
     }
     updateTokenUI();
 
-    fetch(CONFIG_URL).then(function(r) {
+    fetch(CONFIG_URL + '?t=' + Date.now(), { cache: 'no-store' }).then(function(r) {
       if (!r.ok) throw new Error('Load failed');
       return r.json();
     }).then(function(data) {
