@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginBottom="16dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:strokeWidth="1dp"
+    app:strokeColor="#30E85D04"
+    android:foreground="?attr/selectableItemBackground">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/suvichar_card_bg">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="ભાર્ગવસુવિચાર 🌅"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#8B4513" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:src="@drawable/swami_avatar"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="સ્વામીજી"
+                    app:shapeAppearanceOverlay="@style/SwamiAvatarShape"
+                    app:strokeColor="@color/deep_saffron"
+                    app:strokeWidth="1.5dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="५५"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="#40E85D04"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/suvichar_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/text_primary"
+                android:lineSpacingExtra="6dp"
+                android:maxLines="15"
+                android:ellipsize="end"
+                tools:text="ભાવનામાં જ પરમાત્મા વસે છે." />
+
+            <TextView
+                android:id="@+id/suvichar_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="12dp"
+                android:textSize="13sp"
+                android:textStyle="italic"
+                android:textColor="@color/deep_saffron"
+                tools:text="— સ્વામી શ્રીસચ્ચિદાનંદજી" />
+        </LinearLayout>
+    </FrameLayout>
+</com.google.android.material.card.MaterialCardView>
