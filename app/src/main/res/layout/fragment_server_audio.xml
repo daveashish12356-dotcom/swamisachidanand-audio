@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/audio_swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/audio_nested_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:overScrollMode="never">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/background_light">
+
+                <!-- Search Bar - global, same on all pages. Filter shown for Audio. -->
+                <include
+                    layout="@layout/layout_global_search_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/audio_search_bar_include" />
+
+                <!-- Category Chips - Books page jaisa -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/audio_category_chips_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/spacing_medium"
+                    android:paddingEnd="@dimen/spacing_medium"
+                    android:paddingBottom="@dimen/spacing_normal"
+                    android:clipToPadding="false"
+                    android:scrollbars="none" />
+
+                <!-- Title -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_large"
+                    android:layout_marginEnd="@dimen/spacing_large"
+                    android:layout_marginBottom="@dimen/section_title_margin_bottom"
+                    android:text="ઓડિયો પુસ્તકો"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/text_primary"
+                    android:letterSpacing="0.02" />
+
+                <!-- Popular Audio -->
+                <LinearLayout
+                    android:id="@+id/popular_audio_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="@dimen/spacing_large"
+                    android:layout_marginEnd="@dimen/spacing_large"
+                    android:layout_marginBottom="@dimen/section_title_margin_bottom">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="લોકપ્રિય ઓડિયો"
+                        android:textSize="@dimen/section_title_size"
+                        android:textStyle="bold"
+                        android:textColor="?attr/text_primary"
+                        android:layout_marginBottom="12dp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/popular_audio_recycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:orientation="horizontal"
+                        android:clipToPadding="false"
+                        android:paddingEnd="8dp"
+                        android:scrollbars="none"
+                        tools:listitem="@layout/item_audio_book_card_horizontal" />
+                </LinearLayout>
+
+                <!-- All Audio Books -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_large"
+                    android:layout_marginEnd="@dimen/spacing_large"
+                    android:layout_marginBottom="12dp"
+                    android:text="બધાં ઓડિયો પુસ્તકો"
+                    android:textSize="@dimen/section_title_size"
+                    android:textStyle="bold"
+                    android:textColor="?attr/text_primary" />
+
+                <ProgressBar
+                    android:id="@+id/audio_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="24dp"
+                    android:visibility="gone"
+                    tools:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/audio_error_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="24dp"
+                    android:gravity="center"
+                    android:padding="@dimen/spacing_large"
+                    android:text="@string/audio_error"
+                    android:textColor="?attr/text_primary"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    tools:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/audio_books_card_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:paddingStart="@dimen/spacing_medium"
+                    android:paddingEnd="@dimen/spacing_medium"
+                    android:paddingBottom="24dp"
+                    android:clipToPadding="false"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    tools:listitem="@layout/item_audio_book_card" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</FrameLayout>

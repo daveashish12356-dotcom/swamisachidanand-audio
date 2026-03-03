@@ -7,8 +7,10 @@
     <string name="category_jeevan">જીવન</string>
     <string name="nav_home">હોમ</string>
     <string name="nav_books">પુસ્તક</string>
-    <string name="nav_about">વિશે</string>
+    <string name="nav_music">ઓડિયો પુસ્તકો</string>
+    <string name="nav_about">સંપર્ક</string>
     <string name="nav_audio">ઓડિયો પુસ્તકો</string>
+    <string name="nav_videos">વિડિઓ</string>
     <string name="audio_server_title">સર્વર ઓડિયો</string>
     <string name="audio_loading">લોડ થાય છે…</string>
     <string name="audio_error">લિસ્ટ લોડ થઈ નહીં. ઇન્ટરનેટ ચેક કરો.</string>
@@ -26,4 +28,19 @@
     <string name="audio_next">આગળનો ભાગ</string>
     <string name="audio_pause">અટકાવો</string>
     <string name="server_books_base_url">https://daveashish12356-dotcom.github.io/swamisachidanand-audio/</string>
+    <string name="search_global_hint">પુસ્તક, ઓડિયો, વિડિઓ શોધો</string>
+    <string name="search_books_hint">પુસ્તક શોધો</string>
+    <string name="search_audio_hint">ઓડિયો પુસ્તકો શોધો</string>
+    <string name="search_videos_hint">વિડિઓ શોધો</string>
+    <string name="search_no_results">No results found</string>
+    <string name="search_tab_books">પુસ્તકો</string>
+    <string name="search_tab_audio">ઓડિયો</string>
+    <string name="search_tab_videos">વિડિઓ</string>
+    <string name="sampark_follow_us">અમને ફોલો કરો</string>
+    <string name="sampark_photo_caption">પ.પૂ.મહર્ષિ સ્વામી શ્રીસચ્ચિદાનંદજી પરમહંસ ભકિત નિકેતન આશ્રમ. દંતાલી-પેટલાદ</string>
+    <string name="url_website">https://www.swamisachchidanandji.org/</string>
+    <string name="url_youtube">https://www.youtube.com/@swamisachchidanandji</string>
+    <string name="url_facebook">https://www.facebook.com/swamisachchidanandji</string>
+    <string name="url_whatsapp">https://wa.me/919824112625</string>
+    <string name="url_telegram">https://t.me/swamisachchidanandji</string>
 </resources>

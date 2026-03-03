@@ -45,6 +45,18 @@
             android:exported="false"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".YouTubePlayerActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:hardwareAccelerated="true"
+            android:theme="@style/Theme.Swami"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".SearchResultActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Swami"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

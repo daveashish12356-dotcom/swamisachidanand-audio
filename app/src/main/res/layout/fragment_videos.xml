@@ -31,26 +31,6 @@
             android:letterSpacing="0.02" />
     </LinearLayout>
 
-    <!-- Suvichar from server – visible when suvicharEnabled is true -->
-    <LinearLayout
-        android:id="@+id/suvichar_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:layout_marginStart="@dimen/spacing_large"
-        android:layout_marginEnd="@dimen/spacing_large"
-        android:layout_marginBottom="@dimen/spacing_normal">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/suvichar_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:clipToPadding="false"
-            android:overScrollMode="never" />
-    </LinearLayout>
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/videos_swipe_refresh"
         android:layout_width="match_parent"

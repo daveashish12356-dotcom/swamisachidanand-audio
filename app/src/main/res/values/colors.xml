@@ -23,14 +23,24 @@
     <color name="blue_dark">#1976D2</color>
     <color name="blue_secondary">#03A9F4</color>
     
-    <!-- Modern colors -->
-    <color name="background_light">#F8F9FA</color>
+    <!-- Modern colors - premium Play Store style -->
+    <color name="background_light">#FAF9F6</color>
+    <color name="deep_saffron">#E85D04</color>
+    <color name="soft_cream">#FFF8F0</color>
+    <color name="dark_maroon">#6B2D3C</color>
     <color name="card_background">#FFFFFF</color>
     <color name="text_primary">#1A1A1A</color>
     <color name="text_secondary">#757575</color>
     <color name="text_hint">#9E9E9E</color>
     <color name="divider">#E0E0E0</color>
-    
+    <color name="hero_video_stroke">#40E85D04</color>
+    <color name="search_bar_pill">#F1F3F4</color>
+    <color name="search_bar_text_hint">#5F6368</color>
+    <color name="search_bar_text">#202124</color>
+
+    <!-- Bottom nav pill (neumorphic) -->
+    <color name="nav_pill_stroke">#DDDAD4</color>
+
     <!-- Night mode colors -->
     <color name="background_dark">#121212</color>
     <color name="card_background_dark">#1E1E1E</color>

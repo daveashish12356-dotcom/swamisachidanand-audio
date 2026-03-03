@@ -22,6 +22,11 @@
         <!-- Customize your theme here. -->
     </style>
     
+    <!-- Circular avatar for search bar Swamiji photo -->
+    <style name="SwamiAvatarShape" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+    
     <style name="Theme.Swami.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     
     <style name="Theme.Swami.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -30,5 +35,14 @@
         <item name="android:windowBackground">@color/background_light</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <!-- Bottom nav: selected item – orange pill, inset so not cut off -->
+    <style name="BottomNavActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/bhagva</item>
+        <item name="expandedActiveIndicatorPaddingTop">6dp</item>
+        <item name="expandedActiveIndicatorPaddingBottom">6dp</item>
+        <item name="expandedActiveIndicatorPaddingStart">8dp</item>
+        <item name="expandedActiveIndicatorPaddingEnd">8dp</item>
     </style>
 </resources>

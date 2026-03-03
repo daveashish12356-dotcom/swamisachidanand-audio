@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Light orange to white – reference jaisa -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:type="linear"
+        android:angle="90"
+        android:startColor="#FFE8D6"
+        android:centerColor="#FFF5EB"
+        android:endColor="#FFFFFF" />
+    <corners android:radius="20dp" />
+</shape>

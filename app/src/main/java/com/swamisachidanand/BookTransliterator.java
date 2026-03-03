@@ -27,8 +27,22 @@ public class BookTransliterator {
         GUJARATI_TO_ENGLISH.put("કૃષ્ણ", "krishna");
         GUJARATI_TO_ENGLISH.put("વિષ્ણુ", "vishnu");
         GUJARATI_TO_ENGLISH.put("ચરિત્ર", "charitra");
-        
-        // Add more common words as needed
+        // Video / pravachan related
+        GUJARATI_TO_ENGLISH.put("સ્વામી", "swami");
+        GUJARATI_TO_ENGLISH.put("સચ્ચિદાનંદ", "sachchidanand");
+        GUJARATI_TO_ENGLISH.put("સચિદાનંદ", "sachidanand");
+        GUJARATI_TO_ENGLISH.put("કથા", "katha");
+        GUJARATI_TO_ENGLISH.put("પ્રવચન", "pravachan");
+        GUJARATI_TO_ENGLISH.put("સત્સંગ", "satsang");
+        GUJARATI_TO_ENGLISH.put("ભજન", "bhajan");
+        GUJARATI_TO_ENGLISH.put("ભાગવત", "bhagwat");
+        GUJARATI_TO_ENGLISH.put("મહાભારત", "mahabharat");
+        GUJARATI_TO_ENGLISH.put("રામાયણ", "ramayan");
+        GUJARATI_TO_ENGLISH.put("ઉપદેશ", "updesh");
+        GUJARATI_TO_ENGLISH.put("જીવન", "jeevan");
+        GUJARATI_TO_ENGLISH.put("વિડિઓ", "video");
+        GUJARATI_TO_ENGLISH.put("શ્રીમદ્", "shrimad");
+        GUJARATI_TO_ENGLISH.put("ભાગવતમ્", "bhagwatam");
     }
     
     /**

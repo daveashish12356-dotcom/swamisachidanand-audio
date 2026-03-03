@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Reference jaisa: pura header orange, greeting white text, 3 circular photos neeche -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/header_orange"
+    android:elevation="2dp">
+
+    <!-- Greeting (white on orange) + avatar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="6dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="हरिः ॐ 🙏 सुस्वागतम्"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:letterSpacing="0.02" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            app:cardCornerRadius="21dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:strokeColor="#FFFFFFFF"
+            app:strokeWidth="2dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/global_profile_avatar"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:src="@drawable/swami_avatar"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/app_name"
+                app:shapeAppearanceOverlay="@style/SwamiAvatarShape"
+                app:strokeColor="@color/deep_saffron"
+                app:strokeWidth="2dp" />
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+
+    <!-- Neeche: 3 circular photos, horizontal scroll (reference jaisa) -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:paddingBottom="14dp"
+        android:paddingTop="4dp"
+        android:clipToPadding="false">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:src="@drawable/home_photo1"
+                android:scaleType="centerCrop"
+                android:contentDescription="Photo 1"
+                app:shapeAppearanceOverlay="@style/SwamiAvatarShape"
+                app:strokeColor="#FFFFFFFF"
+                app:strokeWidth="1.5dp" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/home_photo2"
+                android:scaleType="centerCrop"
+                android:contentDescription="Photo 2"
+                app:shapeAppearanceOverlay="@style/SwamiAvatarShape"
+                app:strokeColor="#FFFFFFFF"
+                app:strokeWidth="2dp" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:src="@drawable/home_photo1"
+                android:scaleType="centerCrop"
+                android:contentDescription="Photo 3"
+                app:shapeAppearanceOverlay="@style/SwamiAvatarShape"
+                app:strokeColor="#FFFFFFFF"
+                app:strokeWidth="1.5dp" />
+        </LinearLayout>
+    </HorizontalScrollView>
+</LinearLayout>
