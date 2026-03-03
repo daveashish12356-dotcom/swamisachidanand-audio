@@ -39,9 +39,6 @@ import com.bumptech.glide.Glide;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -113,21 +110,6 @@ public class VideosFragment extends Fragment {
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable;
 
-    private static final long SUVICHAR_DISPLAY_MS = 10_000L;
-    private static final long SUVICHAR_FETCH_TIMEOUT_MS = 8_000L;
-
-    private View suvicharContainer;
-    private RecyclerView suvicharRecycler;
-    private final List<SuvicharItem> suvicharList = new ArrayList<>();
-    private SuvicharAdapter suvicharAdapter;
-    private final Handler suvicharHandler = new Handler(Looper.getMainLooper());
-    private Runnable suvicharHideRunnable;
-    private Runnable suvicharTimeoutRunnable;
-    /** True while suvichar is shown for 10 sec; keep video list hidden until then. */
-    private boolean suvicharShowingFirstTime = false;
-    /** True after suvichar config fetch is done (show or hide). Don't show videos until this is true so suvichar shows first. */
-    private boolean suvicharConfigProcessed = false;
-
     @Override
     public @Nullable View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                                        @Nullable Bundle savedInstanceState) {
@@ -139,7 +121,6 @@ public class VideosFragment extends Fragment {
         swipeRefresh = view.findViewById(R.id.videos_swipe_refresh);
 
         if (swipeRefresh != null) swipeRefresh.setOnRefreshListener(() -> {
-            loadSuvichar();
             if (isSearchMode && currentSearchQuery != null && !currentSearchQuery.isEmpty()) {
                 searchFromYouTube(currentSearchQuery);
             } else {
@@ -150,7 +131,7 @@ public class VideosFragment extends Fragment {
         if (retryBtn != null) retryBtn.setOnClickListener(v -> loadVideos());
 
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recyclerView.setHasFixedSize(true);
+        // setHasFixedSize omitted for layout compatibility
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setItemViewCacheSize(20);
         adapter = new VideosAdapter(new ArrayList<>());
@@ -160,6 +141,8 @@ public class VideosFragment extends Fragment {
             @Override
             public void onScrolled(RecyclerView rv, int dx, int dy) {
                 super.onScrolled(rv, dx, dy);
+                android.app.Activity a = getActivity();
+                if (a instanceof MainActivity) ((MainActivity) a).onScrolled(dy);
                 if (dy <= 0 || loadingMore) return;
                 LinearLayoutManager lm = (LinearLayoutManager) rv.getLayoutManager();
                 if (lm == null) return;
@@ -170,57 +153,26 @@ public class VideosFragment extends Fragment {
         });
 
         searchInput = view.findViewById(R.id.global_search_input);
+        if (searchInput != null) searchInput.setHint(R.string.search_videos_hint);
         clearSearch = view.findViewById(R.id.global_clear_search);
         micButton = view.findViewById(R.id.global_mic_button);
         setupSearchView();
 
-        suvicharContainer = view.findViewById(R.id.suvichar_container);
-        suvicharRecycler = view.findViewById(R.id.suvichar_recycler);
-        if (suvicharRecycler != null) {
-            suvicharRecycler.setLayoutManager(new LinearLayoutManager(view.getContext()));
-            suvicharRecycler.setNestedScrollingEnabled(false);
-            suvicharAdapter = new SuvicharAdapter(suvicharList);
-            suvicharRecycler.setAdapter(suvicharAdapter);
+        View avatar = view.findViewById(R.id.global_profile_avatar);
+        if (avatar != null) {
+            avatar.setOnClickListener(v -> {
+                android.app.Activity act = getActivity();
+                if (act instanceof MainActivity) ((MainActivity) act).openSwamiInfoPage();
+            });
         }
-        List<SuvicharItem> localSuvichar = loadSuvicharFromAssets();
-        if (localSuvichar != null && !localSuvichar.isEmpty()) {
-            suvicharConfigProcessed = true;
-            setLoading(false);
-            suvicharList.clear();
-            suvicharList.addAll(localSuvichar);
-            if (suvicharAdapter != null) suvicharAdapter.notifyDataSetChanged();
-            if (suvicharContainer != null) suvicharContainer.setVisibility(View.VISIBLE);
-            if (recyclerView != null) recyclerView.setVisibility(View.GONE);
-            suvicharShowingFirstTime = true;
-            suvicharHandler.removeCallbacks(suvicharHideRunnable);
-            suvicharHideRunnable = () -> {
-                suvicharShowingFirstTime = false;
-                hideSuvichar();
-                updateVideoListVisibility();
-            };
-            suvicharHandler.postDelayed(suvicharHideRunnable, SUVICHAR_DISPLAY_MS);
-            loadVideos();
-            loadSuvichar();
-        } else {
-            setLoading(true);
-            loadSuvichar();
-            suvicharTimeoutRunnable = () -> {
-                if (!suvicharConfigProcessed) {
-                    suvicharConfigProcessed = true;
-                    updateVideoListVisibility();
-                    loadVideos();
-                }
-            };
-            suvicharHandler.postDelayed(suvicharTimeoutRunnable, SUVICHAR_FETCH_TIMEOUT_MS);
-        }
+
+        setLoading(true);
+        loadVideos();
         return view;
     }
 
     @Override
     public void onDestroyView() {
-        suvicharHandler.removeCallbacks(suvicharHideRunnable);
-        suvicharHandler.removeCallbacks(suvicharTimeoutRunnable);
-        suvicharShowingFirstTime = false;
         super.onDestroyView();
     }
 
@@ -233,16 +185,9 @@ public class VideosFragment extends Fragment {
         }
     }
 
-    /** Show video list only after suvichar config is processed and we're not in the 10s suvichar display. */
-    private void updateVideoListVisibility() {
-        if (recyclerView == null) return;
-        boolean show = suvicharConfigProcessed && !suvicharShowingFirstTime;
-        recyclerView.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
-
     private void setLoading(boolean loading) {
         if (loadingView != null) loadingView.setVisibility(loading ? View.VISIBLE : View.GONE);
-        if (recyclerView != null) recyclerView.setVisibility(loading ? View.GONE : (suvicharConfigProcessed && !suvicharShowingFirstTime ? View.VISIBLE : View.GONE));
+        if (recyclerView != null) recyclerView.setVisibility(loading ? View.GONE : View.VISIBLE);
         if (swipeRefresh != null) swipeRefresh.setRefreshing(loading);
     }
 
@@ -388,7 +333,7 @@ public class VideosFragment extends Fragment {
                     } else {
                         showMessage("");
                         if (errorLayout != null) errorLayout.setVisibility(View.GONE);
-                        updateVideoListVisibility();
+                        if (recyclerView != null) recyclerView.setVisibility(View.VISIBLE);
                         adapter.setItems(result);
                     }
                 });
@@ -407,7 +352,7 @@ public class VideosFragment extends Fragment {
         if (adapter == null) return;
         adapter.setItems(list);
         if (errorLayout != null) errorLayout.setVisibility(View.GONE);
-        updateVideoListVisibility();
+        if (recyclerView != null) recyclerView.setVisibility(View.VISIBLE);
         showMessage("");
     }
 
@@ -443,7 +388,7 @@ public class VideosFragment extends Fragment {
         final android.app.Activity activity = getActivity();
         if (activity == null || activity.isFinishing()) return;
 
-        if (!suvicharShowingFirstTime) setLoading(true);
+        setLoading(true);
         showMessage("");
 
         new Thread(() -> {
@@ -663,7 +608,6 @@ public class VideosFragment extends Fragment {
                     if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
                     showMessage("");
                     if (errorLayout != null) errorLayout.setVisibility(View.GONE);
-                    updateVideoListVisibility();
                     allVideos.clear();
                     allVideos.addAll(result);
                     if (!isSearchMode) applyDisplayVideos(new ArrayList<>(allVideos));
@@ -1632,228 +1576,6 @@ public class VideosFragment extends Fragment {
                 startActivity(intent);
             } catch (Exception e2) {
                 Log.e(TAG, "openVideo failed", e2);
-            }
-        }
-    }
-
-    /** Load suvichar from assets/suvichar.json (array of {text, author}). Returns null on error. */
-    private List<SuvicharItem> loadSuvicharFromAssets() {
-        try {
-            android.content.res.AssetManager am = getContext() != null ? getContext().getAssets() : null;
-            if (am == null) return null;
-            StringBuilder sb = new StringBuilder();
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(am.open("suvichar.json"), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = br.readLine()) != null) sb.append(line);
-            }
-            JSONArray arr = new JSONArray(sb.toString());
-            List<SuvicharItem> list = new ArrayList<>();
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject o = arr.optJSONObject(i);
-                if (o != null)
-                    list.add(new SuvicharItem(o.optString("text", ""), o.optString("author", "")));
-            }
-            return list;
-        } catch (Exception e) {
-            Log.e(TAG, "loadSuvicharFromAssets failed", e);
-            return null;
-        }
-    }
-
-    /** Fetch suvichar from server. Tries Pages URL first; on 404 tries raw GitHub URL. */
-    private void loadSuvichar() {
-        android.app.Activity activity = getActivity();
-        if (activity == null || activity.isFinishing()) return;
-        final String baseUrl;
-        try {
-            String b = getString(R.string.server_books_base_url);
-            b = b != null ? b.trim() : "";
-            baseUrl = b.isEmpty() ? "" : (b.endsWith("/") ? b : b + "/");
-        } catch (Exception e) {
-            activity.runOnUiThread(() -> {
-                suvicharConfigProcessed = true;
-                setLoading(false);
-                updateVideoListVisibility();
-                loadVideos();
-            });
-            return;
-        }
-        final String primaryUrl = baseUrl + "public/suvichar_config.json";
-        final String fallbackUrl = buildSuvicharRawUrl(baseUrl);
-        Log.d(TAG, "suvichar fetch start primaryUrl=" + primaryUrl);
-
-        new Thread(() -> {
-            try {
-                OkHttpClient client = new OkHttpClient.Builder()
-                    .connectTimeout(6, TimeUnit.SECONDS)
-                    .readTimeout(10, TimeUnit.SECONDS)
-                    .build();
-                String body = null;
-                Request req1 = new Request.Builder().url(primaryUrl).build();
-                try (Response response = client.newCall(req1).execute()) {
-                    Log.d(TAG, "suvichar primary response code=" + response.code());
-                    if (response.isSuccessful() && response.body() != null) {
-                        body = response.body().string();
-                        Log.d(TAG, "suvichar primary body len=" + (body != null ? body.length() : 0));
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "suvichar primary request failed", e);
-                }
-                if (body == null && fallbackUrl != null) {
-                    Log.d(TAG, "suvichar trying fallback " + fallbackUrl);
-                    Request req2 = new Request.Builder().url(fallbackUrl).build();
-                    try (Response response = client.newCall(req2).execute()) {
-                        Log.d(TAG, "suvichar fallback response code=" + response.code());
-                        if (response.isSuccessful() && response.body() != null) {
-                            body = response.body().string();
-                            Log.d(TAG, "suvichar loaded from raw fallback body len=" + (body != null ? body.length() : 0));
-                        }
-                    } catch (Exception e) {
-                            Log.e(TAG, "suvichar fallback request failed", e);
-                    }
-                }
-                if (body == null) {
-                    Log.w(TAG, "suvichar body null after both URLs -> skip suvichar");
-                    activity.runOnUiThread(() -> {
-                        suvicharConfigProcessed = true;
-                        hideSuvichar();
-                        setLoading(false);
-                        updateVideoListVisibility();
-                        loadVideos();
-                    });
-                    return;
-                }
-                JSONObject root = new JSONObject(body);
-                boolean enabled = root.optBoolean("suvicharEnabled", false);
-                JSONArray arr = root.optJSONArray("suvichar");
-                List<SuvicharItem> list = new ArrayList<>();
-                if (enabled && arr != null) {
-                    for (int i = 0; i < arr.length(); i++) {
-                        JSONObject o = arr.optJSONObject(i);
-                        if (o != null) {
-                            list.add(new SuvicharItem(o.optString("text", ""), o.optString("author", "")));
-                        }
-                    }
-                }
-                Log.d(TAG, "suvichar parsed enabled=" + enabled + " arrLen=" + (arr != null ? arr.length() : 0) + " listSize=" + list.size());
-                List<SuvicharItem> finalList = list;
-                activity.runOnUiThread(() -> {
-                    if (suvicharShowingFirstTime) {
-                        if (!finalList.isEmpty()) {
-                            suvicharList.clear();
-                            suvicharList.addAll(finalList);
-                            if (suvicharAdapter != null) suvicharAdapter.notifyDataSetChanged();
-                        }
-                        return;
-                    }
-                    suvicharConfigProcessed = true;
-                    setLoading(false);
-                    suvicharList.clear();
-                    if (finalList.isEmpty()) {
-                        Log.d(TAG, "suvichar UI: empty list -> hide suvichar show videos");
-                        hideSuvichar();
-                        updateVideoListVisibility();
-                    } else {
-                        Log.d(TAG, "suvichar UI: show " + finalList.size() + " items container=" + (suvicharContainer != null) + " adapter=" + (suvicharAdapter != null));
-                        suvicharList.addAll(finalList);
-                        if (suvicharAdapter != null) suvicharAdapter.notifyDataSetChanged();
-                        if (suvicharContainer != null) {
-                            suvicharContainer.setVisibility(View.VISIBLE);
-                            Log.d(TAG, "suvichar container set VISIBLE");
-                        } else {
-                            Log.e(TAG, "suvichar container is NULL cannot show");
-                        }
-                        if (recyclerView != null) recyclerView.setVisibility(View.GONE);
-                        suvicharShowingFirstTime = true;
-                        suvicharHandler.removeCallbacks(suvicharHideRunnable);
-                        suvicharHideRunnable = () -> {
-                            suvicharShowingFirstTime = false;
-                            hideSuvichar();
-                            updateVideoListVisibility();
-                        };
-                        suvicharHandler.postDelayed(suvicharHideRunnable, SUVICHAR_DISPLAY_MS);
-                    }
-                    loadVideos();
-                });
-            } catch (Throwable t) {
-                Log.e(TAG, "loadSuvichar error", t);
-                activity.runOnUiThread(() -> {
-                    suvicharConfigProcessed = true;
-                    hideSuvichar();
-                    setLoading(false);
-                    updateVideoListVisibility();
-                    loadVideos();
-                });
-            }
-        }).start();
-    }
-
-    /** Build raw.githubusercontent.com URL from Pages base (e.g. ...github.io/repo/ -> raw.../repo/main/public/suvichar_config.json). */
-    private static String buildSuvicharRawUrl(String baseUrl) {
-        if (baseUrl == null || !baseUrl.contains("github.io")) return null;
-        try {
-            int start = baseUrl.indexOf("://") + 3;
-            int end = baseUrl.indexOf(".github.io");
-            if (start < 3 || end <= start) return null;
-            String user = baseUrl.substring(start, end);
-            int repoStart = end + 11;
-            int repoEnd = baseUrl.indexOf("/", repoStart);
-            String repo = repoEnd > repoStart ? baseUrl.substring(repoStart, repoEnd) : baseUrl.substring(repoStart).replace("/", "");
-            if (user.isEmpty() || repo.isEmpty()) return null;
-            return "https://raw.githubusercontent.com/" + user + "/" + repo + "/main/public/suvichar_config.json";
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private void hideSuvichar() {
-        if (suvicharContainer != null) suvicharContainer.setVisibility(View.GONE);
-        suvicharList.clear();
-        if (suvicharAdapter != null) suvicharAdapter.notifyDataSetChanged();
-    }
-
-    private static class SuvicharItem {
-        final String text;
-        final String author;
-
-        SuvicharItem(String text, String author) {
-            this.text = text != null ? text : "";
-            this.author = author != null ? author : "";
-        }
-    }
-
-    private static class SuvicharAdapter extends RecyclerView.Adapter<SuvicharAdapter.SuvicharHolder> {
-        private final List<SuvicharItem> items;
-
-        SuvicharAdapter(List<SuvicharItem> items) {
-            this.items = items != null ? items : new ArrayList<>();
-        }
-
-        @Override
-        public SuvicharHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new SuvicharHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_suvichar, parent, false));
-        }
-
-        @Override
-        public void onBindViewHolder(SuvicharHolder holder, int position) {
-            SuvicharItem item = items.get(position);
-            holder.textView.setText(item.text);
-            holder.authorView.setText("— " + item.author);
-        }
-
-        @Override
-        public int getItemCount() {
-            return items.size();
-        }
-
-        static class SuvicharHolder extends RecyclerView.ViewHolder {
-            final TextView textView;
-            final TextView authorView;
-
-            SuvicharHolder(View itemView) {
-                super(itemView);
-                textView = itemView.findViewById(R.id.suvichar_text);
-                authorView = itemView.findViewById(R.id.suvichar_author);
             }
         }
     }

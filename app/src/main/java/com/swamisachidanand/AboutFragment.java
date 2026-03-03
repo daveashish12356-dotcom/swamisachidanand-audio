@@ -1,8 +1,7 @@
 package com.swamisachidanand;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,12 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.google.android.material.button.MaterialButton;
 
 import androidx.fragment.app.Fragment;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 public class AboutFragment extends Fragment {
 
@@ -36,75 +31,107 @@ public class AboutFragment extends Fragment {
             Log.e(TAG, "onCreateView inflate", t);
             return container != null ? new View(container.getContext()) : null;
         }
-        ImageView swamijiPhoto = view.findViewById(R.id.swamiji_photo);
-        TextView swamijiName = view.findViewById(R.id.swamiji_name);
-        TextView aboutText = view.findViewById(R.id.about_text);
-        TextView ashram1Text = view.findViewById(R.id.ashram1_text);
-        TextView ashram2Text = view.findViewById(R.id.ashram2_text);
-        TextView ashram3Text = view.findViewById(R.id.ashram3_text);
-        if (swamijiName != null) swamijiName.setText("પદ્મભૂષણ શ્રી સ્વામી સચ્ચિદાનંદ");
-        
-        // Load photo from assets if available
-        try {
-            android.app.Activity act = getActivity();
-            if (act == null) return view;
-            String[] imageFiles = {"swamiji.jpg", "Swami_Sachchidanand.jpg", "swamiji.png", "swamiji_photo.jpg", "swamiji_photo.png"};
-            boolean photoLoaded = false;
 
-            for (String imageFile : imageFiles) {
-                try {
-                    InputStream is = act.getAssets().open(imageFile);
-                    Bitmap bitmap = BitmapFactory.decodeStream(is);
-                    if (bitmap != null && swamijiPhoto != null) {
-                        swamijiPhoto.setImageBitmap(bitmap);
-                        photoLoaded = true;
-                        is.close();
-                        Log.d(TAG, "Photo loaded successfully: " + imageFile);
-                        break;
-                    }
-                    is.close();
-                } catch (IOException e) {
-                    Log.d(TAG, "Trying next photo file, current: " + imageFile);
-                }
-            }
-            
-            if (!photoLoaded && swamijiPhoto != null) {
-                swamijiPhoto.setImageResource(android.R.drawable.sym_def_app_icon);
-                Log.d(TAG, "Swamiji photo not found in assets, using default icon");
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error loading photo", e);
-            if (swamijiPhoto != null) swamijiPhoto.setImageResource(android.R.drawable.sym_def_app_icon);
+        // Sampark: YouTube, Facebook, WhatsApp, Telegram – website (swamisachchidanandji.org) links
+        bindSocialLink(view, R.id.sampark_youtube, getString(R.string.url_youtube));
+        bindSocialLink(view, R.id.sampark_facebook, getString(R.string.url_facebook));
+        bindSocialLink(view, R.id.sampark_whatsapp, getString(R.string.url_whatsapp));
+        bindSocialLink(view, R.id.sampark_telegram, getString(R.string.url_telegram));
+
+        // Ashram cards - bind each directly
+        bindAshram(view, R.id.ashram1, "શ્રી ભક્તિ નિકેતન આશ્રમ, દંતાલી",
+                "પ.પૂ.મહર્ષિ સ્વામી શ્રીસચ્ચિદાનંદજી પરમહંસ (પદ્મભૂષણશ્રી)",
+                "પેટલાદ જી. આણંદ, ગુજરાત – ૩૮૮૪૫૦",
+                "9428013551, 9824112625", "swamisachchidanandji.org",
+                "https://maps.app.goo.gl/NEmwiYD8SiUvcMs49", R.drawable.bhakti_niketan_ashram);
+
+        bindAshram(view, R.id.ashram2, "સાધનાશ્રમ, કોબા",
+                "સચ્ચિદાનંદ સેવા સમાજ ટ્રસ્ટ, કોબા",
+                "કોબા હાઇવે, કોબા, જી. ગાંધીનગર, ગુજરાત – ૩૮૨૪૨૬",
+                "8238142042", "swamisachchidanandji.org",
+                "https://maps.app.goo.gl/hF8P8aTpqA1mhK9C9", R.drawable.sadhana_ashram);
+
+        bindAshram(view, R.id.ashram3, "વૃધ્ધાશ્રમ, ઊંઝા",
+                "શ્રી સચ્ચિદાનંદ સેવા સમાજ ટ્રસ્ટ ઊંઝા",
+                "ઊંઝા, જી. મહેસાણા, ગુજરાત – ૩૮૪૧૭૦",
+                "9879104099", "swamisachchidanandji.org",
+                "https://maps.app.goo.gl/6UFWKWH9DfVVBFhA8", R.drawable.vridhashram);
+
+        bindAshram(view, R.id.ashram4, "સુઈગામ",
+                "સ્વામી શ્રી સચ્ચિદાનંદજી સેવા સમાજ ટ્રસ્ટ, સુઈગામ",
+                "સુઈગામ, જી. બનાસકાંઠા, ગુજરાત – ૩૮૫૫૭૦",
+                "", "swamisachchidanandji.org",
+                "https://maps.app.goo.gl/mLbBT1F5i2vjSMPCA", 0);
+
+        View scrollView = view.findViewById(R.id.about_scroll_view);
+        if (scrollView != null && getActivity() instanceof MainActivity) {
+            scrollView.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                if (getActivity() instanceof MainActivity) ((MainActivity) getActivity()).onScrolled(scrollY - oldScrollY);
+            });
         }
-        
-        // Set Swamiji information from Wikipedia
-        String aboutContent = "પદ્મભૂષણ શ્રી સ્વામી સચ્ચિદાનંદ (જન્મ: નાનાલાલ મોતીલાલ ત્રિવેદી, ૧૯૩૨) એક પ્રખ્યાત ગુજરાતી સંત, લેખક અને આધ્યાત્મિક ગુરુ છે.\n\n" +
-                "તેમના સર્જનમાં ભક્તિ સાહિત્ય, ઉપદેશ, યાત્રા વર્ણન અને આધ્યાત્મિક ચિંતનનો સમાવેશ થાય છે. તેઓ ભક્તિ, ઉપદેશ, ધાર્મિક યાત્રાઓ અને આધ્યાત્મિક સાહિત્ય પર અનેક પુસ્તકો લખ્યા છે.\n\n" +
-                "તેમના ઉપદેશો અને લેખનથી લાખો લોકોને આધ્યાત્મિક માર્ગદર્શન અને ભક્તિનો પથ મળ્યો છે. સ્વામી સચ્ચિદાનંદે ભારત સરકાર દ્વારા પદ્મભૂષણ પુરસ્કાર પ્રાપ્ત કર્યો છે અને ગુજરાત સરકાર દ્વારા નર્મદ સુવર્ણચંદ્રક પણ પ્રાપ્ત કર્યો છે.";
-        
-        if (aboutText != null) aboutText.setText(aboutContent);
-        String ashram1 = "ભક્તિનિકેતન આશ્રમ\n" +
-                         "પો.ઓ. નં. ૧૯, દંતાલી ૩૮૮૪૫૦\n" +
-                         "તા. પેટલાદ, જિલ્લો: આણંદ\n" +
-                         "ફોન: ૦૨૬૯૭-૨૫૨૪૮૦";
-        
-        ashram1Text.setText(ashram1);
-        
-        // Set Ashram 2 - સાધનાશ્રમ
-        String ashram2 = "સાધનાશ્રમ\n" +
-                         "કોબા-૩૮૨૦૦૯\n" +
-                         "(જિ. ગાંધીનગર)\n" +
-                         "ફોન: ૦૭૯-૨૩૨૭૬૨૨૬";
-        
-        if (ashram2Text != null) ashram2Text.setText(ashram2);
-        String ashram3 = "વૃદ્ધાશ્રમ\n" +
-                         "પાટણ રોડ,\n" +
-                         "ઊંઝા ૩૮૪૧૭૦\n" +
-                         "(જિ. મહેસાણા)\n" +
-                         "ફોન: ૦૨૭૬૭-૨૫૪૪૮૩";
-        
-        if (ashram3Text != null) ashram3Text.setText(ashram3);
+
         return view;
+    }
+
+    private void bindSocialLink(View root, int viewId, String url) {
+        View v = root.findViewById(viewId);
+        if (v != null && url != null && !url.isEmpty()) {
+            v.setOnClickListener(v1 -> {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                } catch (Exception e) {
+                    Log.e(TAG, "Open link", e);
+                }
+            });
+        }
+    }
+
+    private void bindAshram(View root, int cardId, String title, String desc, String address,
+                            String phone, String website, String mapUrl, int thumbResId) {
+        View card = root.findViewById(cardId);
+        if (card == null) return;
+        TextView t = card.findViewById(R.id.ashram_title);
+        TextView d = card.findViewById(R.id.ashram_desc);
+        TextView a = card.findViewById(R.id.ashram_address);
+        TextView p = card.findViewById(R.id.ashram_phone);
+        TextView w = card.findViewById(R.id.ashram_website);
+        TextView m = card.findViewById(R.id.ashram_map);
+        ImageView img = card.findViewById(R.id.ashram_thumbnail);
+        View phoneRow = card.findViewById(R.id.ashram_phone_row);
+        View websiteRow = card.findViewById(R.id.ashram_website_row);
+        View mapRow = card.findViewById(R.id.ashram_map_row);
+
+        if (t != null) t.setText(title);
+        if (d != null) { d.setText(desc); d.setVisibility(desc != null && !desc.isEmpty() ? View.VISIBLE : View.GONE); }
+        if (a != null) a.setText(address);
+        if (p != null) p.setText(phone);
+        if (w != null) w.setText(website);
+        if (m != null) m.setText(mapUrl);
+        if (phoneRow != null) phoneRow.setVisibility(phone != null && !phone.isEmpty() ? View.VISIBLE : View.GONE);
+        if (websiteRow != null) websiteRow.setVisibility(website != null && !website.isEmpty() ? View.VISIBLE : View.GONE);
+        if (mapRow != null) mapRow.setVisibility(mapUrl != null && !mapUrl.isEmpty() ? View.VISIBLE : View.GONE);
+        if (img != null) {
+            if (thumbResId != 0) {
+                img.setImageResource(thumbResId);
+                img.setVisibility(View.VISIBLE);
+            } else {
+                img.setVisibility(View.GONE);
+            }
+        }
+
+        if (p != null && phone != null && !phone.isEmpty()) {
+            p.setOnClickListener(v -> {
+                String tel = phone.replaceAll("[^0-9+]", "").split(",")[0].trim();
+                if (!tel.startsWith("+")) tel = "+91" + tel;
+                startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + tel)));
+            });
+        }
+        if (w != null && website != null && !website.isEmpty()) {
+            w.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(website.startsWith("http") ? website : "https://" + website))));
+        }
+        if (m != null && mapUrl != null && !mapUrl.isEmpty()) {
+            m.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mapUrl))));
+        }
     }
 }
 

@@ -21,3 +21,5 @@ node_modules
 espeak-ng
 app/release.keystore
 **/release.keystore
+# Keep bot webhook secrets only on server, not in git
+web-backend/webhook.php.local

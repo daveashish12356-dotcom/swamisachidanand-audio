@@ -10,6 +10,10 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +25,19 @@ import java.util.Locale;
  */
 public final class ServerBookLoader {
 
+    private static List<Book> cachedBooks;
+    private static long cacheTimeMs = 0;
+    private static final long CACHE_TTL_MS = 2 * 60 * 1000;
+
+    public static void clearCache() {
+        cachedBooks = null;
+        cacheTimeMs = 0;
+    }
+
     public static List<Book> load(Context context) {
+        if (cachedBooks != null && (System.currentTimeMillis() - cacheTimeMs) < CACHE_TTL_MS) {
+            return new ArrayList<>(cachedBooks);
+        }
         List<Book> list = new ArrayList<>();
         if (context == null) return list;
         try {
@@ -29,15 +45,38 @@ public final class ServerBookLoader {
             if (baseUrl == null) baseUrl = "";
             baseUrl = baseUrl.trim();
             if (!baseUrl.isEmpty() && !baseUrl.endsWith("/")) baseUrl += "/";
-            String booksBase = baseUrl + "books/";
-            String thumbBase = baseUrl + "thumbnails/";
+            // Server repo has PDFs and thumbnails under public/ so live URLs are base + "public/books/" and "public/thumbnails/"
+            String booksBase = baseUrl + "public/books/";
+            String thumbBase = baseUrl + "public/thumbnails/";
 
-            StringBuilder sb = new StringBuilder();
-            try (BufferedReader r = new BufferedReader(new InputStreamReader(context.getAssets().open("books_server_list.json"), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = r.readLine()) != null) sb.append(line);
+            // 1) Try to load books_server_list.json from server (OkHttp for faster fetch).
+            String jsonStr = null;
+            if (!baseUrl.isEmpty()) {
+                try {
+                    OkHttpClient client = new OkHttpClient.Builder()
+                            .connectTimeout(5, java.util.concurrent.TimeUnit.SECONDS)
+                            .readTimeout(5, java.util.concurrent.TimeUnit.SECONDS)
+                            .build();
+                    Request request = new Request.Builder().url(baseUrl + "books_server_list.json").build();
+                    Response response = client.newCall(request).execute();
+                    if (response.isSuccessful() && response.body() != null) {
+                        jsonStr = response.body().string();
+                    }
+                } catch (Exception e) {
+                    android.util.Log.w("ServerBookLoader", "Server books_server_list.json load failed, falling back to assets: " + e.getMessage());
+                }
             }
-            String jsonStr = sb.toString();
+
+            // 2) Fallback: bundled assets/books_server_list.json (same format), so offline/old APK still works.
+            if (jsonStr == null || jsonStr.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                try (BufferedReader r = new BufferedReader(
+                        new InputStreamReader(context.getAssets().open("books_server_list.json"), StandardCharsets.UTF_8))) {
+                    String line;
+                    while ((line = r.readLine()) != null) sb.append(line);
+                }
+                jsonStr = sb.toString();
+            }
             if (jsonStr.startsWith("\uFEFF")) jsonStr = jsonStr.substring(1);
             JSONObject root = new JSONObject(jsonStr);
             JSONArray arr = root.optJSONArray("fileNames");
@@ -61,6 +100,8 @@ public final class ServerBookLoader {
             }
             android.util.Log.d("ServerBookLoader", "loaded " + list.size() + " books, baseUrl=" + baseUrl);
             if (!list.isEmpty()) {
+                cachedBooks = new ArrayList<>(list);
+                cacheTimeMs = System.currentTimeMillis();
                 Book first = list.get(0);
                 android.util.Log.d("ServerBookLoader", "sample thumbnailUrl=" + (first != null ? first.getThumbnailUrl() : ""));
                 android.util.Log.d("ServerBookLoader", "sample pdfUrl=" + (first != null ? first.getPdfUrl() : ""));

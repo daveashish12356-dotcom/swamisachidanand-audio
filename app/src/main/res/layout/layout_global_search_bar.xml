@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Search bar – clean layout, acha dikhne wala. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginTop="28dp"
+    android:layout_marginBottom="10dp">
+
+    <!-- Search bar – thoda niche, color dark, border dikhe -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="#EEEEEE"
+        app:strokeColor="#CCCCCC"
+        app:strokeWidth="1.5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="18dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:minHeight="56dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_search"
+                app:tint="@color/deep_saffron"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="Search" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/global_search_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="28dp"
+                android:hint="@string/search_global_hint"
+                android:textSize="16sp"
+                android:textColorHint="#8A8A8A"
+                android:textColor="@color/text_primary"
+                android:background="@android:color/transparent"
+                android:inputType="text|textAutoComplete|textAutoCorrect"
+                android:imeOptions="actionSearch"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textCursorDrawable="@null"
+                android:gravity="center_vertical" />
+
+            <ImageView
+                android:id="@+id/global_clear_search"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                app:tint="#8A8A8A"
+                android:layout_marginStart="10dp"
+                android:visibility="gone"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="Clear" />
+
+            <ImageView
+                android:id="@+id/global_filter_button"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@android:drawable/ic_menu_sort_by_size"
+                app:tint="@color/deep_saffron"
+                android:layout_marginStart="10dp"
+                android:visibility="gone"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="Filter" />
+
+            <ImageView
+                android:id="@+id/global_mic_button"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginStart="12dp"
+                android:src="@android:drawable/ic_btn_speak_now"
+                app:tint="@color/deep_saffron"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="Voice search" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Avatar – thoda niche, color dark, border dikhe -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="#EEEEEE"
+        app:strokeColor="#CCCCCC"
+        app:strokeWidth="1.5dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/global_profile_avatar"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/swami_avatar"
+            android:background="@android:color/transparent"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/app_name"
+            app:shapeAppearanceOverlay="@style/SwamiAvatarShape"
+            app:strokeColor="@color/deep_saffron"
+            app:strokeWidth="2dp" />
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

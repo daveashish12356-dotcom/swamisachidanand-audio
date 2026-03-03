@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/book_card_margin"
-    app:cardCornerRadius="@dimen/book_card_radius"
-    app:cardElevation="8dp"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="10dp"
     app:strokeWidth="0dp"
-    app:cardBackgroundColor="?attr/card_background"
+    app:cardBackgroundColor="@android:color/white"
     android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
@@ -43,7 +43,7 @@
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
                 android:text="ઓનલાઇન"
-                android:textColor="@color/bhagva"
+                android:textColor="@color/deep_saffron"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
@@ -53,19 +53,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp"
-            android:background="?attr/card_background">
+            android:padding="16dp"
+            android:background="@android:color/white">
 
             <TextView
                 android:id="@+id/book_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="?attr/text_primary"
                 android:maxLines="2"
                 android:ellipsize="end"
-                android:lineSpacingExtra="6dp"
+                android:lineSpacingExtra="4dp"
                 android:letterSpacing="0.02" />
 
             <TextView
@@ -73,19 +73,48 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/book_card_year_size"
-                android:textColor="@color/bhagva"
+                android:textColor="@color/deep_saffron"
                 android:textStyle="bold"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="10dp"
                 android:paddingStart="8dp"
                 android:paddingEnd="12dp"
                 android:paddingTop="6dp"
                 android:paddingBottom="6dp"
                 android:background="@drawable/year_badge"
-                android:gravity="center_vertical" />
+                android:gravity="center_vertical"
+                android:visibility="gone" />
 
+            <!-- Reading Progress - shown when book partially read -->
+            <LinearLayout
+                android:id="@+id/reading_progress_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginTop="12dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="4dp"
+                android:background="@drawable/reading_progress_bg">
+
+                <ProgressBar
+                    android:id="@+id/reading_progress_bar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressTint="@color/deep_saffron"
+                    android:progressBackgroundTint="#E0E0E0" />
+
+                <TextView
+                    android:id="@+id/reading_progress_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textSize="12sp"
+                    android:textColor="?attr/text_secondary"
+                    android:text="50% વાંચવાનું ચાલુ રાખો" />
+            </LinearLayout>
         </LinearLayout>
-
     </LinearLayout>
-
 </com.google.android.material.card.MaterialCardView>
-

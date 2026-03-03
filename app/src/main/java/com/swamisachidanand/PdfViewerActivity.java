@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 
@@ -41,6 +42,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -59,12 +63,15 @@ public class PdfViewerActivity extends AppCompatActivity {
 
     private String bookName;
     private String pdfUrl;
+    private String thumbnailUrl;
     private File pdfFile;
     private PdfRenderer pdfRenderer;
     private ParcelFileDescriptor fileDescriptor;
     private View pdfContentContainer;
     private ImageView pdfSinglePageImage;
     private View pdfDimOverlay;
+    private ImageView pdfLoadingThumbnail;
+    private android.widget.ProgressBar pdfLoadingProgress;
     private TextView pdfLoadingOnlineText;
     private View pdfFrameLayout;
 
@@ -79,13 +86,27 @@ public class PdfViewerActivity extends AppCompatActivity {
     private View pdfTopBar;
     private ImageButton dayNightToggleBtn;
     private TextView pdfBookTitle;
+    private TextView pdfPageIndicator;
+    private ImageButton pdfBackBtn;
+    private ImageButton pdfSearchBtn;
+    private ImageButton pdfBookmarkBtn;
     private ImageButton pdfTopMoreBtn;
+    private View pdfFloatingTools;
+    private ImageButton pdfZoomInBtn;
+    private ImageButton pdfZoomOutBtn;
+    private ImageButton pdfJumpBtn;
+    private ImageButton pdfShareBtn;
+    private float zoomLevel = 1f;
+    private static final float ZOOM_MIN = 0.7f;
+    private static final float ZOOM_MAX = 2.0f;
+    private java.util.Set<Integer> bookmarkedPages = new java.util.HashSet<>();
     private int pageCount = 0;
     private int currentPageIndex = 0;
 
     private SharedPreferences readingProgressPrefs;
     private static final String PREFS_NAME = "reading_progress";
     private static final String KEY_RECENT_BOOKS = "recent_books_list";
+    private static final String KEY_BOOKMARKS_PREFIX = "pdf_bookmarks_";
     private static final int MAX_RECENT_BOOKS = 10;
     private List<Chapter> chapters;
     private final Object rendererLock = new Object();
@@ -113,7 +134,10 @@ public class PdfViewerActivity extends AppCompatActivity {
 
             bookName = getIntent().getStringExtra("book_name");
             pdfUrl = getIntent().getStringExtra("pdf_url");
+            thumbnailUrl = getIntent().getStringExtra("thumbnail_url");
             if (pdfUrl != null) pdfUrl = pdfUrl.trim();
+            if (thumbnailUrl != null && thumbnailUrl.trim().isEmpty()) thumbnailUrl = null;
+            else if (thumbnailUrl != null) thumbnailUrl = thumbnailUrl.trim();
             if (bookName == null) bookName = "";
             bookName = bookName.trim();
             if (bookName.isEmpty() && (pdfUrl == null || pdfUrl.isEmpty())) {
@@ -143,22 +167,34 @@ public class PdfViewerActivity extends AppCompatActivity {
                 return;
             }
 
-            if (pdfDimOverlay != null) pdfDimOverlay.setVisibility(View.GONE);
-            if (pdfFrameLayout != null) pdfFrameLayout.setBackgroundColor(Color.BLACK);
+            // Status/nav bar black until applyDayNightMode(); frame layout uses XML gradient then Java overrides for night
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                getWindow().setStatusBarColor(Color.BLACK);
-                getWindow().setNavigationBarColor(Color.BLACK);
+                getWindow().setStatusBarColor(0xFFF5F0E6);
+                getWindow().setNavigationBarColor(0xFFF5F0E6);
             }
-            getWindow().getDecorView().setBackgroundColor(Color.BLACK);
+            getWindow().getDecorView().setBackgroundColor(0xFFF5F0E6);
 
             pdfTopBar = findViewById(R.id.pdf_top_bar);
-            dayNightToggleBtn = findViewById(R.id.day_night_toggle_btn);
+            pdfBackBtn = findViewById(R.id.pdf_back_btn);
             pdfBookTitle = findViewById(R.id.pdf_book_title);
+            pdfPageIndicator = findViewById(R.id.pdf_page_indicator);
+            pdfSearchBtn = findViewById(R.id.pdf_search_btn);
+            pdfBookmarkBtn = findViewById(R.id.pdf_bookmark_btn);
+            dayNightToggleBtn = findViewById(R.id.day_night_toggle_btn);
             pdfTopMoreBtn = findViewById(R.id.pdf_top_more_btn);
+
             String title = bookName != null ? bookName.replace(".pdf", "").replace(".PDF", "").trim() : "";
             if (pdfBookTitle != null) pdfBookTitle.setText(title);
+            if (pdfBackBtn != null) pdfBackBtn.setOnClickListener(v -> finish());
+            if (pdfSearchBtn != null) pdfSearchBtn.setOnClickListener(v ->
+                    Toast.makeText(this, "PDF શોધ જલ્દી ઉપલબ્ધ થશે", Toast.LENGTH_SHORT).show());
+            loadBookmarks();
+            updateBookmarkButton();
+            if (pdfBookmarkBtn != null) pdfBookmarkBtn.setOnClickListener(v -> toggleBookmark());
+
             syncDayNightFromSystem();
             updateDayNightToggleUi();
+            applyDayNightMode();
             if (dayNightToggleBtn != null) {
                 dayNightToggleBtn.setOnClickListener(v -> {
                     isDayMode = !isDayMode;
@@ -167,6 +203,16 @@ public class PdfViewerActivity extends AppCompatActivity {
                 });
             }
             if (pdfTopMoreBtn != null) pdfTopMoreBtn.setOnClickListener(v -> showPdfTopMoreMenu());
+
+            pdfFloatingTools = findViewById(R.id.pdf_floating_tools);
+            pdfZoomInBtn = findViewById(R.id.pdf_zoom_in_btn);
+            pdfZoomOutBtn = findViewById(R.id.pdf_zoom_out_btn);
+            pdfJumpBtn = findViewById(R.id.pdf_jump_btn);
+            pdfShareBtn = findViewById(R.id.pdf_share_btn);
+            if (pdfZoomInBtn != null) pdfZoomInBtn.setOnClickListener(v -> zoomIn());
+            if (pdfZoomOutBtn != null) pdfZoomOutBtn.setOnClickListener(v -> zoomOut());
+            if (pdfJumpBtn != null) pdfJumpBtn.setOnClickListener(v -> showJumpToPageDialog());
+            if (pdfShareBtn != null) pdfShareBtn.setOnClickListener(v -> shareCurrentPage());
 
             bottomProgressBar = findViewById(R.id.bottom_progress_bar);
             progressSeekBar = findViewById(R.id.progress_seekbar);
@@ -205,20 +251,37 @@ public class PdfViewerActivity extends AppCompatActivity {
                 mainHandler.postDelayed(autoHideRunnable, 5000);
             }
 
+            pdfLoadingThumbnail = findViewById(R.id.pdf_loading_thumbnail);
+            pdfLoadingProgress = findViewById(R.id.pdf_loading_progress);
+            pdfLoadingOnlineText = findViewById(R.id.pdf_loading_online_text);
             if (pdfDimOverlay != null) {
                 pdfDimOverlay.setVisibility(View.VISIBLE);
                 pdfDimOverlay.setBackgroundColor(0xE6000000);
+                pdfDimOverlay.bringToFront();
             }
-            pdfLoadingOnlineText = findViewById(R.id.pdf_loading_online_text);
-            if (pdfUrl != null && !pdfUrl.isEmpty() && pdfLoadingOnlineText != null) {
-                pdfLoadingOnlineText.setText("ઇન્ટરનેટથી લોડ થાય છે...");
+            if (pdfLoadingOnlineText != null) {
+                pdfLoadingOnlineText.setText("બુક લોડ થાય છે...");
                 pdfLoadingOnlineText.setVisibility(View.VISIBLE);
             }
-            pdfContentContainer.postDelayed(() -> {
+            if (pdfLoadingProgress != null) pdfLoadingProgress.setVisibility(View.VISIBLE);
+            if (pdfLoadingThumbnail != null) {
+                pdfLoadingThumbnail.setVisibility(View.VISIBLE);
+                if (thumbnailUrl != null && !thumbnailUrl.isEmpty()) {
+                    Glide.with(this).load(thumbnailUrl)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .placeholder(R.drawable.book_placeholder)
+                            .error(R.drawable.book_placeholder)
+                            .centerCrop()
+                            .into(pdfLoadingThumbnail);
+                } else {
+                    pdfLoadingThumbnail.setImageResource(R.drawable.book_placeholder);
+                }
+            }
+            pdfContentContainer.post(() -> {
                 if (isFinishing() || isDestroyed()) return;
                 if (pdfUrl != null && !pdfUrl.isEmpty()) loadPdfFromUrl(pdfUrl);
                 else loadPdfFromAssets();
-            }, 400);
+            });
         } catch (Exception e) {
             Log.e(TAG, "Fatal error in onCreate", e);
             Toast.makeText(this, "App error: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -228,7 +291,9 @@ public class PdfViewerActivity extends AppCompatActivity {
 
     private void hideLoadingOverlay() {
         runOnUiThread(() -> {
+            if (pdfLoadingProgress != null) pdfLoadingProgress.setVisibility(View.GONE);
             if (pdfLoadingOnlineText != null) pdfLoadingOnlineText.setVisibility(View.GONE);
+            if (pdfLoadingThumbnail != null) pdfLoadingThumbnail.setVisibility(View.GONE);
             if (pdfDimOverlay != null) pdfDimOverlay.setVisibility(View.GONE);
         });
     }
@@ -253,6 +318,11 @@ public class PdfViewerActivity extends AppCompatActivity {
                         topBar.setTranslationY(0f);
                     })
                     .start();
+        }
+        View floatingTools = pdfFloatingTools;
+        if (floatingTools != null && floatingTools.getVisibility() == View.VISIBLE) {
+            floatingTools.animate().alpha(0f).setDuration(CONTROLS_ANIM_DURATION)
+                    .withEndAction(() -> floatingTools.setVisibility(View.GONE)).start();
         }
         if (bottomBar != null && bottomBar.getVisibility() == View.VISIBLE) {
             bottomBar.animate()
@@ -284,6 +354,11 @@ public class PdfViewerActivity extends AppCompatActivity {
                         .setInterpolator(new android.view.animation.DecelerateInterpolator())
                         .start();
             });
+        }
+        if (pdfFloatingTools != null) {
+            pdfFloatingTools.setVisibility(View.VISIBLE);
+            pdfFloatingTools.setAlpha(0f);
+            pdfFloatingTools.animate().alpha(1f).setDuration(CONTROLS_ANIM_DURATION).start();
         }
         if (bottomProgressBar != null) {
             bottomProgressBar.setVisibility(View.VISIBLE);
@@ -365,9 +440,15 @@ public class PdfViewerActivity extends AppCompatActivity {
         });
     }
 
+    /** Page slide duration – subtle slide like Play Books direction hints. */
+    private static final int PAGE_SLIDE_DURATION_MS = 220;
+    private static final int PAGE_SLIDE_IN_DURATION_MS = 200;
+
     /**
-     * Simple book-like page turn animation using 3D Y rotation.
-     * forward=true for next page, false for previous page.
+     * Lightweight page slide animation:
+     * - Next page: content slides slightly right → left.
+     * - Previous page: content slides slightly left → right.
+     * The actual page change + render still happens via onMidTurn (single place).
      */
     private void animatePageTurn(boolean forward, Runnable onMidTurn) {
         if (pdfSinglePageImage == null) {
@@ -376,27 +457,34 @@ public class PdfViewerActivity extends AppCompatActivity {
         }
         try {
             final View v = pdfSinglePageImage;
-            float density = getResources().getDisplayMetrics().density;
-            v.setCameraDistance(8000f * density);
-            float dir = forward ? -1f : 1f;
             v.animate().cancel();
+            v.setRotationY(0f);
+            v.setAlpha(1f);
+            v.setTranslationX(0f);
+
+            float density = getResources().getDisplayMetrics().density;
+            float travel = 40f * density; // small distance for smooth feeling
+            float exitX = forward ? -travel : travel;
+            float enterX = -exitX;
+
             v.animate()
-                    .rotationY(90f * dir)
-                    .translationX(v.getWidth() / 8f * dir)
-                    .setDuration(180)
+                    .translationX(exitX)
+                    .alpha(0.0f)
+                    .setDuration(PAGE_SLIDE_DURATION_MS)
+                    .setInterpolator(new android.view.animation.DecelerateInterpolator())
                     .withEndAction(() -> {
                         if (onMidTurn != null) onMidTurn.run();
-                        v.setRotationY(-90f * dir);
-                        v.setTranslationX(-v.getWidth() / 8f * dir);
+                        v.setTranslationX(enterX);
+                        v.setAlpha(0.0f);
                         v.animate()
-                                .rotationY(0f)
                                 .translationX(0f)
-                                .setDuration(180)
+                                .alpha(1.0f)
+                                .setDuration(PAGE_SLIDE_IN_DURATION_MS)
+                                .setInterpolator(new android.view.animation.DecelerateInterpolator())
                                 .start();
                     })
                     .start();
         } catch (Throwable t) {
-            // Fallback: no animation
             if (onMidTurn != null) onMidTurn.run();
         }
     }
@@ -429,7 +517,7 @@ public class PdfViewerActivity extends AppCompatActivity {
                     pdfFile = new File(cacheDir, CACHE_PDF_FILENAME);
                     try (java.io.InputStream in = response.body().byteStream();
                          FileOutputStream out = new FileOutputStream(pdfFile)) {
-                        byte[] buf = new byte[16384];
+                        byte[] buf = new byte[65536];
                         int n;
                         while ((n = in.read(buf)) != -1) out.write(buf, 0, n);
                     }
@@ -579,6 +667,11 @@ public class PdfViewerActivity extends AppCompatActivity {
     }
 
     private void renderCurrentPage() {
+        renderCurrentPage(null);
+    }
+
+    /** @param afterSetBitmap optional; run on UI thread after bitmap is set (e.g. for slide-in animation) */
+    private void renderCurrentPage(Runnable afterSetBitmap) {
         if (pdfRenderer == null || pdfSinglePageImage == null || pageCount <= 0) return;
         if (rendering) return;
         final int pageIndex = currentPageIndex;
@@ -595,6 +688,7 @@ public class PdfViewerActivity extends AppCompatActivity {
         } catch (Exception e) { /* use constants */ }
         final int finalMaxW = maxW;
         final int finalMaxH = maxH;
+        final Runnable runAfter = afterSetBitmap;
         rendering = true;
         new Thread(() -> {
             Bitmap bitmap = null;
@@ -639,6 +733,7 @@ public class PdfViewerActivity extends AppCompatActivity {
                     try {
                         pdfSinglePageImage.setImageBitmap(toShow);
                         pdfSinglePageImage.setBackgroundColor(Color.BLACK);
+                        if (runAfter != null) runAfter.run();
                     } catch (Exception e) {
                         Log.e(TAG, "setImageBitmap", e);
                     }
@@ -672,8 +767,11 @@ public class PdfViewerActivity extends AppCompatActivity {
             progressSeekBar.setProgress(percentage);
             int pagesLeft = pageCount - (currentPageIndex + 1);
             pagesLeftText.setText(pagesLeft + " pages left");
+            String pageStr = "Page " + (currentPageIndex + 1) + " / " + pageCount;
             pageNumberText.setText((currentPageIndex + 1) + " / " + pageCount);
+            if (pdfPageIndicator != null) pdfPageIndicator.setText(pageStr);
             if (progressWatermark != null) progressWatermark.setText(percentage + "%");
+            updateBookmarkButton();
         } catch (Exception e) {
             Log.e(TAG, "updateBottomProgressBar error", e);
         }
@@ -703,7 +801,50 @@ public class PdfViewerActivity extends AppCompatActivity {
 
     private void applyDayNightMode() {
         updateDayNightToggleUi();
+        if (pdfFrameLayout != null) {
+            if (isDayMode) {
+                pdfFrameLayout.setBackgroundResource(R.drawable.bg_pdf_reader_gradient);
+            } else {
+                pdfFrameLayout.setBackgroundColor(Color.BLACK);
+            }
+        }
+        int bgColor = isDayMode ? 0xFFF5F0E6 : Color.BLACK;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(bgColor);
+            getWindow().setNavigationBarColor(bgColor);
+        }
+        getWindow().getDecorView().setBackgroundColor(bgColor);
+        if (bottomProgressBar != null) {
+            bottomProgressBar.setBackgroundColor(isDayMode ? 0xFFFAF9F6 : 0xFF2D2D2D);
+        }
         renderCurrentPage();
+    }
+
+    private void zoomIn() {
+        if (zoomLevel >= ZOOM_MAX) return;
+        zoomLevel = Math.min(ZOOM_MAX, zoomLevel + 0.25f);
+        applyZoom();
+    }
+
+    private void zoomOut() {
+        if (zoomLevel <= ZOOM_MIN) return;
+        zoomLevel = Math.max(ZOOM_MIN, zoomLevel - 0.25f);
+        applyZoom();
+    }
+
+    private void applyZoom() {
+        if (pdfSinglePageImage == null) return;
+        pdfSinglePageImage.post(() -> {
+            if (pdfSinglePageImage == null) return;
+            int w = pdfSinglePageImage.getWidth();
+            int h = pdfSinglePageImage.getHeight();
+            if (w > 0 && h > 0) {
+                pdfSinglePageImage.setPivotX(w / 2f);
+                pdfSinglePageImage.setPivotY(h / 2f);
+            }
+            pdfSinglePageImage.setScaleX(zoomLevel);
+            pdfSinglePageImage.setScaleY(zoomLevel);
+        });
     }
 
     private void updateDayNightToggleUi() {
@@ -745,12 +886,125 @@ public class PdfViewerActivity extends AppCompatActivity {
         android.widget.PopupMenu p = new android.widget.PopupMenu(this, pdfTopMoreBtn);
         p.getMenu().add(0, 1, 0, "અધ્યાયો");
         p.getMenu().add(0, 2, 0, "Reading progress");
+        p.getMenu().add(0, 3, 0, "Jump to page...");
+        p.getMenu().add(0, 4, 0, "Share page");
+        p.getMenu().add(0, 5, 0, "Saved bookmarks");
         p.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == 1) { showChapterList(); return true; }
-            if (item.getItemId() == 2) { showProgressDialog(); return true; }
+            int id = item.getItemId();
+            if (id == 1) { showChapterList(); return true; }
+            if (id == 2) { showProgressDialog(); return true; }
+            if (id == 3) { showJumpToPageDialog(); return true; }
+            if (id == 4) { shareCurrentPage(); return true; }
+            if (id == 5) { showBookmarksList(); return true; }
             return false;
         });
         p.show();
+    }
+
+    private void showJumpToPageDialog() {
+        if (pageCount <= 0) return;
+        android.widget.EditText input = new android.widget.EditText(this);
+        input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        input.setHint("1 - " + pageCount);
+        input.setText(String.valueOf(currentPageIndex + 1));
+        new AlertDialog.Builder(this)
+                .setTitle("Jump to page")
+                .setView(input)
+                .setPositiveButton("Go", (d, w) -> {
+                    try {
+                        int p = Integer.parseInt(input.getText().toString().trim());
+                        if (p >= 1 && p <= pageCount) {
+                            currentPageIndex = p - 1;
+                            saveReadingProgress();
+                            updateBottomProgressBar();
+                            renderCurrentPage();
+                        } else {
+                            Toast.makeText(this, "1 - " + pageCount + " દાખલ કરો", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(this, "અમાન્ય પાનું", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void shareCurrentPage() {
+        if (bookName == null || pageCount <= 0) return;
+        String shareText = (bookName.replace(".pdf", "").replace(".PDF", "")) + " – Page " + (currentPageIndex + 1) + " / " + pageCount;
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.putExtra(Intent.EXTRA_TEXT, shareText);
+        startActivity(Intent.createChooser(share, "Share"));
+    }
+
+    private void loadBookmarks() {
+        bookmarkedPages.clear();
+        if (readingProgressPrefs == null || bookName == null) return;
+        String s = readingProgressPrefs.getString(KEY_BOOKMARKS_PREFIX + bookName, "");
+        if (s.isEmpty()) return;
+        for (String p : s.split(",")) {
+            try {
+                bookmarkedPages.add(Integer.parseInt(p.trim()));
+            } catch (NumberFormatException ignored) {}
+        }
+    }
+
+    private void saveBookmarks() {
+        if (readingProgressPrefs == null || bookName == null) return;
+        StringBuilder sb = new StringBuilder();
+        for (Integer p : bookmarkedPages) {
+            if (sb.length() > 0) sb.append(",");
+            sb.append(p);
+        }
+        readingProgressPrefs.edit().putString(KEY_BOOKMARKS_PREFIX + bookName, sb.toString()).apply();
+    }
+
+    private void toggleBookmark() {
+        if (pageCount <= 0) return;
+        int page = currentPageIndex;
+        if (bookmarkedPages.contains(page)) {
+            bookmarkedPages.remove(page);
+            Toast.makeText(this, "Bookmark દૂર", Toast.LENGTH_SHORT).show();
+        } else {
+            bookmarkedPages.add(page);
+            Toast.makeText(this, "પાનું બુકમાર્ક થયું", Toast.LENGTH_SHORT).show();
+        }
+        saveBookmarks();
+        updateBookmarkButton();
+    }
+
+    private void updateBookmarkButton() {
+        if (pdfBookmarkBtn == null) return;
+        boolean bookmarked = bookmarkedPages.contains(currentPageIndex);
+        pdfBookmarkBtn.setImageResource(bookmarked ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off);
+    }
+
+    private void showBookmarksList() {
+        if (bookmarkedPages.isEmpty()) {
+            Toast.makeText(this, "હજુ બુકમાર્ક નથી", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        List<Integer> sorted = new ArrayList<>(bookmarkedPages);
+        java.util.Collections.sort(sorted);
+        List<String> labels = new ArrayList<>();
+        for (Integer p : sorted) labels.add("Page " + (p + 1));
+        android.widget.ListView listView = new android.widget.ListView(this);
+        android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<>(this, android.R.layout.simple_list_item_1, labels);
+        listView.setAdapter(adapter);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Saved bookmarks")
+                .setView(listView)
+                .setNegativeButton("બંધ કરો", null)
+                .create();
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            currentPageIndex = sorted.get(position);
+            saveReadingProgress();
+            updateBottomProgressBar();
+            renderCurrentPage();
+            dialog.dismiss();
+        });
+        dialog.show();
     }
 
     @Override
@@ -801,6 +1055,7 @@ public class PdfViewerActivity extends AppCompatActivity {
                 sb.append(list.get(i));
             }
             readingProgressPrefs.edit().putString(KEY_RECENT_BOOKS, sb.toString()).apply();
+            RecentActivityHelper.saveActivity(this, RecentActivityHelper.TYPE_BOOK, fileName);
         } catch (Exception e) {
             Log.e(TAG, "addToRecentBooks error", e);
         }

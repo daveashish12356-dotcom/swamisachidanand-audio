@@ -1,25 +1,29 @@
 package com.swamisachidanand;
 
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
+import java.util.Map;
 
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder> {
     private List<Book> books;
     private OnBookClickListener listener;
     private PdfThumbnailLoader thumbnailLoader;
+    private Map<String, Integer> readingProgressMap;
 
     public interface OnBookClickListener {
         void onBookClick(Book book);
@@ -36,7 +40,11 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
     public void setUseCompactLayout(boolean useCompact) {
         this.useCompactLayout = useCompact;
     }
-    
+
+    public void setReadingProgressMap(Map<String, Integer> map) {
+        this.readingProgressMap = map;
+    }
+
     public void updateBooks(List<Book> newBooks) {
         this.books = (newBooks != null) ? newBooks : new java.util.ArrayList<>();
         notifyDataSetChanged();
@@ -67,37 +75,75 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
                     holder.bookYear.setVisibility(View.GONE);
                 }
             }
-            String pdfUrl = book.getPdfUrl();
+            // Reading progress (grid layout only)
+            if (!useCompactLayout && holder.readingProgressLayout != null) {
+                int percent = 0;
+                if (readingProgressMap != null && book.getName() != null) {
+                    Integer p = readingProgressMap.get(book.getName());
+                    if (p == null && book.getFileName() != null) {
+                        p = readingProgressMap.get(book.getFileName().replace(".pdf", "").replace(".PDF", ""));
+                    }
+                    if (p != null) percent = p;
+                }
+                if (percent > 0 && percent < 100) {
+                    holder.readingProgressLayout.setVisibility(View.VISIBLE);
+                    if (holder.readingProgressBar != null) holder.readingProgressBar.setProgress(percent);
+                    if (holder.readingProgressText != null) {
+                        holder.readingProgressText.setText(percent + "% વાંચવાનું ચાલુ રાખો");
+                    }
+                } else {
+                    holder.readingProgressLayout.setVisibility(View.GONE);
+                }
+            }
             if (holder.bookOnlineBadge != null) {
-                holder.bookOnlineBadge.setVisibility(pdfUrl != null && !pdfUrl.trim().isEmpty() ? View.VISIBLE : View.GONE);
+                holder.bookOnlineBadge.setVisibility(View.GONE);
             }
             if (holder.bookThumbnail != null) {
                 holder.bookThumbnail.setImageBitmap(null);
                 holder.bookThumbnail.setImageDrawable(null);
-                holder.bookThumbnail.setBackgroundResource(R.drawable.book_placeholder);
+                holder.bookThumbnail.setBackground(null);
                 android.content.Context ctx = holder.itemView != null ? holder.itemView.getContext() : null;
                 String thumbnailUrl = book.getThumbnailUrl();
                 if (ctx != null && thumbnailUrl != null && !thumbnailUrl.isEmpty()) {
                     Glide.with(ctx).load(thumbnailUrl)
-                            .apply(new RequestOptions().transform(new RoundedCorners(8)))
+                            .apply(new RequestOptions()
+                                    .transform(new RoundedCorners(8))
+                                    .override(300, 400)
+                                    .centerCrop()
+                                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC))
                             .placeholder(R.drawable.book_placeholder)
                             .error(R.drawable.book_placeholder)
+                            .thumbnail(0.15f)
                             .into(holder.bookThumbnail);
-                    holder.bookThumbnail.setBackground(null);
-                } else if (thumbnailLoader != null && ctx != null && book.getFileName() != null) {
+                } else if (thumbnailLoader != null && ctx != null && book.getFileName() != null && !book.getFileName().isEmpty()) {
                     thumbnailLoader.loadThumbnail(ctx, book.getFileName(), thumbnail -> {
                         if (holder.bookThumbnail == null) return;
                         if (thumbnail != null && !thumbnail.isRecycled()) {
                             holder.bookThumbnail.setImageBitmap(thumbnail);
                             holder.bookThumbnail.setBackground(null);
                         } else {
-                            holder.bookThumbnail.setBackgroundResource(R.drawable.book_placeholder);
+                            holder.bookThumbnail.setImageResource(R.drawable.book_placeholder);
                         }
                     });
+                } else {
+                    holder.bookThumbnail.setImageResource(R.drawable.book_placeholder);
                 }
             }
+            // 3D press animation – thoda sa scale effect
             holder.itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onBookClick(book);
+            });
+            holder.itemView.setOnTouchListener((v, event) -> {
+                switch (event.getActionMasked()) {
+                    case android.view.MotionEvent.ACTION_DOWN:
+                        v.animate().scaleX(1.03f).scaleY(1.03f).setDuration(120).start();
+                        break;
+                    case android.view.MotionEvent.ACTION_CANCEL:
+                    case android.view.MotionEvent.ACTION_UP:
+                        v.animate().scaleX(1f).scaleY(1f).setDuration(120).start();
+                        break;
+                }
+                return false;
             });
         } catch (Throwable t) {
             android.util.Log.e("BookAdapter", "onBindViewHolder", t);
@@ -114,6 +160,9 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         TextView bookName;
         TextView bookYear;
         TextView bookOnlineBadge;
+        LinearLayout readingProgressLayout;
+        ProgressBar readingProgressBar;
+        TextView readingProgressText;
 
         BookViewHolder(View itemView) {
             super(itemView);
@@ -121,6 +170,9 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             bookName = itemView.findViewById(R.id.book_name);
             bookYear = itemView.findViewById(R.id.book_year);
             bookOnlineBadge = itemView.findViewById(R.id.book_online_badge);
+            readingProgressLayout = itemView.findViewById(R.id.reading_progress_layout);
+            readingProgressBar = itemView.findViewById(R.id.reading_progress_bar);
+            readingProgressText = itemView.findViewById(R.id.reading_progress_text);
         }
     }
 }
