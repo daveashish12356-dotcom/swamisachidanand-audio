@@ -11,8 +11,8 @@ android {
         applicationId = "com.swamisachidanand"
         minSdk = 26
         targetSdk = 36
-        versionCode = 15
-        versionName = "1.8"
+        versionCode = 1000
+        versionName = "2.0-dev"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
@@ -30,6 +30,10 @@ android {
                 arguments("-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON")
             }
         }
+        val youtubeApiKey = project.findProperty("YOUTUBE_API_KEY") as String? ?: ""
+        buildConfigField("String", "YOUTUBE_API_KEY", "\"$youtubeApiKey\"")
+        val youtubeProxyUrl = project.findProperty("YOUTUBE_PROXY_URL") as String? ?: ""
+        buildConfigField("String", "YOUTUBE_PROXY_URL", "\"$youtubeProxyUrl\"")
     }
 
     signingConfigs {
@@ -69,6 +73,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
     
     lint {
@@ -95,6 +100,8 @@ android {
     }
 }
 
+// (No extra task hacks here; rely on standard Android Gradle Plugin behaviour.)
+
 dependencies {
 
     implementation(libs.appcompat)
@@ -102,6 +109,15 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.recyclerview)
     implementation(libs.core)
+    
+    // Image loading for book/audio thumbnails
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    // ExoPlayer (Media3) for streaming audio parts from server
+    implementation("androidx.media3:media3-exoplayer:1.5.1")
+
+    // Swipe-to-refresh layout (used in server audio fragment)
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     
     // ViewPager2 for smooth scrolling with 3D effects
     implementation("androidx.viewpager2:viewpager2:1.0.0")
@@ -117,7 +133,10 @@ dependencies {
     
     // OkHttp for Google Cloud Text-to-Speech API
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    
+
+    // In-app YouTube player (video opens in app, not external)
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
+
     // Firebase (BOM manages versions)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)

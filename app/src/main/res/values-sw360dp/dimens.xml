@@ -25,8 +25,8 @@
     <dimen name="bottom_nav_padding_v">9dp</dimen>
     <dimen name="bottom_nav_padding_bottom">7dp</dimen>
 
-    <!-- Home hero video (top section) -->
-    <dimen name="hero_video_height">240dp</dimen>
+    <!-- Home hero video (balanced) -->
+    <dimen name="hero_video_height">200dp</dimen>
 
     <dimen name="book_card_margin">12dp</dimen>
     <dimen name="book_card_radius">22dp</dimen>

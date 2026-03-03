@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Search bar – full width, neeche pura -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginTop="12dp"
+    android:layout_marginBottom="16dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:strokeColor="#E0E0E0"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
+        android:minHeight="56dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_search"
+            app:tint="@color/deep_saffron"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="Search" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/global_search_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="28dp"
+            android:hint="@string/search_global_hint"
+            android:textSize="16sp"
+            android:textColorHint="#8A8A8A"
+            android:textColor="@color/text_primary"
+            android:background="@android:color/transparent"
+            android:inputType="text|textAutoComplete|textAutoCorrect"
+            android:imeOptions="actionSearch"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textCursorDrawable="@null"
+            android:gravity="center_vertical" />
+
+        <ImageView
+            android:id="@+id/global_clear_search"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:tint="#8A8A8A"
+            android:layout_marginStart="10dp"
+            android:visibility="gone"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Clear" />
+
+        <ImageView
+            android:id="@+id/global_mic_button"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="12dp"
+            android:src="@android:drawable/ic_btn_speak_now"
+            app:tint="@color/deep_saffron"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Voice search" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -4,9 +4,18 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-    <!-- House: roof + body -->
+    <!-- Home icon – blue outline (#1976D2) as per provided SVG -->
     <path
-        android:fillColor="#000000"
-        android:pathData="M10,20v-6h4v6h5v-8h3L12,3 2,12h3v8z" />
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#1976D2"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M4,10L12,4L20,10" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#1976D2"
+        android:strokeWidth="2"
+        android:strokeLineJoin="round"
+        android:pathData="M6,10h12v10H6z" />
 </vector>
 

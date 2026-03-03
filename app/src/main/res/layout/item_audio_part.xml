@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/audio_part_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="0dp"
+    android:layout_marginEnd="0dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:strokeWidth="0dp"
+    app:strokeColor="@color/bhagva"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- Left orange accent (visible when currently playing) -->
+        <View
+            android:id="@+id/audio_part_left_accent"
+            android:layout_width="4dp"
+            android:layout_height="match_parent"
+            android:minHeight="48dp"
+            android:background="@color/bhagva"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp">
+
+            <!-- Play icon when playing, else part number -->
+            <ImageView
+                android:id="@+id/audio_part_playing_indicator"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_media_play"
+                app:tint="@color/bhagva"
+                android:visibility="gone"
+                android:contentDescription="Playing" />
+
+            <TextView
+                android:id="@+id/audio_part_number"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@color/bhagva"
+                android:background="@drawable/year_badge" />
+
+            <TextView
+                android:id="@+id/audio_part_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="10dp"
+                android:textSize="15sp"
+                android:textColor="?attr/text_primary"
+                android:lineSpacingExtra="2dp"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/audio_part_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textColor="#757575"
+                android:textStyle="bold"
+                android:minWidth="44dp"
+                android:gravity="end" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

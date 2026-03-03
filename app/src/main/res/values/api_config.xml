@@ -14,5 +14,6 @@
     Note: Keep this key secure. For production, use environment variables or secure storage.
     -->
     <string name="google_cloud_tts_api_key">YOUR_GOOGLE_CLOUD_API_KEY_HERE</string>
+
 </resources>
 
