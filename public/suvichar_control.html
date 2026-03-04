@@ -53,22 +53,10 @@
     .link-box { margin-top: 14px; padding: 10px; background: #f8f8f8; border-radius: 8px; }
     .link-box a { word-break: break-all; color: #1565c0; font-size: 0.8rem; }
 
-    .pin-screen { max-width: 320px; margin: 60px auto; padding: 24px; background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
-    .pin-screen h2 { font-size: 1.1rem; color: #5d4e37; margin-bottom: 16px; }
-    .pin-screen input { width: 100%; padding: 14px; font-size: 1.2rem; text-align: center; letter-spacing: 8px; border: 2px solid #ddd; border-radius: 10px; }
-    .pin-screen button { margin-top: 16px; padding: 12px 24px; background: #E85D04; color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; }
-    .pin-screen .pin-err { color: #c62828; font-size: 0.9rem; margin-top: 10px; display: none; }
-    #mainContent { display: none; }
+    /* PIN screen removed: main content always visible now */
   </style>
 </head>
 <body>
-  <div id="pinScreen" class="pin-screen">
-    <h2>પહેલા PIN લગાવો</h2>
-    <input type="password" id="pinInput" placeholder="PIN" maxlength="6" inputmode="numeric" autocomplete="off" />
-    <button type="button" id="pinBtn">ખોલો</button>
-    <div id="pinErr" class="pin-err">ગલત PIN.</div>
-  </div>
-
   <div id="mainContent">
   <a href="../index.html" class="back">← મુખ્ય પેજ પર પાછા</a>
 
@@ -124,38 +112,6 @@
   </div>
   </div>
 
-  <script>
-    var PIN = '444444';
-    var PIN_KEY = 'suvichar_pin_ok';
-    function checkPin() {
-      try { return sessionStorage.getItem(PIN_KEY) === '1'; } catch (e) { return false; }
-    }
-    function setPinOk() {
-      try { sessionStorage.setItem(PIN_KEY, '1'); } catch (e) {}
-    }
-    function showMain() {
-      document.getElementById('pinScreen').style.display = 'none';
-      document.getElementById('mainContent').style.display = 'block';
-    }
-    if (checkPin()) {
-      document.getElementById('pinScreen').style.display = 'none';
-      document.getElementById('mainContent').style.display = 'block';
-    } else {
-      document.getElementById('pinBtn').onclick = function() {
-        var v = document.getElementById('pinInput').value.trim();
-        if (v === PIN) {
-          setPinOk();
-          showMain();
-        } else {
-          document.getElementById('pinErr').style.display = 'block';
-        }
-      };
-      document.getElementById('pinInput').onkeydown = function(e) {
-        if (e.key === 'Enter') document.getElementById('pinBtn').click();
-      };
-    }
-
-  </script>
   <script>
     var CONFIG_URL = 'https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/suvichar_config.json';
     var REPO = 'daveashish12356-dotcom/swamisachidanand-audio';
