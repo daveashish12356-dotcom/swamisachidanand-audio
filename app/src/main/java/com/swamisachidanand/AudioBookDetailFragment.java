@@ -536,9 +536,14 @@ public class AudioBookDetailFragment extends Fragment implements AudioPartsAdapt
         Toast.makeText(requireContext(), R.string.audio_loading, Toast.LENGTH_SHORT).show();
 
         if (player == null) {
+            java.util.Map<String, String> headers = new java.util.HashMap<>();
+            headers.put("Accept", "application/octet-stream,*/*");
             DefaultHttpDataSource.Factory httpFactory = new DefaultHttpDataSource.Factory()
-                    .setUserAgent("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
-                    .setAllowCrossProtocolRedirects(true);
+                    .setUserAgent("Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
+                    .setAllowCrossProtocolRedirects(true)
+                    .setConnectTimeoutMs(30_000)
+                    .setReadTimeoutMs(90_000)
+                    .setDefaultRequestProperties(headers);
             DefaultDataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(requireContext(), httpFactory);
             DefaultMediaSourceFactory mediaSourceFactory = new DefaultMediaSourceFactory(requireContext()).setDataSourceFactory(dataSourceFactory);
             player = new ExoPlayer.Builder(requireContext()).setMediaSourceFactory(mediaSourceFactory).build();

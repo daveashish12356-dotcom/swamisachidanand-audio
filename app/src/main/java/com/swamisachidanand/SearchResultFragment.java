@@ -199,24 +199,35 @@ public class SearchResultFragment extends Fragment implements BookAdapter.OnBook
             String url = base + "audio_list.json";
             List<ServerAudioBook> loaded = null;
             try {
-                okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
-                okhttp3.Request request = new okhttp3.Request.Builder().url(url).build();
+                okhttp3.OkHttpClient client = new okhttp3.OkHttpClient.Builder()
+                        .connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
+                        .readTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
+                        .build();
+                okhttp3.Request request = new okhttp3.Request.Builder()
+                        .url(url)
+                        .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
+                        .addHeader("Accept", "application/json")
+                        .build();
                 try (okhttp3.Response resp = client.newCall(request).execute()) {
                     if (resp.isSuccessful() && resp.body() != null) {
-                        loaded = ServerAudioParser.parseBooks(resp.body().string());
+                        String body = resp.body().string();
+                        if (body != null && body.trim().startsWith("{"))
+                            loaded = ServerAudioParser.parseBooks(body);
                     }
                 }
             } catch (Throwable ignored) {}
             if (loaded == null || loaded.isEmpty()) {
-                try (BufferedReader r = new BufferedReader(
-                        new InputStreamReader(act.getAssets().open("audio_list_main.json"), StandardCharsets.UTF_8))) {
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = r.readLine()) != null) sb.append(line);
-                    loaded = ServerAudioParser.parseBooks(sb.toString());
-                } catch (Throwable ignored) {
-                    loaded = ServerAudioParser.demoBooks();
+                for (String assetName : new String[]{"audio_list_main.json", "audio_list_fallback.json"}) {
+                    try (BufferedReader r = new BufferedReader(
+                            new InputStreamReader(act.getAssets().open(assetName), StandardCharsets.UTF_8))) {
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        while ((line = r.readLine()) != null) sb.append(line);
+                        loaded = ServerAudioParser.parseBooks(sb.toString());
+                        if (loaded != null && !loaded.isEmpty()) break;
+                    } catch (Throwable ignored) { }
                 }
+                if (loaded == null) loaded = ServerAudioParser.demoBooks();
             }
             return loaded != null ? loaded : new ArrayList<>();
         } catch (Throwable t) {

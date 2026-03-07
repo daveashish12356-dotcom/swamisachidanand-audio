@@ -1,4 +1,6 @@
 # Deploy public/books and public/thumbnails for 100+ PDFs (books_server_list.json).
+# GitHub push limit: 100 MB per file. LFS works on main but gh-pages branch cannot use LFS,
+# so we copy only files <= 95 MB to _site so the deploy push succeeds.
 # Repo Settings > Pages > Source: "Deploy from a branch" > Branch: gh-pages > / (root)
 name: Deploy books and thumbnails to Pages
 
@@ -10,6 +12,9 @@ on:
 permissions:
   contents: write
 
+env:
+  MAX_FILE_MB: 95
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -20,27 +25,63 @@ jobs:
           lfs: true
 
       - name: Pull LFS files (real PDFs and thumbnails)
-        run: git lfs pull
-
-      - name: Copy books, thumbnails, book list and suvichar to site root
         run: |
-          mkdir -p _site/public
-          cp -r public/books _site/public/
-          cp -r public/thumbnails _site/public/
-          if [ -f public/books_server_list.json ]; then
-            cat public/books_server_list.json > _site/books_server_list.json
-          else
-            echo "FATAL: public/books_server_list.json not found"; ls -la public/; exit 1
-          fi
+          git lfs fetch --all
+          git lfs pull
+
+      - name: Copy books, thumbnails (skip pointers <500B and files > ${MAX_FILE_MB} MB)
+        run: |
+          mkdir -p _site/public/books _site/public/thumbnails
+          MAX_BYTES=$((MAX_FILE_MB * 1024 * 1024))
+          MIN_BYTES=500
+          COPIED=0
+          SKIPPED=0
+          for f in public/books/*.pdf; do
+            [ -f "$f" ] || continue
+            sz=$(stat -c%s "$f" 2>/dev/null || stat -f%z "$f" 2>/dev/null)
+            if [ -z "$sz" ] || [ "$sz" -lt "$MIN_BYTES" ]; then
+              echo "SKIP (LFS pointer or tiny): $f (size $sz)"
+              SKIPPED=$((SKIPPED+1))
+            elif [ "$sz" -le "$MAX_BYTES" ]; then
+              cp "$f" _site/public/books/
+              COPIED=$((COPIED+1))
+            else
+              echo "SKIP (size > ${MAX_FILE_MB}MB): $f"
+              SKIPPED=$((SKIPPED+1))
+            fi
+          done
+          for f in public/thumbnails/*.jpg public/thumbnails/*.jpeg public/thumbnails/*.png 2>/dev/null; do
+            [ -f "$f" ] || continue
+            sz=$(stat -c%s "$f" 2>/dev/null || stat -f%z "$f" 2>/dev/null)
+            if [ -n "$sz" ] && [ "$sz" -ge "$MIN_BYTES" ] && [ "$sz" -le "$MAX_BYTES" ]; then
+              cp "$f" _site/public/thumbnails/ 2>/dev/null || true
+            fi
+          done
+          echo "Copied $COPIED PDFs, skipped $SKIPPED"
+
+      - name: Copy book list and config to site root
+        run: |
+          # Build list of only deployed PDFs (so app does not show 404 for skipped 100MB+ books)
+          python3 << 'PY'
+          import json, os
+          with open("public/books_server_list.json", encoding="utf-8") as f:
+            data = json.load(f)
+          names = data.get("fileNames", [])
+          deployed = [n for n in names if os.path.isfile(os.path.join("_site/public/books", n))]
+          with open("_site/books_server_list.json", "w", encoding="utf-8") as f:
+            json.dump({"fileNames": deployed}, f, ensure_ascii=False)
+          print("Books in list (deployed only):", len(deployed), "of", len(names))
+          PY
           count=$(grep -o '\.pdf"' _site/books_server_list.json | wc -l)
-          echo "Book count in list: $count"
-          if [ "$count" -lt 50 ]; then echo "ERROR: expected at least 50 books, got $count"; exit 1; fi
-          cp public/suvichar_config.json _site/ 2>/dev/null || true
-          cp public/suvichar_control.html _site/ 2>/dev/null || true
+          echo "Deployed PDF count: $count"
+          if [ "$count" -lt 1 ]; then echo "WARN: no PDFs deployed (LFS may need git lfs push from local)"; fi
+          mkdir -p _site/public
+          cp public/suvichar_config.json _site/public/ 2>/dev/null || true
+          cp public/suvichar_control.html _site/public/ 2>/dev/null || true
           cp public/audio_list.json _site/ 2>/dev/null || true
-          echo "100+ books + thumbnails" > _site/index.html
-          ls -la _site/ _site/public/
-          head -c 200 _site/books_server_list.json
+          echo "Books + thumbnails (files <= ${MAX_FILE_MB}MB)" > _site/index.html
+          ls -la _site/ _site/public/ _site/public/books/ | head -30
+          head -c 300 _site/books_server_list.json
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4

@@ -54,13 +54,26 @@ public final class ServerBookLoader {
             if (!baseUrl.isEmpty()) {
                 try {
                     OkHttpClient client = new OkHttpClient.Builder()
-                            .connectTimeout(5, java.util.concurrent.TimeUnit.SECONDS)
-                            .readTimeout(5, java.util.concurrent.TimeUnit.SECONDS)
+                            .connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
+                            .readTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
                             .build();
-                    Request request = new Request.Builder().url(baseUrl + "books_server_list.json").build();
+                    Request request = new Request.Builder()
+                            .url(baseUrl + "books_server_list.json")
+                            .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
+                            .addHeader("Accept", "application/json")
+                            .build();
                     Response response = client.newCall(request).execute();
                     if (response.isSuccessful() && response.body() != null) {
                         jsonStr = response.body().string();
+                        // GitHub Pages can return HTML (e.g. 404/403 page); only treat as JSON if it looks like JSON
+                        if (jsonStr != null && !jsonStr.trim().startsWith("{")) {
+                            android.util.Log.w("ServerBookLoader", "Server response not JSON (got " + (jsonStr.length() > 50 ? jsonStr.substring(0, 50) + "..." : jsonStr) + "), using assets");
+                            jsonStr = null;
+                        } else if (jsonStr != null && !jsonStr.isEmpty()) {
+                            android.util.Log.i("ServerBookLoader", "books_server_list.json loaded from server OK");
+                        }
+                    } else {
+                        android.util.Log.w("ServerBookLoader", "Server response not successful: " + (response != null ? response.code() : "null"));
                     }
                 } catch (Exception e) {
                     android.util.Log.w("ServerBookLoader", "Server books_server_list.json load failed, falling back to assets: " + e.getMessage());
@@ -68,6 +81,7 @@ public final class ServerBookLoader {
             }
 
             // 2) Fallback: bundled assets/books_server_list.json (same format), so offline/old APK still works.
+            boolean fromServer = (jsonStr != null && !jsonStr.isEmpty());
             if (jsonStr == null || jsonStr.isEmpty()) {
                 StringBuilder sb = new StringBuilder();
                 try (BufferedReader r = new BufferedReader(
@@ -77,8 +91,28 @@ public final class ServerBookLoader {
                 }
                 jsonStr = sb.toString();
             }
+            if (jsonStr == null) jsonStr = "";
             if (jsonStr.startsWith("\uFEFF")) jsonStr = jsonStr.substring(1);
-            JSONObject root = new JSONObject(jsonStr);
+            JSONObject root;
+            try {
+                root = new JSONObject(jsonStr);
+            } catch (Exception parseEx) {
+                android.util.Log.w("ServerBookLoader", "Parse failed, retrying from assets: " + parseEx.getMessage());
+                if (fromServer) {
+                    try (BufferedReader r = new BufferedReader(
+                            new InputStreamReader(context.getAssets().open("books_server_list.json"), StandardCharsets.UTF_8))) {
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        while ((line = r.readLine()) != null) sb.append(line);
+                        jsonStr = sb.toString();
+                        if (jsonStr.startsWith("\uFEFF")) jsonStr = jsonStr.substring(1);
+                        root = new JSONObject(jsonStr);
+                    } catch (Exception e2) {
+                        android.util.Log.e("ServerBookLoader", "Assets fallback failed: " + e2.getMessage());
+                        return list;
+                    }
+                } else return list;
+            }
             JSONArray arr = root.optJSONArray("fileNames");
             if (arr == null) return list;
             for (int i = 0; i < arr.length(); i++) {
@@ -97,6 +131,39 @@ public final class ServerBookLoader {
                 if (year != null) book.setPublishYear(year);
                 book.setCategory(detectCategory(displayName));
                 list.add(book);
+            }
+            if (fromServer && list.isEmpty()) {
+                android.util.Log.w("ServerBookLoader", "Server returned empty list, using assets");
+                try (BufferedReader r = new BufferedReader(
+                        new InputStreamReader(context.getAssets().open("books_server_list.json"), StandardCharsets.UTF_8))) {
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = r.readLine()) != null) sb.append(line);
+                    jsonStr = sb.toString();
+                    if (jsonStr.startsWith("\uFEFF")) jsonStr = jsonStr.substring(1);
+                    root = new JSONObject(jsonStr);
+                    arr = root.optJSONArray("fileNames");
+                    if (arr != null) {
+                        list.clear();
+                        for (int i = 0; i < arr.length(); i++) {
+                            String fileName = arr.optString(i, "").trim();
+                            if (fileName.isEmpty() || !fileName.toLowerCase(Locale.ROOT).endsWith(".pdf")) continue;
+                            String displayName = fileName.replace(".pdf", "").replace(".PDF", "");
+                            String thumbName = fileName.replace(".pdf", ".jpg").replace(".PDF", ".jpg");
+                            String encodedPdf = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name()).replace("+", "%20");
+                            String encodedThumb = URLEncoder.encode(thumbName, StandardCharsets.UTF_8.name()).replace("+", "%20");
+                            Book book = new Book(displayName, fileName, 0);
+                            book.setPdfUrl(booksBase + encodedPdf);
+                            book.setThumbnailUrl(thumbBase + encodedThumb);
+                            String year = PdfYearExtractor.extractYearSimple(fileName);
+                            if (year != null) book.setPublishYear(year);
+                            book.setCategory(detectCategory(displayName));
+                            list.add(book);
+                        }
+                    }
+                } catch (Exception e) {
+                    android.util.Log.e("ServerBookLoader", "Assets fallback for empty server list failed", e);
+                }
             }
             android.util.Log.d("ServerBookLoader", "loaded " + list.size() + " books, baseUrl=" + baseUrl);
             if (!list.isEmpty()) {
@@ -132,6 +199,7 @@ public final class ServerBookLoader {
                     URL url = new URL(thumbUrl);
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("HEAD");
+                    conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36");
                     conn.setConnectTimeout(8000);
                     conn.setReadTimeout(8000);
                     conn.connect();

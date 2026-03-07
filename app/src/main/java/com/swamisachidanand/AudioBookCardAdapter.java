@@ -124,7 +124,7 @@ public class AudioBookCardAdapter extends RecyclerView.Adapter<AudioBookCardAdap
             if (base != null) {
                 base = base.trim();
                 if (!base.isEmpty() && !base.endsWith("/")) base += "/";
-                thumbUrl = base + "thumbnails/" + book.getId() + ".jpg";
+                thumbUrl = base + "public/thumbnails/" + book.getId() + ".jpg";
             }
         }
 

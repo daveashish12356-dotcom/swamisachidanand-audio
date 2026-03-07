@@ -144,7 +144,7 @@ public class HomeHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (base != null) {
                 base = base.trim();
                 if (!base.isEmpty() && !base.endsWith("/")) base += "/";
-                thumbUrl = base + "thumbnails/" + book.getId() + ".jpg";
+                thumbUrl = base + "public/thumbnails/" + book.getId() + ".jpg";
             }
         }
         if (thumbUrl != null && !thumbUrl.isEmpty()) {

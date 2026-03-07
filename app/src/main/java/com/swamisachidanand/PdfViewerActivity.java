@@ -499,7 +499,11 @@ public class PdfViewerActivity extends AppCompatActivity {
                         .connectTimeout(30, TimeUnit.SECONDS)
                         .readTimeout(60, TimeUnit.SECONDS)
                         .build();
-                Request request = new Request.Builder().url(url).build();
+                Request request = new Request.Builder()
+                        .url(url)
+                        .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
+                        .addHeader("Accept", "application/pdf,*/*")
+                        .build();
                 try (Response response = client.newCall(request).execute()) {
                     if (!response.isSuccessful() || response.body() == null) {
                         runOnUiThread(() -> {
@@ -520,6 +524,27 @@ public class PdfViewerActivity extends AppCompatActivity {
                         byte[] buf = new byte[65536];
                         int n;
                         while ((n = in.read(buf)) != -1) out.write(buf, 0, n);
+                    }
+                    // Validate: real PDF starts with %PDF-
+                    byte[] header = new byte[5];
+                    try (java.io.FileInputStream fis = new java.io.FileInputStream(pdfFile)) {
+                        if (fis.read(header) != 5 || header[0] != 0x25 || header[1] != 0x50
+                                || header[2] != 0x44 || header[3] != 0x46 || header[4] != 0x2D) {
+                            long len = pdfFile.length();
+                            byte[] sample = new byte[Math.min(200, (int) len)];
+                            try (java.io.FileInputStream f2 = new java.io.FileInputStream(pdfFile)) {
+                                f2.read(sample);
+                            }
+                            Log.w(TAG, "PDF invalid: url=" + url + " size=" + len + " head=" + new String(sample, 0, Math.min(80, sample.length), StandardCharsets.UTF_8).replaceAll("[\\x00-\\x1f]", "."));
+                            pdfFile.delete();
+                            pdfFile = null;
+                            runOnUiThread(() -> {
+                                hideLoadingOverlay();
+                                Toast.makeText(this, "સર્વર પર ફાઇલ ગલત છે. પછી ફરી ચકાસો.", Toast.LENGTH_LONG).show();
+                                finish();
+                            });
+                            return;
+                        }
                     }
                     runOnUiThread(() -> {
                         if (isFinishing() || isDestroyed()) return;

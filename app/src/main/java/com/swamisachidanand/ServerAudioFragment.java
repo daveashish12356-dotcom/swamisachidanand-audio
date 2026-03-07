@@ -215,12 +215,21 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
 
                     // Pehle server se full list (20+ books) lane ki koshish
                     try {
-                        OkHttpClient client = new OkHttpClient();
-                        Request request = new Request.Builder().url(url).build();
+                        OkHttpClient client = new OkHttpClient.Builder()
+                                .connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
+                                .readTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
+                                .build();
+                        Request request = new Request.Builder()
+                                .url(url)
+                                .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
+                                .addHeader("Accept", "application/json")
+                                .build();
                         Response response = client.newCall(request).execute();
                         if (response.isSuccessful() && response.body() != null) {
                             String body = response.body().string();
-                            loaded = ServerAudioParser.parseBooks(body);
+                            if (body != null && body.trim().startsWith("{")) {
+                                loaded = ServerAudioParser.parseBooks(body);
+                            }
                         }
                     } catch (Throwable ignored) {
                         // Network fail – niche fallback use hoga
@@ -228,16 +237,17 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
 
                     // Agar network se kuch na mila to assets se (agar app me copy ho)
                     if (loaded == null || loaded.isEmpty()) {
-                        try (BufferedReader r = new BufferedReader(
-                                new InputStreamReader(act.getAssets().open("audio_list_main.json"), StandardCharsets.UTF_8))) {
-                            StringBuilder sb = new StringBuilder();
-                            String line;
-                            while ((line = r.readLine()) != null) sb.append(line);
-                            loaded = ServerAudioParser.parseBooks(sb.toString());
-                        } catch (Throwable ignored) {
-                            // Fallback: hardcoded small list so page kabhi blank na ho
-                            loaded = ServerAudioParser.demoBooks();
+                        for (String assetName : new String[]{"audio_list_main.json", "audio_list_fallback.json"}) {
+                            try (BufferedReader r = new BufferedReader(
+                                    new InputStreamReader(act.getAssets().open(assetName), StandardCharsets.UTF_8))) {
+                                StringBuilder sb = new StringBuilder();
+                                String line;
+                                while ((line = r.readLine()) != null) sb.append(line);
+                                loaded = ServerAudioParser.parseBooks(sb.toString());
+                                if (loaded != null && !loaded.isEmpty()) break;
+                            } catch (Throwable ignored) { }
                         }
+                        if (loaded == null || loaded.isEmpty()) loaded = ServerAudioParser.demoBooks();
                     }
 
                     // Yahan par books page (PDF list) se thumbnail link karo + Africa book synthesize karo agar server list se missing ho.
@@ -294,7 +304,7 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
                                     String pdfName = "આફ્રિકા-પ્રવાસનાં સંસ્મરણો.pdf";
                                     String thumbName = pdfName.replace(".pdf", ".jpg");
                                     String encodedThumb = URLEncoder.encode(thumbName, StandardCharsets.UTF_8.name()).replace("+", "%20");
-                                    africaThumb = base + "thumbnails/" + encodedThumb;
+                                    africaThumb = base + "public/thumbnails/" + encodedThumb;
                                 } catch (Exception ignored3) {
                                 }
                                 if (loaded == null) loaded = new ArrayList<>();
@@ -321,7 +331,7 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
                                             String pdfName = "આફ્રિકા-પ્રવાસનાં સંસ્મરણો.pdf";
                                             String thumbName = pdfName.replace(".pdf", ".jpg");
                                             String encodedThumb = URLEncoder.encode(thumbName, StandardCharsets.UTF_8.name()).replace("+", "%20");
-                                            fromBooks = base + "thumbnails/" + encodedThumb;
+                                            fromBooks = base + "public/thumbnails/" + encodedThumb;
                                         } catch (Exception ignored4) {
                                         }
                                     }
