@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>સુવિચાર કંટ્રોલ</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; max-width: 540px; margin: 24px auto; padding: 20px; background: linear-gradient(#f8f4ee, #efe8dc); color: #333; min-height: 100vh; }
+    .back { display: inline-block; margin-bottom: 16px; color: #E85D04; text-decoration: none; font-size: 0.9rem; }
+    .back:hover { text-decoration: underline; }
+    h1 { font-size: 1.35rem; color: #8B4513; text-align: center; margin-bottom: 6px; }
+    .sub { text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 20px; }
+
+    .status-box { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); text-align: center; border: 2px solid #eee; }
+    .status-label { font-size: 0.85rem; color: #666; margin-bottom: 6px; }
+    .status-value { font-size: 1.4rem; font-weight: bold; }
+    .status-value.on { color: #2e7d32; }
+    .status-value.off { color: #c62828; }
+    .status-value.loading { color: #888; font-size: 1rem; }
+
+    .quick-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    button.quick { padding: 14px 24px; border-radius: 10px; font-size: 1rem; font-weight: bold; border: none; cursor: pointer; }
+    button.quick-on { background: #2e7d32; color: #fff; }
+    button.quick-on:hover { background: #1b5e20; }
+    button.quick-off { background: #c62828; color: #fff; }
+    button.quick-off:hover { background: #b71c1c; }
+
+    .edit-box { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    .edit-box h3 { font-size: 1rem; color: #5d4e37; margin: 0 0 8px 0; }
+    .edit-box p { font-size: 0.82rem; color: #666; margin: 0 0 10px 0; line-height: 1.4; }
+    textarea { width: 100%; min-height: 200px; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-family: monospace; font-size: 13px; resize: vertical; display: block; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    button { padding: 12px 20px; border-radius: 10px; font-size: 1rem; font-weight: bold; border: none; cursor: pointer; }
+    button.primary { background: #2e7d32; color: #fff; }
+    button.primary:hover { background: #1b5e20; }
+    button.secondary { background: #f0f0f0; color: #333; }
+    button.secondary:hover { background: #e0e0e0; }
+    .msg { margin-top: 10px; font-size: 0.9rem; padding: 8px; border-radius: 6px; display: none; }
+    .msg.ok { background: #e8f5e9; color: #1b5e20; display: block; }
+    .msg.err { background: #ffebee; color: #c62828; display: block; }
+    .token-row { margin-top: 14px; }
+    .token-row label { font-size: 0.85rem; color: #555; display: block; margin-bottom: 4px; }
+    .token-row input { width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; }
+    .token-saved { margin-top: 12px; padding: 10px 12px; background: #e8f5e9; color: #1b5e20; border-radius: 8px; font-size: 0.9rem; }
+    .token-saved a { color: #1565c0; font-size: 0.85rem; }
+    .token-link { display: inline-block; margin-top: 8px; padding: 8px 14px; background: #f5f5f5; color: #333; border-radius: 8px; text-decoration: none; font-size: 0.9rem; }
+    .token-link:hover { background: #eee; }
+
+    .note { background: #fff; border-radius: 12px; padding: 16px; font-size: 0.88rem; color: #555; line-height: 1.6; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-top: 20px; }
+    .note strong { color: #333; }
+    .note code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.85em; }
+    .link-box { margin-top: 14px; padding: 10px; background: #f8f8f8; border-radius: 8px; }
+    .link-box a { word-break: break-all; color: #1565c0; font-size: 0.8rem; }
+
+    /* PIN screen removed: main content always visible now */
+  </style>
+</head>
+<body>
+  <div id="mainContent">
+  <a href="../index.html" class="back">← મુખ્ય પેજ પર પાછા</a>
+
+  <h1>ભાર્ગવ સુવિચાર – કંટ્રોલ</h1>
+  <p class="sub">ફક્ત આ કરો: પેસ્ટ કરો → ઉમેરો → સેવ કરો. બાકી ઓટો. (Token એક વાર લગાવો, પછી ફરી નહીં.)</p>
+
+  <div class="status-box">
+    <div class="status-label">હાલની સ્થિતિ (એપમાં શું દેખાશે)</div>
+    <div id="status" class="status-value loading">ચેક થાય છે...</div>
+    <div class="quick-btns" style="margin-top:14px;">
+      <button type="button" class="quick quick-on" id="btnOn">સુવિચાર ON</button>
+      <button type="button" class="quick quick-off" id="btnOff">સુવિચાર OFF</button>
+    </div>
+  </div>
+
+  <div class="edit-box">
+    <h3>૧. અહીં પેસ્ટ કરો — જે લખ્યું એમ જ (ટાઇટલ, વાક્ય, 📚 સ્રોત)</h3>
+    <p>શ્રી જે લખે છે એ સંપૂર્ણ કોપી કરી અહીં પેસ્ટ કરો. 📚 વાળી લાઇન ઓટોમેટિક સ્રોત બનશે. પછી «ઉમેરો» દબાવો.</p>
+    <textarea id="pasteArea" placeholder="અહીં પેસ્ટ કરો... (કોઈ ફોર્મેટ જોઈએ નહીં, જેમ છે તેમ)" style="min-height:160px;"></textarea>
+    <div class="btn-row">
+      <button type="button" class="primary" id="btnAddPaste">ઉમેરો</button>
+    </div>
+    <div id="pasteMsg" class="msg" style="margin-top:8px;"></div>
+  </div>
+
+  <div class="edit-box">
+    <h3>૨. સેવ કરો</h3>
+    <p><strong>ટિપ:</strong> ફક્ત સુવિચાર ટેક્સ્ટ અહીં પેસ્ટ કરી «સેવ કરો» દબાવો — ઓટો લગાવશે. <br><small>પુરાનો સુવિચાર દેખાય તો <b>Ctrl+Shift+R</b> દબાવી પેજ ફરી લોડ કરો.</small></p>
+    <textarea id="jsonText" style="min-height:120px;" placeholder="અહીં સુવિચાર પેસ્ટ કરો અથવા JSON જુઓ" title="પેસ્ટ અથવા JSON"></textarea>
+    <div class="btn-row">
+      <button type="button" class="primary" id="btnSave">સેવ કરો</button>
+      <button type="button" class="secondary" id="btnCopy">કોપી કરો</button>
+    </div>
+    <div id="tokenSection">
+      <div id="tokenRow" class="token-row">
+        <label for="token">GitHub token (ફક્ત અહીં બોક્સ માં પેસ્ટ કરો — વેબસાઇટ/કોડ માં કદી લગાવશો નહીં)</label>
+        <a href="https://github.com/settings/tokens/new?scopes=repo&description=Suvichar+control" target="_blank" rel="noopener" class="token-link">GitHub પર token બનાવો (એક ક્લિક)</a>
+        <input type="password" id="token" placeholder="Token અહીં પેસ્ટ કરો → પછી સેવ કરો દબાવો" autocomplete="off" style="margin-top:8px;" />
+      </div>
+      <div id="tokenSaved" class="token-saved" style="display:none;">Token લગાવાઈ ગયું. ફરીથી કંઈ લગાવવું પડશે નહીં — ફક્ત ON/OFF બદલો અને «સેવ કરો» દબાવો.</div>
+    </div>
+    <div id="msg" class="msg"></div>
+  </div>
+
+  <div class="note">
+    <strong>પેસ્ટ ફક્ત એટલું:</strong> કોઈ પણ જગ્યાથી સુવિચાર કોપી કરી અહીં (ઉપરના પેસ્ટ બોક્સ અથવા નીચેના બોક્સ) પેસ્ટ કરો → «સેવ કરો» દબાવો. બાકી ઓટો.<br>
+    <strong>જો "અમાન્ય JSON" દેખાય:</strong> પેજ પુરાનો લોડ થયો છે. <b>Ctrl+Shift+R</b> (કે Mac પર Cmd+Shift+R) દબાવી પેજ ફરી લોડ કરો.<br><br>
+    <strong>સુરક્ષા:</strong> Token ક્યારેય વેબસાઇટ/કોડ માં લગાવશો નહીં — ફક્ત અહીં બોક્સ માં પેસ્ટ કરો.<br>
+    <strong>એપ:</strong> સેવ પછી એપમાં વિડિઓ ટેબ ખોલો/રિફ્રેશ કરો.
+    <div class="link-box">
+      <a href="https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/suvichar_config.json" target="_blank" rel="noopener">Config લિંક</a>
+    </div>
+  </div>
+  </div>
+
+  <script>
+    var CONFIG_URL = 'https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/suvichar_config.json';
+    var REPO = 'daveashish12356-dotcom/swamisachidanand-audio';
+    var FILE_PATH = 'public/suvichar_config.json';
+    var TOKEN_KEY = 'suvichar_gh_token';
+
+    var defaultJson = {"suvicharEnabled":true,"suvichar":[{"text":"ભાવનામાં જ પરમાત્મા વસે છે.","author":"સ્વામી શ્રીસચ્ચિદાનંદજી"},{"text":"સત્ય અને પ્રેમથી જીવન સાર્થક થાય છે.","author":"સ્વામી શ્રીસચ્ચિદાનંદજી"}]};
+
+    function getToken() {
+      var t = document.getElementById('token').value.trim();
+      if (t) return t;
+      try { return localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { return ''; }
+    }
+    function setToken(t) {
+      try { if (t) localStorage.setItem(TOKEN_KEY, t); } catch (e) {}
+    }
+    function showMsg(text, isErr) {
+      var m = document.getElementById('msg');
+      m.textContent = text;
+      m.className = 'msg ' + (isErr ? 'err' : 'ok');
+    }
+    function setJsonInBox(obj) {
+      document.getElementById('jsonText').value = JSON.stringify(obj, null, 2);
+    }
+    function getJsonFromBox() {
+      var raw = document.getElementById('jsonText').value.trim();
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch (e) { return null; }
+    }
+    function showPasteMsg(text, isErr) {
+      var m = document.getElementById('pasteMsg');
+      m.textContent = text;
+      m.className = 'msg ' + (isErr ? 'err' : 'ok');
+    }
+
+    document.getElementById('btnAddPaste').onclick = function() {
+      var pasted = document.getElementById('pasteArea').value.trim();
+      if (!pasted) {
+        showPasteMsg('કંઈ પેસ્ટ નથી. પહેલા સુવિચાર પેસ્ટ કરો.', true);
+        return;
+      }
+      var lines = pasted.split(/\r?\n/);
+      var idx = -1;
+      for (var i = 0; i < lines.length; i++) {
+        if (lines[i].indexOf('📚') !== -1) { idx = i; break; }
+      }
+      var text, author;
+      if (idx >= 0) {
+        text = lines.slice(0, idx).join('\n').trim();
+        author = lines.slice(idx).join(' ').replace(/\s+/g, ' ').trim();
+      } else {
+        text = pasted;
+        author = 'સ્વામી શ્રીસચ્ચિદાનંદજી';
+      }
+      var json = getJsonFromBox();
+      if (!json) json = { suvicharEnabled: true, suvichar: [] };
+      if (typeof json.suvicharEnabled === 'undefined') json.suvicharEnabled = true;
+      if (!Array.isArray(json.suvichar)) json.suvichar = [];
+      json.suvichar = [{ text: text, author: author }];
+      setJsonInBox(json);
+      document.getElementById('pasteArea').value = '';
+      showPasteMsg('લગાવ્યું. હવે «સેવ કરો» દબાવો — પુરાનું હટી જશે, ફક્ત આ નવું રહેશે.', false);
+    };
+
+    var ta = document.getElementById('jsonText');
+    ta.value = '';
+
+    function updateTokenUI() {
+      var saved = false;
+      try { saved = !!localStorage.getItem(TOKEN_KEY); } catch (e) {}
+      var row = document.getElementById('tokenRow');
+      var msg = document.getElementById('tokenSaved');
+      if (saved && row && msg) {
+        row.style.display = 'none';
+        msg.style.display = 'block';
+      } else if (row && msg) {
+        row.style.display = 'block';
+        msg.style.display = 'none';
+      }
+    }
+    updateTokenUI();
+
+    fetch(CONFIG_URL + '?t=' + Date.now(), { cache: 'no-store' }).then(function(r) {
+      if (!r.ok) throw new Error('Load failed');
+      return r.json();
+    }).then(function(data) {
+      var el = document.getElementById('status');
+      el.classList.remove('loading');
+      if (data.suvicharEnabled) {
+        el.textContent = 'સુવિચાર ચાલુ (ON)';
+        el.className = 'status-value on';
+      } else {
+        el.textContent = 'સુવિચાર બંધ (OFF)';
+        el.className = 'status-value off';
+      }
+      setJsonInBox(data);
+    }).catch(function() {
+      var el = document.getElementById('status');
+      el.classList.remove('loading');
+      var obj = getJsonFromBox();
+      var on = obj && obj.suvicharEnabled;
+      el.textContent = on ? 'સુવિચાર ચાલુ (ON)' : 'સુવિચાર બંધ (OFF)';
+      el.className = 'status-value ' + (on ? 'on' : 'off');
+    });
+
+    document.getElementById('btnOn').onclick = function() {
+      var obj = getJsonFromBox();
+      if (!obj) obj = { suvicharEnabled: true, suvichar: [] };
+      obj.suvicharEnabled = true;
+      if (!Array.isArray(obj.suvichar)) obj.suvichar = [];
+      setJsonInBox(obj);
+      document.getElementById('status').textContent = 'સુવિચાર ચાલુ (ON)';
+      document.getElementById('status').className = 'status-value on';
+      showMsg('ON થયું. હવે "સેવ કરો" દબાવો.', false);
+    };
+    document.getElementById('btnOff').onclick = function() {
+      var obj = getJsonFromBox();
+      if (!obj) obj = { suvicharEnabled: false, suvichar: [] };
+      obj.suvicharEnabled = false;
+      if (!Array.isArray(obj.suvichar)) obj.suvichar = [];
+      setJsonInBox(obj);
+      document.getElementById('status').textContent = 'સુવિચાર બંધ (OFF)';
+      document.getElementById('status').className = 'status-value off';
+      showMsg('OFF થયું. હવે "સેવ કરો" દબાવો.', false);
+    };
+
+    document.getElementById('btnCopy').onclick = function() {
+      ta.select();
+      document.execCommand('copy');
+      showMsg('કોપી થઈ ગયું.', false);
+      setTimeout(function() { document.getElementById('msg').className = 'msg'; document.getElementById('msg').textContent = ''; }, 2000);
+    };
+
+    function parsePastedTextAsSuvichar(raw) {
+      if (!raw || typeof raw !== 'string') return null;
+      var t = raw.trim();
+      if (t.indexOf('{') === 0) return null;
+      var lines = t.split(/\r?\n/);
+      var idx = -1;
+      for (var i = 0; i < lines.length; i++) {
+        if (lines[i].indexOf('📚') !== -1) { idx = i; break; }
+      }
+      var text, author;
+      if (idx >= 0) {
+        text = lines.slice(0, idx).join('\n').trim();
+        author = lines.slice(idx).join(' ').replace(/\s+/g, ' ').trim();
+      } else {
+        text = t;
+        author = 'સ્વામી શ્રીસચ્ચિદાનંદજી';
+      }
+      if (!text) return null;
+      return { suvicharEnabled: true, suvichar: [{ text: text, author: author }] };
+    }
+
+    document.getElementById('btnSave').onclick = function() {
+      var token = getToken();
+      if (!token) {
+        showMsg('પહેલા ઉપર GitHub token લગાવો.', true);
+        return;
+      }
+      var json = getJsonFromBox();
+      if (!json) {
+        var raw = document.getElementById('jsonText').value.trim();
+        json = parsePastedTextAsSuvichar(raw);
+        if (json) {
+          setJsonInBox(json);
+          showMsg('પેસ્ટ ટેક્સ્ટ ઓટો લગાવ્યું. સેવ થઈ રહ્યું...', false);
+        } else {
+          setJsonInBox({ suvicharEnabled: true, suvichar: [] });
+          showMsg('પહેલા સુવિચાર પેસ્ટ કરો, પછી સેવ કરો.', true);
+          return;
+        }
+      }
+      if (typeof json.suvicharEnabled === 'undefined') json.suvicharEnabled = true;
+      if (!Array.isArray(json.suvichar)) json.suvichar = [];
+      setToken(token);
+      var content = JSON.stringify(json);
+      var enc = btoa(unescape(encodeURIComponent(content)));
+
+      fetch('https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH, {
+        method: 'GET',
+        headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': 'token ' + token }
+      }).then(function(r) {
+        if (!r.ok) throw new Error('Get sha failed');
+        return r.json();
+      }).then(function(info) {
+        return fetch('https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH, {
+          method: 'PUT',
+          headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: 'Update suvichar from control page', content: enc, sha: info.sha })
+        });
+      }).then(function(r) {
+        if (!r.ok) return r.json().then(function(e) { throw new Error(e.message || 'Save failed'); });
+        showMsg('સેવ થઈ ગયું. એપમાં રિફ્રેશ કરો.', false);
+        var el = document.getElementById('status');
+        el.textContent = json.suvicharEnabled ? 'સુવિચાર ચાલુ (ON)' : 'સુવિચાર બંધ (OFF)';
+        el.className = 'status-value ' + (json.suvicharEnabled ? 'on' : 'off');
+        updateTokenUI();
+      }).catch(function(e) {
+        showMsg('ભૂલ: ' + (e.message || 'Token ચેક કરો.'), true);
+      });
+    };
+  </script>
+</body>
+</html>
