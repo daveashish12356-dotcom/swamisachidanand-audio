@@ -17,11 +17,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Copy books, thumbnails and suvichar to site root
+      - name: Copy books, thumbnails, book list and suvichar to site root
         run: |
           mkdir -p _site
           cp -r public/books _site/
           cp -r public/thumbnails _site/
+          cp public/books_server_list.json _site/ 2>/dev/null || true
           cp public/suvichar_config.json _site/ 2>/dev/null || true
           cp public/suvichar_control.html _site/ 2>/dev/null || true
           echo "56 books + 56 thumbnails" > _site/index.html
