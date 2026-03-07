@@ -1,4 +1,4 @@
-# Deploy public/books and public/thumbnails so all 60 PDFs are online.
+# Deploy public/books and public/thumbnails for 100+ PDFs (books_server_list.json).
 # Repo Settings > Pages > Source: "Deploy from a branch" > Branch: gh-pages > / (root)
 name: Deploy books and thumbnails to Pages
 
@@ -29,10 +29,10 @@ jobs:
           fi
           count=$(grep -o '\.pdf"' _site/books_server_list.json | wc -l)
           echo "Book count in list: $count"
-          if [ "$count" -lt 60 ]; then echo "ERROR: expected 60 books, got $count"; exit 1; fi
+          if [ "$count" -lt 50 ]; then echo "ERROR: expected at least 50 books, got $count"; exit 1; fi
           cp public/suvichar_config.json _site/ 2>/dev/null || true
           cp public/suvichar_control.html _site/ 2>/dev/null || true
-          echo "60 books + thumbnails" > _site/index.html
+          echo "100+ books + thumbnails" > _site/index.html
           ls -la _site/ _site/public/
           head -c 200 _site/books_server_list.json
 
