@@ -16,6 +16,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Pull LFS files (real PDFs and thumbnails)
+        run: git lfs pull
 
       - name: Copy books, thumbnails, book list and suvichar to site root
         run: |
@@ -32,6 +37,7 @@ jobs:
           if [ "$count" -lt 50 ]; then echo "ERROR: expected at least 50 books, got $count"; exit 1; fi
           cp public/suvichar_config.json _site/ 2>/dev/null || true
           cp public/suvichar_control.html _site/ 2>/dev/null || true
+          cp public/audio_list.json _site/ 2>/dev/null || true
           echo "100+ books + thumbnails" > _site/index.html
           ls -la _site/ _site/public/
           head -c 200 _site/books_server_list.json
