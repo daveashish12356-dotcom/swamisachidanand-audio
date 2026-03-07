@@ -29,10 +29,11 @@ jobs:
 
       - name: Pull LFS files (real PDFs and thumbnails)
         run: |
-          git lfs fetch --all
-          git lfs pull
+          git lfs fetch origin ${{ github.ref_name }}
+          git lfs pull origin ${{ github.ref_name }}
+          git lfs status
           # Verify we got real files, not just pointers (pointers are ~130 bytes)
-          sample=$(find public/books -name "*.pdf" -type f | head -1)
+          sample=$(find public/books -name "*.pdf" -type f 2>/dev/null | head -1)
           if [ -n "$sample" ]; then
             sz=$(stat -c%s "$sample" 2>/dev/null)
             if [ -n "$sz" ] && [ "$sz" -lt 500 ]; then
