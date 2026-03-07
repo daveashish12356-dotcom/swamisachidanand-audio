@@ -22,14 +22,19 @@ jobs:
           mkdir -p _site
           cp -r public/books _site/
           cp -r public/thumbnails _site/
-          cp public/books_server_list.json _site/books_server_list.json
+          if [ -f public/books_server_list.json ]; then
+            cat public/books_server_list.json > _site/books_server_list.json
+          else
+            echo "FATAL: public/books_server_list.json not found"; ls -la public/; exit 1
+          fi
           count=$(grep -o '\.pdf"' _site/books_server_list.json | wc -l)
           echo "Book count in list: $count"
-          if [ "$count" -lt 60 ]; then echo "ERROR: expected 60 books" && exit 1; fi
+          if [ "$count" -lt 60 ]; then echo "ERROR: expected 60 books, got $count"; exit 1; fi
           cp public/suvichar_config.json _site/ 2>/dev/null || true
           cp public/suvichar_control.html _site/ 2>/dev/null || true
           echo "60 books + thumbnails" > _site/index.html
           ls -la _site/
+          head -c 200 _site/books_server_list.json
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
