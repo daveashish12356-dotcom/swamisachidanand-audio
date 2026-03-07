@@ -1,4 +1,4 @@
-# Deploy public/books and public/thumbnails so all 56 PDFs are online.
+# Deploy public/books and public/thumbnails so all 60 PDFs are online.
 # Repo Settings > Pages > Source: "Deploy from a branch" > Branch: gh-pages > / (root)
 name: Deploy books and thumbnails to Pages
 
@@ -22,10 +22,10 @@ jobs:
           mkdir -p _site
           cp -r public/books _site/
           cp -r public/thumbnails _site/
-          cp public/books_server_list.json _site/ 2>/dev/null || true
+          cp public/books_server_list.json _site/ && echo "books_server_list.json copied"
           cp public/suvichar_config.json _site/ 2>/dev/null || true
           cp public/suvichar_control.html _site/ 2>/dev/null || true
-          echo "56 books + 56 thumbnails" > _site/index.html
+          echo "60 books + thumbnails" > _site/index.html
           ls -la _site/
 
       - name: Deploy to gh-pages
