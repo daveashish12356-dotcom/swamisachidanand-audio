@@ -19,6 +19,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Git LFS
+        uses: git-lfs/actions/setup-git-lfs@v1
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -28,6 +31,16 @@ jobs:
         run: |
           git lfs fetch --all
           git lfs pull
+          # Verify we got real files, not just pointers (pointers are ~130 bytes)
+          sample=$(find public/books -name "*.pdf" -type f | head -1)
+          if [ -n "$sample" ]; then
+            sz=$(stat -c%s "$sample" 2>/dev/null)
+            if [ -n "$sz" ] && [ "$sz" -lt 500 ]; then
+              echo "::error::LFS pointers only (file $sample has $sz bytes). Push real files: run locally 'git lfs push origin main' then re-run this workflow."
+              exit 1
+            fi
+            echo "LFS OK: $sample size=$sz"
+          fi
 
       - name: Copy books, thumbnails (skip pointers <500B and files > ${MAX_FILE_MB} MB)
         run: |
@@ -58,6 +71,10 @@ jobs:
             fi
           done
           echo "Copied $COPIED PDFs, skipped $SKIPPED"
+          if [ "$COPIED" -lt 1 ]; then
+            echo "::error::No real PDFs to deploy (all are LFS pointers or skipped). Push LFS objects: run locally 'git lfs push origin main' then re-run this workflow."
+            exit 1
+          fi
 
       - name: Copy book list and config to site root
         run: |
@@ -74,7 +91,7 @@ jobs:
           PY
           count=$(grep -o '\.pdf"' _site/books_server_list.json | wc -l)
           echo "Deployed PDF count: $count"
-          if [ "$count" -lt 1 ]; then echo "WARN: no PDFs deployed (LFS may need git lfs push from local)"; fi
+          if [ "$count" -lt 1 ]; then echo "::error::No PDFs in list. LFS may need: run locally 'git lfs push origin main'"; exit 1; fi
           mkdir -p _site/public
           cp public/suvichar_config.json _site/public/ 2>/dev/null || true
           cp public/suvichar_control.html _site/public/ 2>/dev/null || true
