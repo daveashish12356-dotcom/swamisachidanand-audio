@@ -19,9 +19,9 @@ jobs:
 
       - name: Copy books, thumbnails, book list and suvichar to site root
         run: |
-          mkdir -p _site
-          cp -r public/books _site/
-          cp -r public/thumbnails _site/
+          mkdir -p _site/public
+          cp -r public/books _site/public/
+          cp -r public/thumbnails _site/public/
           if [ -f public/books_server_list.json ]; then
             cat public/books_server_list.json > _site/books_server_list.json
           else
@@ -33,7 +33,7 @@ jobs:
           cp public/suvichar_config.json _site/ 2>/dev/null || true
           cp public/suvichar_control.html _site/ 2>/dev/null || true
           echo "60 books + thumbnails" > _site/index.html
-          ls -la _site/
+          ls -la _site/ _site/public/
           head -c 200 _site/books_server_list.json
 
       - name: Deploy to gh-pages
