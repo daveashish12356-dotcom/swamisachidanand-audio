@@ -298,20 +298,25 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                     .readTimeout(10, TimeUnit.SECONDS)
                     .build();
                 String body = null;
-                Request req1 = new Request.Builder().url(primaryUrl).build();
+                Request req1 = new Request.Builder().url(primaryUrl)
+                        .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
+                        .addHeader("Accept", "application/json")
+                        .build();
                 try (Response response = client.newCall(req1).execute()) {
                     if (response.isSuccessful() && response.body() != null)
                         body = response.body().string();
                 }
                 if (body == null && fallbackUrl != null) {
-                    try (Response response = client.newCall(new Request.Builder().url(fallbackUrl).build()).execute()) {
+                    try (Response response = client.newCall(new Request.Builder().url(fallbackUrl)
+                            .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
+                            .addHeader("Accept", "application/json")
+                            .build()).execute()) {
                         if (response.isSuccessful() && response.body() != null)
                             body = response.body().string();
                     }
                 }
-                if (body == null) {
-                    Log.w(TAG, "suvichar: server body null, hide");
-                    activity.runOnUiThread(this::hideSuvichar);
+                if (body == null || !body.trim().startsWith("{")) {
+                    Log.w(TAG, "suvichar: server body null or not JSON, keep assets display");
                     return;
                 }
                 JSONObject root = new JSONObject(body);
@@ -343,25 +348,25 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                         suvicharHandler.postDelayed(suvicharHideRunnable, displayMsFinal);
                         return;
                     }
-                    suvicharList.clear();
                     if (finalList.isEmpty()) {
-                        hideSuvichar();
-                    } else {
-                        suvicharList.addAll(finalList);
-                        if (suvicharAdapter != null) suvicharAdapter.notifyDataSetChanged();
-                        if (suvicharContainer != null) suvicharContainer.setVisibility(View.VISIBLE);
-                        suvicharShowing = true;
-                        suvicharHandler.removeCallbacks(suvicharHideRunnable);
-                        suvicharHideRunnable = () -> {
-                            suvicharShowing = false;
-                            hideSuvichar();
-                        };
-                        suvicharHandler.postDelayed(suvicharHideRunnable, displayMs);  // displayMs from outer scope
+                        // Server empty – keep assets suvichar as is, do nothing
+                        return;
                     }
+                    suvicharList.clear();
+                    suvicharList.addAll(finalList);
+                    if (suvicharAdapter != null) suvicharAdapter.notifyDataSetChanged();
+                    if (suvicharContainer != null) suvicharContainer.setVisibility(View.VISIBLE);
+                    suvicharShowing = true;
+                    suvicharHandler.removeCallbacks(suvicharHideRunnable);
+                    suvicharHideRunnable = () -> {
+                        suvicharShowing = false;
+                        hideSuvichar();
+                    };
+                    suvicharHandler.postDelayed(suvicharHideRunnable, displayMs);
                 });
             } catch (Throwable t) {
                 Log.e(TAG, "loadSuvichar error", t);
-                activity.runOnUiThread(this::hideSuvichar);
+                // Do not hide – keep assets suvichar visible
             }
         }).start();
     }
@@ -1122,19 +1127,28 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                     if (!base.isEmpty() && !base.endsWith("/")) base += "/";
                 }
                 String url = (base != null ? base : "") + "audio_list.json";
-                OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS).build();
-                try (okhttp3.Response resp = client.newCall(new okhttp3.Request.Builder().url(url).build()).execute()) {
-                    if (resp.isSuccessful() && resp.body() != null)
-                        loaded = ServerAudioParser.parseBooks(resp.body().string());
+                OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS).readTimeout(20, java.util.concurrent.TimeUnit.SECONDS).build();
+                okhttp3.Request req = new okhttp3.Request.Builder().url(url)
+                        .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
+                        .addHeader("Accept", "application/json").build();
+                try (okhttp3.Response resp = client.newCall(req).execute()) {
+                    if (resp.isSuccessful() && resp.body() != null) {
+                        String body = resp.body().string();
+                        if (body != null && body.trim().startsWith("{"))
+                            loaded = ServerAudioParser.parseBooks(body);
+                    }
                 } catch (Exception ignored) {}
                 if (loaded == null || loaded.isEmpty()) {
-                    try (java.io.BufferedReader r = new java.io.BufferedReader(
-                            new java.io.InputStreamReader(act.getAssets().open("audio_list_main.json"), java.nio.charset.StandardCharsets.UTF_8))) {
-                        StringBuilder sb = new StringBuilder();
-                        String line;
-                        while ((line = r.readLine()) != null) sb.append(line);
-                        loaded = ServerAudioParser.parseBooks(sb.toString());
-                    } catch (Exception ignored) {}
+                    for (String assetName : new String[]{"audio_list_main.json", "audio_list_fallback.json"}) {
+                        try (java.io.BufferedReader r = new java.io.BufferedReader(
+                                new java.io.InputStreamReader(act.getAssets().open(assetName), java.nio.charset.StandardCharsets.UTF_8))) {
+                            StringBuilder sb = new StringBuilder();
+                            String line;
+                            while ((line = r.readLine()) != null) sb.append(line);
+                            loaded = ServerAudioParser.parseBooks(sb.toString());
+                            if (loaded != null && !loaded.isEmpty()) break;
+                        } catch (Exception ignored) { }
+                    }
                 }
                 if (loaded == null) loaded = new ArrayList<>();
                 // Map thumbnails from books (same as ServerAudioFragment) so audio history shows covers
@@ -1395,21 +1409,27 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                 String base = act.getString(R.string.server_books_base_url);
                 if (base != null) { base = base.trim(); if (!base.isEmpty() && !base.endsWith("/")) base += "/"; }
                 String url = (base != null ? base : "") + "audio_list.json";
-                OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS).build();
-                okhttp3.Request req = new okhttp3.Request.Builder().url(url).build();
+                OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS).readTimeout(20, java.util.concurrent.TimeUnit.SECONDS).build();
+                okhttp3.Request req = new okhttp3.Request.Builder().url(url)
+                        .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
+                        .addHeader("Accept", "application/json").build();
                 try (okhttp3.Response resp = client.newCall(req).execute()) {
                     if (resp.isSuccessful() && resp.body() != null) {
                         String body = resp.body().string();
-                        loaded = ServerAudioParser.parseBooks(body);
+                        if (body != null && body.trim().startsWith("{"))
+                            loaded = ServerAudioParser.parseBooks(body);
                     }
                 }
                 if (loaded == null || loaded.isEmpty()) {
-                    try (java.io.BufferedReader r = new java.io.BufferedReader(
-                            new java.io.InputStreamReader(act.getAssets().open("audio_list_main.json"), java.nio.charset.StandardCharsets.UTF_8))) {
-                        StringBuilder sb = new StringBuilder();
-                        String line;
-                        while ((line = r.readLine()) != null) sb.append(line);
-                        loaded = ServerAudioParser.parseBooks(sb.toString());
+                    for (String assetName : new String[]{"audio_list_main.json", "audio_list_fallback.json"}) {
+                        try (java.io.BufferedReader r = new java.io.BufferedReader(
+                                new java.io.InputStreamReader(act.getAssets().open(assetName), java.nio.charset.StandardCharsets.UTF_8))) {
+                            StringBuilder sb = new StringBuilder();
+                            String line;
+                            while ((line = r.readLine()) != null) sb.append(line);
+                            loaded = ServerAudioParser.parseBooks(sb.toString());
+                            if (loaded != null && !loaded.isEmpty()) break;
+                        } catch (Exception ignored) { }
                     }
                 }
                 if (loaded == null) loaded = ServerAudioParser.demoBooks();
