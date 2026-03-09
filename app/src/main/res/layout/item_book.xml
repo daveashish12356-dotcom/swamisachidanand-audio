@@ -7,114 +7,90 @@
     app:cardCornerRadius="18dp"
     app:cardElevation="10dp"
     app:strokeWidth="0dp"
-    app:cardBackgroundColor="@android:color/white"
+    app:cardBackgroundColor="@android:color/transparent"
     android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
     android:stateListAnimator="@null">
 
-    <LinearLayout
+    <!-- Single 3D-style book cover with title like Shorts -->
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="@dimen/book_card_thumbnail_height">
 
-        <FrameLayout
+        <ImageView
+            android:id="@+id/book_thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/book_card_thumbnail_height">
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:contentDescription="Book thumbnail"
+            android:background="@drawable/book_placeholder" />
 
-            <ImageView
-                android:id="@+id/book_thumbnail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:background="@drawable/book_placeholder"
-                android:contentDescription="Book thumbnail"
-                android:padding="2dp" />
+        <!-- Online badge (kept same ids/behaviour) -->
+        <TextView
+            android:id="@+id/book_online_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_margin="8dp"
+            android:background="@drawable/year_badge"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="ઓનલાઇન"
+            android:textColor="@color/deep_saffron"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/book_online_badge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|end"
-                android:layout_margin="6dp"
-                android:background="@drawable/year_badge"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:text="ઓનલાઇન"
-                android:textColor="@color/deep_saffron"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:visibility="gone" />
-        </FrameLayout>
-
+        <!-- Title overlay at bottom, YouTube Shorts style -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:orientation="vertical"
-            android:padding="16dp"
-            android:background="@android:color/white">
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/bg_book_title_gradient">
 
             <TextView
                 android:id="@+id/book_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="?attr/text_primary"
+                android:textColor="@android:color/white"
                 android:maxLines="2"
                 android:ellipsize="end"
-                android:lineSpacingExtra="4dp"
+                android:lineSpacingExtra="3dp"
                 android:letterSpacing="0.02" />
-
-            <TextView
-                android:id="@+id/book_year"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/book_card_year_size"
-                android:textColor="@color/deep_saffron"
-                android:textStyle="bold"
-                android:layout_marginTop="10dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="6dp"
-                android:paddingBottom="6dp"
-                android:background="@drawable/year_badge"
-                android:gravity="center_vertical"
-                android:visibility="gone" />
-
-            <!-- Reading Progress - shown when book partially read -->
-            <LinearLayout
-                android:id="@+id/reading_progress_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:layout_marginTop="12dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="4dp"
-                android:background="@drawable/reading_progress_bg">
-
-                <ProgressBar
-                    android:id="@+id/reading_progress_bar"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="6dp"
-                    android:max="100"
-                    android:progress="0"
-                    android:progressTint="@color/deep_saffron"
-                    android:progressBackgroundTint="#E0E0E0" />
-
-                <TextView
-                    android:id="@+id/reading_progress_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:textSize="12sp"
-                    android:textColor="?attr/text_secondary"
-                    android:text="50% વાંચવાનું ચાલુ રાખો" />
-            </LinearLayout>
         </LinearLayout>
+    </FrameLayout>
+
+    <!-- Hidden reading progress views to keep existing Java code compatible -->
+    <LinearLayout
+        android:id="@+id/reading_progress_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/reading_progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:max="100"
+            android:progress="0" />
+
+        <TextView
+            android:id="@+id/reading_progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="" />
     </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>
