@@ -49,7 +49,7 @@ public final class ServerBookLoader {
             String booksBase = baseUrl + "public/books/";
             String thumbBase = baseUrl + "public/thumbnails/";
 
-            // 1) Try to load books_server_list.json from server (OkHttp for faster fetch).
+            // 1) Try to load books_server_list.json from server (now served under public/ so web and app use same list).
             String jsonStr = null;
             if (!baseUrl.isEmpty()) {
                 try {
@@ -57,8 +57,9 @@ public final class ServerBookLoader {
                             .connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
                             .readTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
                             .build();
+                    // Server JSON is under public/ so it matches public/books/ PDFs.
                     Request request = new Request.Builder()
-                            .url(baseUrl + "books_server_list.json")
+                            .url(baseUrl + "public/books_server_list.json")
                             .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
                             .addHeader("Accept", "application/json")
                             .build();
