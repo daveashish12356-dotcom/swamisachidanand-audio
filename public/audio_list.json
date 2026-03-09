@@ -1,6 +1,6 @@
 {
-  "version": 7,
-  "updated": "2026-03-09T09:41:13Z",
+  "version": 8,
+  "updated": "2026-03-09T10:04:53Z",
   "books": [
     {
       "id": "amarakantak_madhyapradesh",
@@ -6517,27 +6517,27 @@
       "parts": [
         {
           "id": "1",
-          "title": "??? 1",
+          "title": "1.???? ?????? ??????",
           "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/shri_hanuman_chalisa/1.mp3"
         },
         {
           "id": "2",
-          "title": "??? 2",
+          "title": "2.?????",
           "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/shri_hanuman_chalisa/2.mp3"
         },
         {
           "id": "3",
-          "title": "??? 3",
+          "title": "3.1 ??????",
           "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/shri_hanuman_chalisa/3.mp3"
         },
         {
           "id": "4",
-          "title": "??? 4",
+          "title": "3.2 ??????",
           "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/shri_hanuman_chalisa/4.mp3"
         },
         {
           "id": "5",
-          "title": "??? 5",
+          "title": "4.1 ???? ?????? ??????",
           "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/shri_hanuman_chalisa/5.mp3"
         }
       ],
