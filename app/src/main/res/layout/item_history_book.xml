@@ -7,43 +7,42 @@
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp"
     app:strokeWidth="0dp"
-    app:cardBackgroundColor="?attr/card_background"
+    app:cardBackgroundColor="@android:color/transparent"
     android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true">
 
-    <LinearLayout
+    <!-- History book card: full cover + bottom title overlay -->
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="@dimen/history_card_thumbnail_height">
 
-        <FrameLayout
+        <ImageView
+            android:id="@+id/book_thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/history_card_thumbnail_height">
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:background="@drawable/book_placeholder"
+            android:contentDescription="Book thumbnail" />
 
-            <ImageView
-                android:id="@+id/book_thumbnail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:background="@drawable/book_placeholder"
-                android:contentDescription="Book thumbnail" />
-
-            <TextView
-                android:id="@+id/book_online_badge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|end"
-                android:layout_margin="4dp"
-                android:visibility="gone" />
-        </FrameLayout>
+        <TextView
+            android:id="@+id/book_online_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_margin="4dp"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:orientation="vertical"
-            android:padding="12dp"
-            android:background="?attr/card_background">
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="8dp"
+            android:background="@drawable/bg_book_title_gradient">
 
             <TextView
                 android:id="@+id/book_name"
@@ -51,26 +50,17 @@
                 android:layout_height="wrap_content"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                android:textColor="?attr/text_primary"
+                android:textColor="@android:color/white"
                 android:maxLines="2"
                 android:ellipsize="end"
                 android:lineSpacingExtra="2dp" />
-
-            <TextView
-                android:id="@+id/book_year"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="11sp"
-                android:textColor="@color/bhagva"
-                android:textStyle="bold"
-                android:layout_marginTop="4dp"
-                android:paddingStart="6dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
-                android:background="@drawable/year_badge"
-                android:gravity="center_vertical"
-                android:visibility="gone" />
         </LinearLayout>
-    </LinearLayout>
+
+        <!-- Hidden year to keep adapter IDs valid -->
+        <TextView
+            android:id="@+id/book_year"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
+    </FrameLayout>
 </com.google.android.material.card.MaterialCardView>

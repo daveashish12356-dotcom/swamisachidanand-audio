@@ -92,6 +92,40 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- Bottom overlay: title + author, YouTube Shorts style -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="12dp">
+
+                <TextView
+                    android:id="@+id/audio_book_card_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:lineSpacingExtra="3dp" />
+
+                <TextView
+                    android:id="@+id/audio_book_card_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textSize="12sp"
+                    android:textColor="#F0F0F0"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    tools:text="સ્વામી સચ્ચિદાનંદ" />
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/audio_book_card_duration_badge"
                 android:layout_width="wrap_content"
@@ -120,33 +154,5 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
         </FrameLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="14dp"
-            android:background="@android:color/white">
-
-            <TextView
-                android:id="@+id/audio_book_card_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:textColor="?attr/text_primary"
-                android:maxLines="2"
-                android:ellipsize="end"
-                android:lineSpacingExtra="4dp" />
-
-            <TextView
-                android:id="@+id/audio_book_card_author"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textSize="13sp"
-                android:textColor="?attr/text_secondary"
-                android:text="સ્વામી સચ્ચિદાનંદ" />
-        </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -7,56 +7,55 @@
     android:layout_marginEnd="@dimen/book_home_card_margin_h"
     android:layout_marginBottom="@dimen/book_home_card_margin_h"
     app:cardCornerRadius="@dimen/book_home_card_radius"
-    app:cardElevation="2dp"
+    app:cardElevation="4dp"
     app:strokeWidth="0dp"
-    app:cardBackgroundColor="?attr/card_background"
+    app:cardBackgroundColor="@android:color/transparent"
     android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
     android:stateListAnimator="@null">
 
-    <LinearLayout
+    <!-- Compact 3D-style cover with title overlay (Popular section) -->
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="@dimen/book_home_card_thumbnail_height">
 
-        <FrameLayout
+        <ImageView
+            android:id="@+id/book_thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/book_home_card_thumbnail_height">
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:background="@drawable/book_placeholder"
+            android:contentDescription="Book thumbnail" />
 
-            <ImageView
-                android:id="@+id/book_thumbnail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:background="@drawable/book_placeholder"
-                android:contentDescription="Book thumbnail"
-                android:padding="2dp" />
+        <TextView
+            android:id="@+id/book_online_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_margin="4dp"
+            android:background="@drawable/year_badge"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:text="ઓનલાઇન"
+            android:textColor="@color/bhagva"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/book_online_badge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|end"
-                android:layout_margin="4dp"
-                android:background="@drawable/year_badge"
-                android:paddingStart="6dp"
-                android:paddingEnd="6dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
-                android:text="ઓનલાઇન"
-                android:textColor="@color/bhagva"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                android:visibility="gone" />
-        </FrameLayout>
-
+        <!-- Bottom gradient + title (YouTube Shorts style) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:orientation="vertical"
-            android:padding="@dimen/book_home_card_inner_padding"
-            android:background="?attr/card_background">
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="8dp"
+            android:background="@drawable/bg_book_title_gradient">
 
             <TextView
                 android:id="@+id/book_name"
@@ -64,30 +63,20 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/book_home_card_title_size"
                 android:textStyle="bold"
-                android:textColor="?attr/text_primary"
-                android:maxLines="1"
+                android:textColor="@android:color/white"
+                android:maxLines="2"
                 android:ellipsize="end"
-                android:lineSpacingExtra="4dp" />
-
-            <TextView
-                android:id="@+id/book_year"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/book_home_card_year_size"
-                android:textColor="@color/bhagva"
-                android:textStyle="bold"
-                android:layout_marginTop="8dp"
-                android:paddingStart="6dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:background="@drawable/year_badge"
-                android:gravity="center_vertical"
-                android:visibility="gone" />
-
+                android:lineSpacingExtra="2dp" />
         </LinearLayout>
 
-    </LinearLayout>
+        <!-- Hidden year view so adapter IDs stay valid -->
+        <TextView
+            android:id="@+id/book_year"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
+
+    </FrameLayout>
 
 </com.google.android.material.card.MaterialCardView>
 

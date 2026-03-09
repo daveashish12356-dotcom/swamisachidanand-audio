@@ -10,10 +10,10 @@
 //    https://yourwebsite.com/bot_upload.php
 
 // ---------- 1. DB CONFIG (Yahan apni details daalo) ----------
-$dbHost = "localhost";
-$dbUser = "DB_USERNAME";   // TODO: MySQL username
-$dbPass = "DB_PASSWORD";   // TODO: MySQL password
-$dbName = "DB_NAME";       // TODO: Database name
+$dbHost = "sql310.infinityfree.com";
+$dbUser = "if0_41315067";        // InfinityFree MySQL username
+$dbPass = "iFFcg3n3rOKEHvW";    // yahan apna real password dalna hai (InfinityFree panel wala)
+$dbName = "if0_41315067_suvichar"; // InfinityFree database name
 
 // ---------- 2. DB CONNECT ----------
 $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);

@@ -77,7 +77,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
     private LinearLayout searchResultsSection;
     private RecyclerView searchResultsRecycler;
     private TextView searchNoResults;
-    private BookAdapter searchResultsAdapter;
+    private UnifiedSearchAdapter unifiedSearchAdapter;
     private List<Book> allBooksForSearch = new ArrayList<>();
 
     private HomeHistoryAdapter homeHistoryAdapter;
@@ -85,6 +85,8 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
     private BookAdapter bhaktiBooksAdapter;
     private HomeVideoAdapter homeVideoAdapter;
     private AudioBookCardAdapter homeAudioAdapter;
+    private List<ServerAudioBook> allHomeAudio;
+    private List<HomeVideoLoader.HomeVideoItem> allHomeVideos;
     
     private Handler autoScrollHandler;
     private Runnable autoScrollRunnable;
@@ -103,10 +105,13 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
     // Best books = first N from assets (no fixed list). Purani books hatao, nayi PDFs dalo assets me — wahi dikhengi.
     private static final int BEST_BOOKS_COUNT = 8;
 
-    private static final long SUVICHAR_DISPLAY_MS = 10_000L;
+    /** Chota suvichar → 15 sec ruke, badha → 30 sec (jaise movie credits ke baad) */
+    private static final long SUVICHAR_DISPLAY_MS = 15_000L;
     private static final long SUVICHAR_DISPLAY_LONG_MS = 30_000L;
-    /** Badha suvichar = text length above this → 30 sec, else 10 sec */
+    /** Badha suvichar = text length above this → 30 sec, else 15 sec */
     private static final int SUVICHAR_LONG_THRESHOLD = 150;
+    /** Sirf beech wale text par: pehli line niche se last line upper tak dhire dhire scroll – duration (sirf ek baar) */
+    private static final long SUVICHAR_TEXT_SCROLL_MS = 28_000L;
     private View suvicharContainer;
     private RecyclerView suvicharRecycler;
     private final List<SuvicharItem> suvicharList = new ArrayList<>();
@@ -168,16 +173,20 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                 quickContact.setOnClickListener(v -> switchToBottomNavTab(R.id.nav_about));
             }
 
-        if (searchResultsRecycler != null && getContext() != null) {
+        if (getContext() != null && searchResultsRecycler != null) {
             searchResultsRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-            // setHasFixedSize omitted: layout may use wrap_content in scroll direction
             searchResultsRecycler.setItemAnimator(new DefaultItemAnimator());
             int spacing = (int) (10 * getResources().getDisplayMetrics().density);
             searchResultsRecycler.addItemDecoration(new HorizontalSpacingItemDecoration(spacing));
-            searchResultsAdapter = new BookAdapter(new ArrayList<>(), this);
-                searchResultsAdapter.setUseCompactLayout(true);
-                searchResultsRecycler.setAdapter(searchResultsAdapter);
-            }
+            unifiedSearchAdapter = new UnifiedSearchAdapter();
+            unifiedSearchAdapter.setBookClickListener(this);
+            unifiedSearchAdapter.setAudioClickListener(book -> {
+                if (getActivity() instanceof MainActivity && book != null) {
+                    ((MainActivity) getActivity()).openAudioBook(book);
+                }
+            });
+            searchResultsRecycler.setAdapter(unifiedSearchAdapter);
+        }
 
             setupSuvichar(view);
             setupSearchBar();
@@ -232,15 +241,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             suvicharList.clear();
             suvicharList.addAll(onlyLatest(local));
             if (suvicharAdapter != null) suvicharAdapter.notifyDataSetChanged();
-            if (suvicharContainer != null) suvicharContainer.setVisibility(View.VISIBLE);
-            suvicharShowing = true;
-            suvicharHandler.removeCallbacks(suvicharHideRunnable);
-            suvicharHideRunnable = () -> {
-                Log.d(TAG, "suvichar: hide runnable (assets)");
-                suvicharShowing = false;
-                hideSuvichar();
-            };
-            suvicharHandler.postDelayed(suvicharHideRunnable, displayMs);
+            showSuvicharWithAnimation(displayMs);
         } else {
             Log.d(TAG, "suvichar: no assets, will try server");
         }
@@ -298,25 +299,20 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                     .readTimeout(10, TimeUnit.SECONDS)
                     .build();
                 String body = null;
-                Request req1 = new Request.Builder().url(primaryUrl)
-                        .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
-                        .addHeader("Accept", "application/json")
-                        .build();
+                Request req1 = new Request.Builder().url(primaryUrl).build();
                 try (Response response = client.newCall(req1).execute()) {
                     if (response.isSuccessful() && response.body() != null)
                         body = response.body().string();
                 }
                 if (body == null && fallbackUrl != null) {
-                    try (Response response = client.newCall(new Request.Builder().url(fallbackUrl)
-                            .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
-                            .addHeader("Accept", "application/json")
-                            .build()).execute()) {
+                    try (Response response = client.newCall(new Request.Builder().url(fallbackUrl).build()).execute()) {
                         if (response.isSuccessful() && response.body() != null)
                             body = response.body().string();
                     }
                 }
-                if (body == null || !body.trim().startsWith("{")) {
-                    Log.w(TAG, "suvichar: server body null or not JSON, keep assets display");
+                if (body == null) {
+                    Log.w(TAG, "suvichar: server body null, hide");
+                    activity.runOnUiThread(this::hideSuvichar);
                     return;
                 }
                 JSONObject root = new JSONObject(body);
@@ -345,28 +341,22 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                             suvicharShowing = false;
                             hideSuvichar();
                         };
-                        suvicharHandler.postDelayed(suvicharHideRunnable, displayMsFinal);
-                        return;
-                    }
-                    if (finalList.isEmpty()) {
-                        // Server empty – keep assets suvichar as is, do nothing
+                        // Rebind ke baad layout hone do, phir scroll (pehli line niche → upper, phir 30 sec sdhir)
+                        suvicharRecycler.postDelayed(() -> startSuvicharTextScrollAnimation(SUVICHAR_DISPLAY_LONG_MS), 120);
                         return;
                     }
                     suvicharList.clear();
-                    suvicharList.addAll(finalList);
-                    if (suvicharAdapter != null) suvicharAdapter.notifyDataSetChanged();
-                    if (suvicharContainer != null) suvicharContainer.setVisibility(View.VISIBLE);
-                    suvicharShowing = true;
-                    suvicharHandler.removeCallbacks(suvicharHideRunnable);
-                    suvicharHideRunnable = () -> {
-                        suvicharShowing = false;
+                    if (finalList.isEmpty()) {
                         hideSuvichar();
-                    };
-                    suvicharHandler.postDelayed(suvicharHideRunnable, displayMs);
+                    } else {
+                        suvicharList.addAll(finalList);
+                        if (suvicharAdapter != null) suvicharAdapter.notifyDataSetChanged();
+                        showSuvicharWithAnimation(displayMsFinal);
+                    }
                 });
             } catch (Throwable t) {
                 Log.e(TAG, "loadSuvichar error", t);
-                // Do not hide – keep assets suvichar visible
+                activity.runOnUiThread(this::hideSuvichar);
             }
         }).start();
     }
@@ -392,6 +382,119 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
     private static long suvicharDisplayMsFor(SuvicharItem item) {
         int len = item != null && item.text != null ? item.text.length() : 0;
         return len > SUVICHAR_LONG_THRESHOLD ? SUVICHAR_DISPLAY_LONG_MS : SUVICHAR_DISPLAY_MS;
+    }
+
+    /**
+     * Suvichar dikhao – header/author static; sirf beech wala text pehli line se last line tak dhire dhire scroll.
+     * Scroll khatam ke baad 15 sec (chota) ya 30 sec (badha) ruk ke hide.
+     */
+    private void showSuvicharWithAnimation(long displayMs) {
+        if (suvicharContainer == null) return;
+        suvicharShowing = true;
+        suvicharHandler.removeCallbacks(suvicharHideRunnable);
+        suvicharContainer.setVisibility(View.VISIBLE);
+        suvicharContainer.setAlpha(1f);
+        suvicharContainer.setTranslationY(0f);
+        suvicharHideRunnable = () -> {
+            suvicharShowing = false;
+            hideSuvichar();
+        };
+        startSuvicharTextScrollAnimation(displayMs);
+    }
+
+    private void startSuvicharTextScrollAnimation(long displayMsAfterScroll) {
+        startSuvicharTextScrollAnimation(displayMsAfterScroll, 0);
+    }
+
+    private void startSuvicharTextScrollAnimation(long displayMsAfterScroll, int retryCount) {
+        if (suvicharRecycler == null) {
+            suvicharHandler.postDelayed(suvicharHideRunnable, displayMsAfterScroll);
+            return;
+        }
+        // RecyclerView par listener – server list update ke baad bhi recycler layout fire karega
+        if (suvicharRecycler == null) {
+            suvicharHandler.postDelayed(suvicharHideRunnable, displayMsAfterScroll);
+            return;
+        }
+        suvicharRecycler.getViewTreeObserver().addOnGlobalLayoutListener(new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                suvicharRecycler.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                if (!isAdded()) return;
+                View itemView = suvicharRecycler.getChildAt(0);
+                if (itemView == null && retryCount < 3) {
+                    Log.d(TAG, "suvichar scroll: itemView null, retry " + (retryCount + 1));
+                    suvicharHandler.postDelayed(() -> startSuvicharTextScrollAnimation(displayMsAfterScroll, retryCount + 1), 150);
+                    return;
+                }
+                if (itemView == null) {
+                    Log.d(TAG, "suvichar scroll: itemView null after retries, skip scroll");
+                    suvicharHandler.postDelayed(suvicharHideRunnable, displayMsAfterScroll);
+                    return;
+                }
+                android.widget.ScrollView scroll = itemView.findViewById(R.id.suvichar_scroll);
+                if (scroll == null || scroll.getChildCount() == 0) {
+                    Log.d(TAG, "suvichar scroll: scroll null or no child, skip");
+                    suvicharHandler.postDelayed(suvicharHideRunnable, displayMsAfterScroll);
+                    return;
+                }
+                View textChild = scroll.getChildAt(0);
+                if (textChild.getHeight() == 0 || scroll.getHeight() == 0) {
+                    scroll.post(() -> tryStartScrollAnim(scroll, displayMsAfterScroll));
+                } else {
+                    tryStartScrollAnim(scroll, displayMsAfterScroll);
+                }
+            }
+        });
+    }
+
+    private void tryStartScrollAnim(android.widget.ScrollView scroll, long displayMsAfterScroll) {
+        if (!isAdded() || scroll.getChildCount() == 0) return;
+        View textChild = scroll.getChildAt(0);
+        int contentHeight = textChild.getHeight();
+        int scrollHeight = scroll.getHeight();
+        scroll.setScrollY(0);
+        // Pehla animation: first line NICHE se → scroll karke last line upper tak (same as credits)
+        int range1 = Math.max(0, scrollHeight + contentHeight);
+        if (range1 <= 0) {
+            startSecondScrollAnim(textChild, scrollHeight, displayMsAfterScroll);
+            return;
+        }
+        textChild.setTranslationY(scrollHeight);
+        android.animation.ValueAnimator va1 = android.animation.ValueAnimator.ofInt(0, range1);
+        va1.setDuration(SUVICHAR_TEXT_SCROLL_MS);
+        va1.setInterpolator(new android.view.animation.LinearInterpolator());
+        va1.addUpdateListener(anim -> {
+            int y = (Integer) anim.getAnimatedValue();
+            textChild.setTranslationY(scrollHeight - y);
+        });
+        va1.addListener(new android.animation.AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(android.animation.Animator animation) {
+                startSecondScrollAnim(textChild, scrollHeight, displayMsAfterScroll);
+            }
+        });
+        va1.start();
+    }
+
+    /** Dusra animation: first line niche se upper tak, phir 30 sec sdhir */
+    private void startSecondScrollAnim(View textChild, int scrollHeight, long displayMsAfterScroll) {
+        if (!isAdded()) return;
+        textChild.setTranslationY(scrollHeight);
+        android.animation.ValueAnimator va2 = android.animation.ValueAnimator.ofInt(0, scrollHeight);
+        va2.setDuration(SUVICHAR_TEXT_SCROLL_MS);
+        va2.setInterpolator(new android.view.animation.LinearInterpolator());
+        va2.addUpdateListener(anim -> {
+            int y = (Integer) anim.getAnimatedValue();
+            textChild.setTranslationY(scrollHeight - y);
+        });
+        va2.addListener(new android.animation.AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(android.animation.Animator animation) {
+                suvicharHandler.postDelayed(suvicharHideRunnable, displayMsAfterScroll);
+            }
+        });
+        va2.start();
     }
 
     private void hideSuvichar() {
@@ -880,9 +983,15 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                 @Override
                 public void afterTextChanged(android.text.Editable s) {}
             });
+            // IME search par alag page nahi kholna – yahi par filter hoga
             searchInput.setOnEditorActionListener((v, actionId, event) -> {
                 if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
-                    openGlobalSearch();
+                    // keyboard hide kar do, results already filter ho chuke honge
+                    try {
+                        android.view.inputmethod.InputMethodManager imm =
+                                (android.view.inputmethod.InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        if (imm != null) imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    } catch (Throwable ignored) {}
                     return true;
                 }
                 return false;
@@ -902,14 +1011,6 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
         if (micButton != null) {
             micButton.setOnClickListener(v -> startVoiceSearch());
         }
-    }
-
-    private void openGlobalSearch() {
-        String q = searchInput != null && searchInput.getText() != null ? searchInput.getText().toString().trim() : "";
-        if (q.isEmpty()) return;
-        android.content.Intent i = new android.content.Intent(requireContext(), SearchResultActivity.class);
-        i.putExtra(SearchResultActivity.EXTRA_QUERY, q);
-        startActivity(i);
     }
 
     private void startVoiceSearch() {
@@ -942,30 +1043,22 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             if (results != null && !results.isEmpty()) {
                 String spoken = results.get(0);
                 if (searchInput != null) searchInput.setText(spoken);
-                if (!spoken.trim().isEmpty()) {
-                    openGlobalSearch();
-                }
             }
         }
     }
 
     private void filterBooks(String query) {
-        if (searchResultsAdapter == null) return;
-
-        List<Book> filtered = new ArrayList<>();
-        if (query.isEmpty()) {
-            if (searchNoResults != null) searchNoResults.setVisibility(View.GONE);
-            if (searchResultsRecycler != null) searchResultsRecycler.setVisibility(View.GONE);
-            searchResultsAdapter.updateBooks(filtered);
-            return;
-        }
+        if (unifiedSearchAdapter == null || allBooksForSearch == null) return;
 
         String queryLower = query.trim().toLowerCase();
         if (queryLower.isEmpty()) {
-            searchResultsAdapter.updateBooks(filtered);
+            unifiedSearchAdapter.setItems(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+            if (searchResultsRecycler != null) searchResultsRecycler.setVisibility(View.GONE);
+            if (searchNoResults != null) searchNoResults.setVisibility(View.GONE);
             return;
         }
 
+        List<Book> filtered = new ArrayList<>();
         for (Book book : allBooksForSearch) {
             String name = book.getName();
             String fName = book.getFileName();
@@ -994,7 +1087,6 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             if (matches) filtered.add(book);
         }
 
-        // Start-with matches first, then by name
         Collections.sort(filtered, (a, b) -> {
             String an = a.getName() != null ? a.getName() : "";
             String bn = b.getName() != null ? b.getName() : "";
@@ -1003,16 +1095,78 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             if (aStart != bStart) return aStart ? -1 : 1;
             return an.compareToIgnoreCase(bn);
         });
-        searchResultsAdapter.updateBooks(filtered);
 
-        if (filtered.isEmpty()) {
-            if (searchNoResults != null) { searchNoResults.setVisibility(View.VISIBLE); }
-            if (searchResultsRecycler != null) { searchResultsRecycler.setVisibility(View.GONE); }
-        } else {
-            if (searchNoResults != null) { searchNoResults.setVisibility(View.GONE); }
-            if (searchResultsRecycler != null) { searchResultsRecycler.setVisibility(View.VISIBLE); }
+        List<ServerAudioBook> filteredAudio = getFilteredAudioForSearch(queryLower);
+
+        // Pehle books + audio dikhao; videos ke liye YouTube search (Ramayan jaisa query par videos aaye)
+        unifiedSearchAdapter.setItems(filtered, filteredAudio, new ArrayList<>());
+        int totalSoFar = filtered.size() + filteredAudio.size();
+        if (searchResultsRecycler != null) {
+            searchResultsRecycler.setVisibility(totalSoFar > 0 ? View.VISIBLE : View.GONE);
+        }
+        if (searchNoResults != null) {
+            searchNoResults.setVisibility(totalSoFar == 0 ? View.VISIBLE : View.GONE);
+        }
+
+        final String queryForVideos = queryLower;
+        Context ctx = getContext();
+        if (ctx != null) {
+            YouTubeSearchLoader.search(ctx, query.trim(), videoResults -> {
+            if (!isAdded() || unifiedSearchAdapter == null) return;
+            String current = searchInput != null && searchInput.getText() != null
+                    ? searchInput.getText().toString().trim().toLowerCase() : "";
+            if (!current.equals(queryForVideos)) return;
+            List<HomeVideoLoader.HomeVideoItem> list = videoResults != null ? videoResults : new ArrayList<>();
+            unifiedSearchAdapter.setItems(filtered, filteredAudio, list);
+            int total = filtered.size() + filteredAudio.size() + list.size();
+            if (searchResultsRecycler != null) searchResultsRecycler.setVisibility(total > 0 ? View.VISIBLE : View.GONE);
+            if (searchNoResults != null) searchNoResults.setVisibility(total == 0 ? View.VISIBLE : View.GONE);
+            });
         }
     }
+
+    private List<ServerAudioBook> getFilteredAudioForSearch(String queryLower) {
+        if (allHomeAudio == null) return new ArrayList<>();
+        List<ServerAudioBook> filtered = new ArrayList<>();
+        String q = queryLower != null ? queryLower.trim() : "";
+        if (q.isEmpty()) return filtered;
+        for (ServerAudioBook b : allHomeAudio) {
+            if (b == null) continue;
+            String title = b.getTitle() != null ? b.getTitle().toLowerCase() : "";
+            String id = b.getId() != null ? b.getId().toLowerCase() : "";
+            if (SearchHelper.matches(b.getTitle(), q)) { filtered.add(b); continue; }
+            if (title.contains(q) || id.contains(q)) { filtered.add(b); continue; }
+            String[] words = q.split("\\s+");
+            for (String w : words) {
+                if (w.length() >= 2 && (title.contains(w) || id.contains(w))) {
+                    filtered.add(b);
+                    break;
+                }
+            }
+        }
+        return filtered;
+    }
+
+    private List<HomeVideoLoader.HomeVideoItem> getFilteredVideosForSearch(String queryLower) {
+        if (allHomeVideos == null) return new ArrayList<>();
+        List<HomeVideoLoader.HomeVideoItem> filtered = new ArrayList<>();
+        String q = queryLower != null ? queryLower.trim() : "";
+        if (q.isEmpty()) return filtered;
+        for (HomeVideoLoader.HomeVideoItem v : allHomeVideos) {
+            if (v == null) continue;
+            String title = v.title != null ? v.title.toLowerCase() : "";
+            if (title.contains(q)) { filtered.add(v); continue; }
+            String[] words = q.split("\\s+");
+            for (String w : words) {
+                if (w.length() >= 2 && title.contains(w)) {
+                    filtered.add(v);
+                    break;
+                }
+            }
+        }
+        return filtered;
+    }
+
 
     /** Map thumbnails for audio books from PDF books (same logic as ServerAudioFragment). */
     private static List<ServerAudioBook> mapAudioThumbnails(Activity act, List<ServerAudioBook> loaded, String base) {
@@ -1127,28 +1281,19 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                     if (!base.isEmpty() && !base.endsWith("/")) base += "/";
                 }
                 String url = (base != null ? base : "") + "audio_list.json";
-                OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS).readTimeout(20, java.util.concurrent.TimeUnit.SECONDS).build();
-                okhttp3.Request req = new okhttp3.Request.Builder().url(url)
-                        .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
-                        .addHeader("Accept", "application/json").build();
-                try (okhttp3.Response resp = client.newCall(req).execute()) {
-                    if (resp.isSuccessful() && resp.body() != null) {
-                        String body = resp.body().string();
-                        if (body != null && body.trim().startsWith("{"))
-                            loaded = ServerAudioParser.parseBooks(body);
-                    }
+                OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS).build();
+                try (okhttp3.Response resp = client.newCall(new okhttp3.Request.Builder().url(url).build()).execute()) {
+                    if (resp.isSuccessful() && resp.body() != null)
+                        loaded = ServerAudioParser.parseBooks(resp.body().string());
                 } catch (Exception ignored) {}
                 if (loaded == null || loaded.isEmpty()) {
-                    for (String assetName : new String[]{"audio_list_main.json", "audio_list_fallback.json"}) {
-                        try (java.io.BufferedReader r = new java.io.BufferedReader(
-                                new java.io.InputStreamReader(act.getAssets().open(assetName), java.nio.charset.StandardCharsets.UTF_8))) {
-                            StringBuilder sb = new StringBuilder();
-                            String line;
-                            while ((line = r.readLine()) != null) sb.append(line);
-                            loaded = ServerAudioParser.parseBooks(sb.toString());
-                            if (loaded != null && !loaded.isEmpty()) break;
-                        } catch (Exception ignored) { }
-                    }
+                    try (java.io.BufferedReader r = new java.io.BufferedReader(
+                            new java.io.InputStreamReader(act.getAssets().open("audio_list_main.json"), java.nio.charset.StandardCharsets.UTF_8))) {
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        while ((line = r.readLine()) != null) sb.append(line);
+                        loaded = ServerAudioParser.parseBooks(sb.toString());
+                    } catch (Exception ignored) {}
                 }
                 if (loaded == null) loaded = new ArrayList<>();
                 // Map thumbnails from books (same as ServerAudioFragment) so audio history shows covers
@@ -1338,6 +1483,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
         HomeVideoLoader.loadLatest(getContext(), videos -> {
             if (!isAdded() || homeVideoAdapter == null) return;
             if (videos != null && !videos.isEmpty()) {
+                allHomeVideos = new ArrayList<>(videos);
                 homeVideoAdapter.setItems(videos);
             } else {
                 Log.d(TAG, "New videos empty from loader – fallback: search Sachchidanand Dantali");
@@ -1345,6 +1491,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                     if (isAdded() && homeVideoAdapter != null && results != null && !results.isEmpty()) {
                         java.util.List<HomeVideoLoader.HomeVideoItem> top = results.size() > 5
                             ? results.subList(0, 5) : results;
+                        allHomeVideos = new ArrayList<>(top);
                         homeVideoAdapter.setItems(top);
                     }
                 });
@@ -1409,32 +1556,27 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                 String base = act.getString(R.string.server_books_base_url);
                 if (base != null) { base = base.trim(); if (!base.isEmpty() && !base.endsWith("/")) base += "/"; }
                 String url = (base != null ? base : "") + "audio_list.json";
-                OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS).readTimeout(20, java.util.concurrent.TimeUnit.SECONDS).build();
-                okhttp3.Request req = new okhttp3.Request.Builder().url(url)
-                        .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36")
-                        .addHeader("Accept", "application/json").build();
+                OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS).build();
+                okhttp3.Request req = new okhttp3.Request.Builder().url(url).build();
                 try (okhttp3.Response resp = client.newCall(req).execute()) {
                     if (resp.isSuccessful() && resp.body() != null) {
                         String body = resp.body().string();
-                        if (body != null && body.trim().startsWith("{"))
-                            loaded = ServerAudioParser.parseBooks(body);
+                        loaded = ServerAudioParser.parseBooks(body);
                     }
                 }
                 if (loaded == null || loaded.isEmpty()) {
-                    for (String assetName : new String[]{"audio_list_main.json", "audio_list_fallback.json"}) {
-                        try (java.io.BufferedReader r = new java.io.BufferedReader(
-                                new java.io.InputStreamReader(act.getAssets().open(assetName), java.nio.charset.StandardCharsets.UTF_8))) {
-                            StringBuilder sb = new StringBuilder();
-                            String line;
-                            while ((line = r.readLine()) != null) sb.append(line);
-                            loaded = ServerAudioParser.parseBooks(sb.toString());
-                            if (loaded != null && !loaded.isEmpty()) break;
-                        } catch (Exception ignored) { }
+                    try (java.io.BufferedReader r = new java.io.BufferedReader(
+                            new java.io.InputStreamReader(act.getAssets().open("audio_list_main.json"), java.nio.charset.StandardCharsets.UTF_8))) {
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        while ((line = r.readLine()) != null) sb.append(line);
+                        loaded = ServerAudioParser.parseBooks(sb.toString());
                     }
                 }
                 if (loaded == null) loaded = ServerAudioParser.demoBooks();
                 loaded = mapAudioThumbnails(act, loaded, base);
                 java.util.Collections.sort(loaded, (a, b) -> (b.getTitle() != null ? b.getTitle() : "").compareTo(a.getTitle() != null ? a.getTitle() : ""));
+                allHomeAudio = new ArrayList<>(loaded);
                 java.util.List<ServerAudioBook> toShow = loaded.size() > 6 ? loaded.subList(0, 6) : loaded;
                 java.util.List<ServerAudioBook> finalList = toShow;
                 act.runOnUiThread(() -> {
