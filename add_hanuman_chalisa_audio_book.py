@@ -1,20 +1,22 @@
 # -*- coding: utf-8 -*-
-"""Add ચાણક્યની વ્યવહારનીતિ audio book to audio_list.json"""
+"""Add 'શ્રી હનુમાન ચાલીસા' audio book to audio_list.json"""
 import json
 import os
 import shutil
 import sys
 from datetime import datetime
 
-# Paths
-AUDIO_FOLDER = r"C:\Users\davea\Desktop\ચાણક્યની વ્યવહારનીતિ"
-THUMBNAIL_PDF = r"C:\Users\davea\Desktop\ચાણક્યની વ્યવહારનીતિ.pdf"
+# Paths (local on your PC)
+# Folder with final MP3/WAV parts:
+AUDIO_FOLDER = r"C:\Users\davea\Desktop\શ્રી હનુમાન ચાલીસા"
+# PDF whose cover we use for thumbnail:
+THUMBNAIL_PDF = r"C:\Users\davea\Desktop\શ્રી હનુમાન ચાલીસા.pdf"
 AUDIO_LIST_JSON = os.path.join(os.path.dirname(__file__), "public", "audio_list.json")
 PUBLIC_THUMBNAILS = os.path.join(os.path.dirname(__file__), "public", "thumbnails")
 
 # Book details
 BOOK_ID = "shri_hanuman_chalisa"
-BOOK_TITLE = "ચાણક્યની વ્યવહારનીતિ"
+BOOK_TITLE = "શ્રી હનુમાન ચાલીસા"
 RELEASE_TAG = "shri_hanuman_chalisa"  # GitHub release tag
 BASE_URL = "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/"
 
@@ -153,7 +155,7 @@ def main():
     if sys.stdout.encoding != 'utf-8':
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     
-    print("Adding Chanakya Vyavaharniti audio book...")
+    print("Adding 'શ્રી હનુમાન ચાલીસા' audio book...")
     print(f"Audio folder: {AUDIO_FOLDER}")
     print(f"Thumbnail PDF: {THUMBNAIL_PDF}\n")
     

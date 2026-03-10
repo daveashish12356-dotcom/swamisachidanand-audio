@@ -1,6 +1,6 @@
 {
-  "version": 8,
-  "updated": "2026-03-09T10:04:53Z",
+  "version": 9,
+  "updated": "2026-03-10T19:49:50Z",
   "books": [
     {
       "id": "amarakantak_madhyapradesh",
@@ -6508,6 +6508,62 @@
           "id": "44",
           "title": "12.ઉપાસના (8)",
           "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chalo_abhigam_badlie/44.mp3"
+        }
+      ]
+    },
+    {
+      "id": "shri_hanuman_chalisa",
+      "title": "શ્રી હનુમાન ચાલીસા",
+      "parts": [
+        {
+          "id": "1",
+          "title": "1",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/shri_hanuman_chalisa/1.mp3"
+        },
+        {
+          "id": "2",
+          "title": "1.શ્રી હનુમાન ચાલીસા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/shri_hanuman_chalisa/2.wav"
+        },
+        {
+          "id": "3",
+          "title": "2",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/shri_hanuman_chalisa/3.mp3"
+        },
+        {
+          "id": "4",
+          "title": "2.અર્પણ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/shri_hanuman_chalisa/4.wav"
+        },
+        {
+          "id": "5",
+          "title": "3.1 ભૂમિકા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/shri_hanuman_chalisa/5.wav"
+        },
+        {
+          "id": "6",
+          "title": "3.2 ભૂમિકા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/shri_hanuman_chalisa/6.wav"
+        },
+        {
+          "id": "7",
+          "title": "3",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/shri_hanuman_chalisa/7.mp3"
+        },
+        {
+          "id": "8",
+          "title": "4.1 શ્રી હનુમાન ચાલીસા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/shri_hanuman_chalisa/8.wav"
+        },
+        {
+          "id": "9",
+          "title": "4",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/shri_hanuman_chalisa/9.mp3"
+        },
+        {
+          "id": "10",
+          "title": "5",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/shri_hanuman_chalisa/10.mp3"
         }
       ]
     }
