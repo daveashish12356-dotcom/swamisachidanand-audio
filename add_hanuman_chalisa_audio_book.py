@@ -34,13 +34,14 @@ def find_audio_files(folder_path):
             if ext in ['.wav', '.mp3', '.m4a']:
                 audio_files.append(f)
     
-    # Sort files naturally (1.wav, 2.wav, ... 10.wav)
+    # Sort "naturally" by ALL numbers in filename:
+    # Example: 4.2 < 4.10, and 3.1 < 3.2
     def sort_key(name):
-        base = os.path.splitext(name)[0]
-        # Extract numbers from filename
         import re
-        nums = re.findall(r'\d+', base)
-        return int(nums[0]) if nums else 999
+        base = os.path.splitext(name)[0]
+        nums = [int(n) for n in re.findall(r'\d+', base)]
+        # Put files without numbers at the end, keep deterministic order
+        return (0, tuple(nums), base) if nums else (1, (), base)
     
     audio_files.sort(key=sort_key)
     return audio_files
@@ -60,10 +61,23 @@ def copy_thumbnail(pdf_path, book_id):
         print(f"Copied thumbnail: {dest_jpg}")
         return f"{book_id}.jpg"
     
-    # Try to extract first page from PDF as JPG
+    # Try to extract first page from PDF as JPG (PyMuPDF first, then pdf2image)
     dest_jpg = os.path.join(PUBLIC_THUMBNAILS, f"{book_id}.jpg")
     os.makedirs(PUBLIC_THUMBNAILS, exist_ok=True)
     
+    try:
+        import fitz  # PyMuPDF
+        doc = fitz.open(pdf_path)
+        page = doc.load_page(0)
+        pix = page.get_pixmap(dpi=150)
+        pix.save(dest_jpg)
+        print(f"Extracted thumbnail from PDF (PyMuPDF): {dest_jpg}")
+        return f"{book_id}.jpg"
+    except ImportError:
+        pass
+    except Exception as e:
+        print(f"PyMuPDF thumbnail extraction failed: {e}")
+
     try:
         from pdf2image import convert_from_path
         # Extract first page as image
@@ -77,6 +91,13 @@ def copy_thumbnail(pdf_path, book_id):
         print("For now, copying PDF reference. You'll need to manually create JPG thumbnail.")
     except Exception as e:
         print(f"Could not extract thumbnail from PDF: {e}")
+
+    # Fallback: if a Gujarati-named thumbnail already exists in repo, copy it
+    legacy_repo_thumb = os.path.join(PUBLIC_THUMBNAILS, "શ્રી હનુમાન ચાલીસા.jpg")
+    if os.path.isfile(legacy_repo_thumb):
+        shutil.copy2(legacy_repo_thumb, dest_jpg)
+        print(f"Copied existing repo thumbnail: {dest_jpg}")
+        return f"{book_id}.jpg"
     
     # Fallback: copy PDF path info (user will need to create JPG manually)
     print(f"Note: Please create thumbnail manually:")
@@ -89,9 +110,8 @@ def create_parts(audio_files, release_tag):
     parts = []
     for i, filename in enumerate(audio_files, 1):
         base_name = os.path.splitext(filename)[0]
-        ext = os.path.splitext(filename)[1].lower()
-        # Use simple numbering for GitHub release
-        part_filename = f"{i}{ext}"
+        # Release assets are numbered MP3s: 1.mp3, 2.mp3, ...
+        part_filename = f"{i}.mp3"
         url = f"{BASE_URL}{release_tag}/{part_filename}"
         
         parts.append({
@@ -123,7 +143,7 @@ def add_book_to_json():
             book['title'] = BOOK_TITLE
             book['parts'] = create_parts(find_audio_files(AUDIO_FOLDER), RELEASE_TAG)
             if thumbnail_name := copy_thumbnail(THUMBNAIL_PDF, BOOK_ID):
-                book['thumbnailUrl'] = f"https://daveashish12356-dotcom.github.io/swamisachidanand-audio/thumbnails/{thumbnail_name}"
+                book['thumbnailUrl'] = f"https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/thumbnails/{thumbnail_name}"
             break
     else:
         # Add new book
@@ -133,7 +153,7 @@ def add_book_to_json():
             "parts": create_parts(find_audio_files(AUDIO_FOLDER), RELEASE_TAG)
         }
         if thumbnail_name := copy_thumbnail(THUMBNAIL_PDF, BOOK_ID):
-            new_book['thumbnailUrl'] = f"https://daveashish12356-dotcom.github.io/swamisachidanand-audio/thumbnails/{thumbnail_name}"
+            new_book['thumbnailUrl'] = f"https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/thumbnails/{thumbnail_name}"
         books.append(new_book)
         print(f"Added new book: {BOOK_ID}")
     
