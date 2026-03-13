@@ -1,6 +1,6 @@
 {
-  "version": 12,
-  "updated": "2026-03-11T13:54:44Z",
+  "version": 13,
+  "updated": "2026-03-13T22:22:51Z",
   "books": [
     {
       "id": "amarakantak_madhyapradesh",
@@ -6672,6 +6672,253 @@
         }
       ],
       "thumbnailUrl": "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/thumbnails/shri_hanuman_chalisa.jpg"
+    },
+    {
+      "id": "bhagavatnu_chintan",
+      "title": "ભાગવતનું ચિંતન",
+      "parts": [
+        {
+          "id": "1",
+          "title": "1. ભાગવતનું ચિંતન",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/1.mp3"
+        },
+        {
+          "id": "2",
+          "title": "2. અર્પણ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/2.mp3"
+        },
+        {
+          "id": "3",
+          "title": "3.1 ભૂમિકા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/3.mp3"
+        },
+        {
+          "id": "4",
+          "title": "3.2 ભૂમિકા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/4.mp3"
+        },
+        {
+          "id": "5",
+          "title": "4.1 વ્યાસજીને દિશા મળી",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/5.mp3"
+        },
+        {
+          "id": "6",
+          "title": "4.2 વ્યાસજીને દિશા મળી",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/6.mp3"
+        },
+        {
+          "id": "7",
+          "title": "5.1 આત્મદેવ અને ધુંધુકારી",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/7.mp3"
+        },
+        {
+          "id": "8",
+          "title": "5.2 આત્મદેવ અને ધુંધુકારી",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/8.mp3"
+        },
+        {
+          "id": "9",
+          "title": "5.3 આત્મદેવ અને ધુંધુકારી",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/9.mp3"
+        },
+        {
+          "id": "10",
+          "title": "6. શુકદેવ-જન્મકથા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/10.mp3"
+        },
+        {
+          "id": "11",
+          "title": "7. નારદજીની કથા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/11.mp3"
+        },
+        {
+          "id": "12",
+          "title": "8.1 પરીક્ષિતનો શાપ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/12.mp3"
+        },
+        {
+          "id": "13",
+          "title": "8.2 પરીક્ષિતનો શાપ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/13.mp3"
+        },
+        {
+          "id": "14",
+          "title": "9.1 પરીક્ષિતનું કથાશ્રવણ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/14.mp3"
+        },
+        {
+          "id": "15",
+          "title": "9.2 પરીક્ષિતનું કથાશ્રવણ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/15.mp3"
+        },
+        {
+          "id": "16",
+          "title": "10.1 દેવકી-વસુદેવને હાથકડી",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/16.mp3"
+        },
+        {
+          "id": "17",
+          "title": "10.2 દેવકી-વસુદેવને હાથકડી",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/17.mp3"
+        },
+        {
+          "id": "18",
+          "title": "11.1 વસુદેવ-દેવકી કારાવાસમાં",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/18.mp3"
+        },
+        {
+          "id": "19",
+          "title": "11.2 વસુદેવ-દેવકી કારાવાસમાં",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/19.mp3"
+        },
+        {
+          "id": "20",
+          "title": "12.1 કૃષ્ણજન્મ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/20.mp3"
+        },
+        {
+          "id": "21",
+          "title": "12.2 કૃષ્ણજન્મ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/21.mp3"
+        },
+        {
+          "id": "22",
+          "title": "13.1 શ્રીકૃષ્ણની બાળલીલાઓ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/22.mp3"
+        },
+        {
+          "id": "23",
+          "title": "13.2 શ્રીકૃષ્ણની બાળલીલાઓ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/23.mp3"
+        },
+        {
+          "id": "24",
+          "title": "14.1 કંસવધ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/24.mp3"
+        },
+        {
+          "id": "25",
+          "title": "14.2 કંસવધ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/25.mp3"
+        },
+        {
+          "id": "26",
+          "title": "15. વિધાધ્યયન",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/26.mp3"
+        },
+        {
+          "id": "27",
+          "title": "16. શ્રીકૃષ્ણ દ્વારકામાં",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/27.mp3"
+        },
+        {
+          "id": "28",
+          "title": "17.1 રુક્મિણીહરણ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/28.mp3"
+        },
+        {
+          "id": "29",
+          "title": "17.2 રુક્મિણીહરણ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/29.mp3"
+        },
+        {
+          "id": "30",
+          "title": "18. પ્રઘુમ્નની પ્રાપ્તિ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/30.mp3"
+        },
+        {
+          "id": "31",
+          "title": "19. શ્રીકૃષ્ણની આઠ રાણીઓ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/31.mp3"
+        },
+        {
+          "id": "32",
+          "title": "20. નરકાસુરનો વધ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/32.mp3"
+        },
+        {
+          "id": "33",
+          "title": "21. અનિરુદ્ધનાં લગ્ન",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/33.mp3"
+        },
+        {
+          "id": "34",
+          "title": "22. ઉષા-અનિરુદ્ધ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/34.mp3"
+        },
+        {
+          "id": "35",
+          "title": "23. શશિશુપાલવધ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/35.mp3"
+        },
+        {
+          "id": "36",
+          "title": "24. સૂતજીની હત્યા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/36.mp3"
+        },
+        {
+          "id": "37",
+          "title": "25.1 સુદામાચરિત્ર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/37.mp3"
+        },
+        {
+          "id": "38",
+          "title": "25.2 સુદામાચરિત્ર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/38.mp3"
+        },
+        {
+          "id": "39",
+          "title": "26. સુભદ્રાહરણ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/39.mp3"
+        },
+        {
+          "id": "40",
+          "title": "27.1 યાદવોનો નાશ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/40.mp3"
+        },
+        {
+          "id": "41",
+          "title": "27.2 યાદવોનો નાશ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/41.mp3"
+        },
+        {
+          "id": "42",
+          "title": "28. પાછા ઇન્દ્રપ્રસ્થમાં",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/42.mp3"
+        },
+        {
+          "id": "43",
+          "title": "29.1 ચોવીસ ગુરુઓ-બહુગુરુવાદ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/43.mp3"
+        },
+        {
+          "id": "44",
+          "title": "29.2 ચોવીસ ગુરુઓ-બહુગુરુવાદ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/44.mp3"
+        },
+        {
+          "id": "45",
+          "title": "29.3 ચોવીસ ગુરુઓ-બહુગુરુવાદ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/45.mp3"
+        },
+        {
+          "id": "46",
+          "title": "29.4 ચોવીસ ગુરુઓ-બહુગુરુવાદ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/46.mp3"
+        },
+        {
+          "id": "47",
+          "title": "30. રાજા પરીક્ષિતને તક્ષકડંસ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/47.mp3"
+        },
+        {
+          "id": "48",
+          "title": "31. મહાસંહાર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/bhagavatnu_chintan/48.mp3"
+        }
+      ],
+      "thumbnailUrl": "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/thumbnails/bhagavatnu_chintan.jpg"
     }
   ]
 }
