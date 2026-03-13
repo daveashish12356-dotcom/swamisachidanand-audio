@@ -1,6 +1,6 @@
 {
-  "version": 13,
-  "updated": "2026-03-13T22:22:51Z",
+  "version": 14,
+  "updated": "2026-03-13T22:34:32Z",
   "books": [
     {
       "id": "amarakantak_madhyapradesh",
@@ -6919,6 +6919,188 @@
         }
       ],
       "thumbnailUrl": "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/thumbnails/bhagavatnu_chintan.jpg"
+    },
+    {
+      "id": "kalapani",
+      "title": "કલાપાણી",
+      "parts": [
+        {
+          "id": "1",
+          "title": "1. કાલાપાની",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/1.mp3"
+        },
+        {
+          "id": "2",
+          "title": "2. અર્પણ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/2.mp3"
+        },
+        {
+          "id": "3",
+          "title": "3.1 ભૂમિકા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/3.mp3"
+        },
+        {
+          "id": "4",
+          "title": "3.2 ભૂમિકા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/4.mp3"
+        },
+        {
+          "id": "5",
+          "title": "4.1 જોગેશચંદ્ર ચેટર્જી",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/5.mp3"
+        },
+        {
+          "id": "6",
+          "title": "4.2 જોગેશચંદ્ર ચેટર્જી",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/6.mp3"
+        },
+        {
+          "id": "7",
+          "title": "4.3 જોગેશચંદ્ર ચેટર્જી",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/7.mp3"
+        },
+        {
+          "id": "8",
+          "title": "5. દલપતરાવ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/8.mp3"
+        },
+        {
+          "id": "9",
+          "title": "6. ભૂપેન્દ્રનાથ સાન્‍્યાલ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/9.mp3"
+        },
+        {
+          "id": "10",
+          "title": "7. મુકુંદીલાલ ગુપ્તા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/10.mp3"
+        },
+        {
+          "id": "11",
+          "title": "8. વિનય ભૂષણ ડે",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/11.mp3"
+        },
+        {
+          "id": "12",
+          "title": "9. વિષ્ણુ શરણ દુબલિશ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/12.mp3"
+        },
+        {
+          "id": "13",
+          "title": "10. શંભુનાથ આઝાદ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/13.mp3"
+        },
+        {
+          "id": "14",
+          "title": "11. હરિપદ ભટદ્ાચાર્ય",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/14.mp3"
+        },
+        {
+          "id": "15",
+          "title": "12. કમલનાથ તિવારી",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/15.mp3"
+        },
+        {
+          "id": "16",
+          "title": "13. ડો. ગયા પ્રસાદ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/16.mp3"
+        },
+        {
+          "id": "17",
+          "title": "14.1 જયદેવ કપૂર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/17.mp3"
+        },
+        {
+          "id": "18",
+          "title": "14.2 જયદેવ કપૂર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/18.mp3"
+        },
+        {
+          "id": "19",
+          "title": "15.વિજયકુમાર સિન્હા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/19.mp3"
+        },
+        {
+          "id": "20",
+          "title": "16. ગોવિંદ ચરણકર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/20.mp3"
+        },
+        {
+          "id": "21",
+          "title": "17. અમરસિંહ અમર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/21.mp3"
+        },
+        {
+          "id": "22",
+          "title": "18. નિધાનસિંહ ચુગ્ઘા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/22.mp3"
+        },
+        {
+          "id": "23",
+          "title": "19. ભાનસિંહ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/23.mp3"
+        },
+        {
+          "id": "24",
+          "title": "20.ફીલ્ડમાર્શલ લહદ્દારામ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/24.mp3"
+        },
+        {
+          "id": "25",
+          "title": "21.  શચીન્દ્રનાથ સાન્યાલ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/25.mp3"
+        },
+        {
+          "id": "26",
+          "title": "22.મૌલવી અહમદુલ્લા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/26.mp3"
+        },
+        {
+          "id": "27",
+          "title": "23. ઉલ્લાસકર દત્ત",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/27.mp3"
+        },
+        {
+          "id": "28",
+          "title": "24. ઉપેન્દ્રનાથ બંધોપાધ્યાય",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/28.mp3"
+        },
+        {
+          "id": "29",
+          "title": "25. ગણેશ દામોદર સાવરકર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/29.mp3"
+        },
+        {
+          "id": "30",
+          "title": "26. પુલિન બિહારી દાસ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/30.mp3"
+        },
+        {
+          "id": "31",
+          "title": "27. હેમચંદ્ર દાસ કાનૂનગો",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/31.mp3"
+        },
+        {
+          "id": "32",
+          "title": "28. રાંમરક્ખા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/32.mp3"
+        },
+        {
+          "id": "33",
+          "title": "29. વારીન્દ્રકુમાર ઘોષ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/33.mp3"
+        },
+        {
+          "id": "34",
+          "title": "30. ઊંધમસિંહ કસેલ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/34.mp3"
+        },
+        {
+          "id": "35",
+          "title": "31. બાબા જ્વાલાસિંહ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/kalapani/35.mp3"
+        }
+      ],
+      "thumbnailUrl": "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/thumbnails/kalapani.jpg"
     }
   ]
 }
