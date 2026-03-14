@@ -17,6 +17,9 @@ MANUAL_IMG_OVERRIDE = {
     15: "nava_vichar.jpg",         # નવા વિચારો
     17: "prithvi_pradakshina.jpg", # પૃથ્વી-પ્રદક્ષિણા
     21: "himalay_na_hindole.jpg",  # હિમાલયના હીંડોળે
+    26: "ijipt_isttrail_jankhi.jpg", # ઇજિપ્ત-ઇસ્ત્રાઇલની ઝાંખી
+    27: "tanzaniya_17_divas.jpg",   # ટાન્ઝાનિયામાં 17 દિવસ
+    29: "yurap_ni_atariye.jpg",     # યુરોપની અટારીએથી
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
