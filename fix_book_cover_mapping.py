@@ -84,6 +84,12 @@ MANUAL_IMG_OVERRIDE = {
     122: "virata_parmo_dharm.jpg", # વીરતા પરમો ધર્મ
     123: "kashmir_no_tunko_etihas.jpg", # કાશ્મીરનો ટૂંકો ઇતિહાસ
     126: "muglo_antarik_hinsa.jpg", # મોગલોનો આંતરિક હિંસા કલહ
+    128: "chedti_thi_barbadi.jpg", # છેડતીથી બરબાદી
+    130: "patna_ane_panna.jpg", # પટના અને પન્ના
+    131: "amara_vridhashramo_kadva_anubhav.jpg", # અમારા વૃદ્ધાશ્રમોના કડવા અનુભવો
+    135: "ramanuj_pratima_darshan.jpg", # રામાનુજ પ્રતિમા દર્શન
+    136: "patni_thi_thati_pida.jpg", # પત્નીઓથી થતી પીડા
+    138: "kabutaro_akho_udhado.jpg", # કબૂતરો, આંખો ઉઘાડો !
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
