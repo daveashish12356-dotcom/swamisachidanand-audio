@@ -29,6 +29,14 @@ MANUAL_IMG_OVERRIDE = {
     41: "apni_durbaltao.jpg",       # આપણી દુર્બળતાઓ
     42: "shrilanka_ni_safare.jpg",  # શ્રીલંકાની સફરે
     43: "dakshin_thaine_purv_ma.jpg", # દક્ષિણ-પૂર્વનો પ્રવાસ
+    45: "rastiy_trith_adaman.jpg",  # રાષ્ટ્રીય તીર્થ આંદામાન
+    46: "tarki_ane_ejippt.jpg",     # ટર્કી અને ઇજિપ્ત
+    47: "staptiy_shourya_rajasthan.jpg", # સ્થાપત્ય અને શૌર્યની ભૂમિ રાજસ્થાન
+    48: "phari_pacha_purv_ma.jpg",  # ફરી પાછા પૂર્વમાં
+    49: "sikkim_ane_bhutan_no_pravas.jpg", # સિક્કિમ અને ભુતાનનો પ્રવાસ
+    51: "purv_yurop_no_pravas.jpg", # પૂર્વ-યુરોપનો પ્રવાસ
+    52: "moreshiyas_ane_dubai_no_pravas.jpg", # મોરેશિયસ અને દુબઇનો પ્રવાસ
+    54: "mara_purvashram_na_samsmarano.jpg", # મારા પૂર્વાશ્રમનાં સંસ્મરણો
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
