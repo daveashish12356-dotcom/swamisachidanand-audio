@@ -86,7 +86,7 @@ MANUAL_IMG_OVERRIDE = {
     126: "muglo_antarik_hinsa.jpg", # મોગલોનો આંતરિક હિંસા કલહ
     128: "chedti_thi_barbadi.jpg", # છેડતીથી બરબાદી
     130: "patna_ane_panna.jpg", # પટના અને પન્ના
-    131: "amara_vridhashramo_kadva_anubhav.jpg", # અમારા વૃદ્ધાશ્રમોના કડવા અનુભવો
+    131: "amara_vridhashramo_kadva_anubhav_v2.jpg", # અમારા વૃદ્ધાશ્રમોના કડવા અનુભવો
     135: "ramanuj_pratima_darshan.jpg", # રામાનુજ પ્રતિમા દર્શન
     136: "patni_thi_thati_pida.jpg", # પત્નીઓથી થતી પીડા
     138: "kabutaro_akho_udhado.jpg", # કબૂતરો, આંખો ઉઘાડો !
