@@ -48,6 +48,11 @@ MANUAL_IMG_OVERRIDE = {
     71: "amarkantak_madhyapradesh_mahima.jpg", # અમરકંટક અને મધ્યપ્રદેશનો મહિમા
     73: "bhagvat_nu_chintan.jpg",  # ભાગવતનું ચિંતન
     74: "purv_ni_sat_baheno.jpg", # પૂર્વની સાત બહેનો
+    77: "sacha_mahapurusho.jpg", # સાચા મહાપુરુષો
+    78: "upnishad_kathao_ane_chintan.jpg", # ઉપનિષદોની કથાઓ અને ચિંતન
+    80: "buddh_jatak_chintan_2.jpg", # બુદ્ધ-જાતક-ચિંતન:2
+    81: "sardar_saheb_mari_najare.jpg", # સરદાર સાહેબ : મારી નજરે (PDF→JPG)
+    82: "saurashtra_no_madhpudo.jpg", # સૌરાષ્ટ્રનો મધપૂડો
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
