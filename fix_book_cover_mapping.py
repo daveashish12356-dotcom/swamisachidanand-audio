@@ -22,6 +22,10 @@ MANUAL_IMG_OVERRIDE = {
     29: "yurap_ni_atariye.jpg",     # યુરોપની અટારીએથી
     31: "rastr_na_salgata_prashno.jpg", # રાષ્ટ્રના સળગતા પ્રશ્નો
     32: "chin_mari_najare.jpg",     # ચીન-મારી નજરે
+    34: "agvadh_ma_aradhna.jpg",    # અગવડોમાં આરાધના
+    35: "pachim_thaine_rashiya.jpg", # પશ્ચિમ થઈને રશિયા
+    39: "purv_ma_navu_pachim.jpg",  # પૂર્વમાં નવું પશ્ચિમ
+    40: "africa_pravasna_sansmarano.jpg", # આફ્રિકા-પ્રવાસનાં સંસ્મરણો
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
