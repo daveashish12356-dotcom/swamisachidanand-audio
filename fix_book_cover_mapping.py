@@ -43,6 +43,11 @@ MANUAL_IMG_OVERRIDE = {
     59: "bodhgaya_netra_shradh.jpg", # બોધગયામાં નેત્રશ્રાદ્ધ
     61: "tamil_nadu_yatra.jpg",   # તામિલનાડુની યાત્રા
     63: "junagadh_no_azadi_jang.jpg", # જુનાગઢનો આઝાદીજંગ
+    65: "ramayan_chintan.jpg",     # રામાયણનું ચિંતન
+    68: "shahido_ni_krantigatha.jpg", # શહીદોની ક્રાંતિગાથાઓ
+    71: "amarkantak_madhyapradesh_mahima.jpg", # અમરકંટક અને મધ્યપ્રદેશનો મહિમા
+    73: "bhagvat_nu_chintan.jpg",  # ભાગવતનું ચિંતન
+    74: "purv_ni_sat_baheno.jpg", # પૂર્વની સાત બહેનો
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
