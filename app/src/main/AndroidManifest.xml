@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Android 13+ need this for suvichar (આજનું ચિંતન) notifications -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".App"
@@ -18,6 +20,11 @@
         android:theme="@style/Theme.Swami"
         android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode"
         android:resizeableActivity="true">
+
+        <!-- AdMob app id -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7592986107944664~8167456866" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -41,7 +48,7 @@
             android:exported="false"
             android:hardwareAccelerated="true" />
         <activity
-            android:name=".PdfViewerActivity"
+            android:name=".ModernPdfActivity"
             android:exported="false"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity" />
@@ -57,6 +64,23 @@
             android:exported="false"
             android:theme="@style/Theme.Swami"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".SuvicharAdminActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Swami"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".BookStoreActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Swami"
+            android:parentActivityName=".MainActivity" />
+        <service
+            android:name=".MyFirebaseService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

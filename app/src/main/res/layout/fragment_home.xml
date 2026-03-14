@@ -373,6 +373,18 @@
             android:clipToPadding="false"
             android:scrollbars="horizontal" />
 
+        <!-- Banner ad between new audio and new books -->
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/home_inline_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_large"
+            android:layout_marginEnd="@dimen/spacing_large"
+            android:layout_marginBottom="@dimen/spacing_large"
+            android:visibility="gone"
+            app:adSize="BANNER"
+            app:adUnitId="ca-app-pub-7592986107944664/4541738286" />
+
         <!-- 6. New / Popular Books -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -492,6 +504,59 @@
             android:paddingEnd="@dimen/spacing_large"
             android:clipToPadding="false"
             android:scrollbars="horizontal" />
+
+        <!-- સુરત પુસ્તક સેન્ટર - 40% ડિસ્કાઉન્ટ -->
+        <LinearLayout
+            android:id="@+id/home_book_store_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="@dimen/spacing_xxlarge">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/spacing_large"
+                android:paddingEnd="@dimen/spacing_large"
+                android:paddingBottom="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="📚 સુરત પુસ્તક સેન્ટર - 40% ડિસ્કાઉન્ટ"
+                    android:textSize="@dimen/section_title_size"
+                    android:textStyle="bold"
+                    android:textColor="?attr/text_primary" />
+
+                <TextView
+                    android:id="@+id/home_book_store_view_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="View More ›"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/deep_saffron"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="4dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/home_book_store_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:paddingStart="@dimen/spacing_large"
+                android:paddingEnd="@dimen/spacing_large"
+                android:clipToPadding="false"
+                android:scrollbars="horizontal" />
+        </LinearLayout>
 
     </LinearLayout>
 
