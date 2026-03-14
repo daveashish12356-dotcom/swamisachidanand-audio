@@ -90,6 +90,9 @@ MANUAL_IMG_OVERRIDE = {
     135: "ramanuj_pratima_darshan.jpg", # રામાનુજ પ્રતિમા દર્શન
     136: "patni_thi_thati_pida.jpg", # પત્નીઓથી થતી પીડા
     138: "kabutaro_akho_udhado.jpg", # કબૂતરો, આંખો ઉઘાડો !
+    141: "mahan_ramanujachary.jpg", # મહાન રામાનુજાચાર્ય
+    142: "prashn_yej_uttar_bhag1.jpg", # પ્રશ્ન એ જ ઉત્તર ભાગ-1
+    143: "chintan_kanikavo.jpg", # ચિંતનકણિકાઓ
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
