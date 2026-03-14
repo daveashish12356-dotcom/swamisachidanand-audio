@@ -53,6 +53,10 @@ MANUAL_IMG_OVERRIDE = {
     80: "buddh_jatak_chintan_2.jpg", # બુદ્ધ-જાતક-ચિંતન:2
     81: "sardar_saheb_mari_najare.jpg", # સરદાર સાહેબ : મારી નજરે (PDF→JPG)
     82: "saurashtra_no_madhpudo.jpg", # સૌરાષ્ટ્રનો મધપૂડો
+    85: "kranti_kathao.jpg",        # ક્રાંતિકથાઓ
+    87: "vishnusahasranam_part1.jpg", # વિષ્ણુસહસ્ત્રનામ ભાગ-1
+    89: "prashn_yej_uttar.jpg",     # પ્રશ્ન એ જ ઉત્તર
+    91: "sardar_saheb_vadapradhan.jpg", # જો સરદાર સાહેબ વડાપ્રધાન બન્યા હોત તો ?
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
