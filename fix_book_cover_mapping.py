@@ -37,6 +37,12 @@ MANUAL_IMG_OVERRIDE = {
     51: "purv_yurop_no_pravas.jpg", # પૂર્વ-યુરોપનો પ્રવાસ
     52: "moreshiyas_ane_dubai_no_pravas.jpg", # મોરેશિયસ અને દુબઇનો પ્રવાસ
     54: "mara_purvashram_na_samsmarano.jpg", # મારા પૂર્વાશ્રમનાં સંસ્મરણો
+    55: "leh_ladakh_kargil_kashmir.jpg", # લેહ, લદાખ, કારગિલ, કાશ્મીર
+    56: "himalay_na_char_dham.jpg", # હિમાલયના ચાર ધામ
+    58: "kandhe_bandh_saar.jpg",   # કાન્હડદેપ્રબંધ-સાર
+    59: "bodhgaya_netra_shradh.jpg", # બોધગયામાં નેત્રશ્રાદ્ધ
+    61: "tamil_nadu_yatra.jpg",   # તામિલનાડુની યાત્રા
+    63: "junagadh_no_azadi_jang.jpg", # જુનાગઢનો આઝાદીજંગ
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
