@@ -75,6 +75,15 @@ MANUAL_IMG_OVERRIDE = {
     111: "kadva_mith_anubhavo.jpg", # કડવામીઠા અનુભવો
     112: "bijapur_thi_nanded.jpg", # બીજાપુરથી નાંદેડ
     115: "gova_pravas.jpg", # ગોવાપ્રવાસ
+    113: "andaman_no_pravas.png", # આંદામાનનો પ્રવાસ
+    117: "nepal_yatra.jpg", # નેપાળ-યાત્રા
+    118: "khota_updesho_parinamo.jpg", # ખોટા ઉપદેશોનાં ખોટાં પરિણામ
+    119: "haridwar_yatra.jpg", # હરિદ્વારની યાત્રા
+    120: "ablamathi_prala_sindhutai_sapkal.jpg", # અબળામાંથી પ્રબળા સિંધુતાઇ સપકાળ
+    121: "andaman_bijo_pravas.jpg", # આંદામાનનો બીજો પ્રવાસ
+    122: "virata_parmo_dharm.jpg", # વીરતા પરમો ધર્મ
+    123: "kashmir_no_tunko_etihas.jpg", # કાશ્મીરનો ટૂંકો ઇતિહાસ
+    126: "muglo_antarik_hinsa.jpg", # મોગલોનો આંતરિક હિંસા કલહ
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
