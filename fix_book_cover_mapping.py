@@ -72,6 +72,9 @@ MANUAL_IMG_OVERRIDE = {
     108: "tanot_mata_longowal_yuddh.jpg", # તનોટમાતા અને લોંગોવાલનું યુદ્ધ
     109: "mahadevi_ahilyabai_holkar.jpg", # મહાદેવી અહલ્યાબાઇ હોળકર
     110: "adi_sudharak_raja_rammohan_ray.jpg", # આદિ સુધારક રાજા રામમોહન રાય
+    111: "kadva_mith_anubhavo.jpg", # કડવામીઠા અનુભવો
+    112: "bijapur_thi_nanded.jpg", # બીજાપુરથી નાંદેડ
+    115: "gova_pravas.jpg", # ગોવાપ્રવાસ
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
