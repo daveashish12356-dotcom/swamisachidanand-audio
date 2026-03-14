@@ -93,6 +93,7 @@ MANUAL_IMG_OVERRIDE = {
     141: "mahan_ramanujachary.jpg", # મહાન રામાનુજાચાર્ય
     142: "prashn_yej_uttar_bhag1.jpg", # પ્રશ્ન એ જ ઉત્તર ભાગ-1
     143: "chintan_kanikavo.jpg", # ચિંતનકણિકાઓ
+    152: "devalay_thi_dehalay_gujarat.jpg", # દેવાલય થી દેહાલય ગુજરાતમાં (new book)
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
