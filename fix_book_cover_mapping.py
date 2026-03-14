@@ -26,6 +26,9 @@ MANUAL_IMG_OVERRIDE = {
     35: "pachim_thaine_rashiya.jpg", # પશ્ચિમ થઈને રશિયા
     39: "purv_ma_navu_pachim.jpg",  # પૂર્વમાં નવું પશ્ચિમ
     40: "africa_pravasna_sansmarano.jpg", # આફ્રિકા-પ્રવાસનાં સંસ્મરણો
+    41: "apni_durbaltao.jpg",       # આપણી દુર્બળતાઓ
+    42: "shrilanka_ni_safare.jpg",  # શ્રીલંકાની સફરે
+    43: "dakshin_thaine_purv_ma.jpg", # દક્ષિણ-પૂર્વનો પ્રવાસ
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
