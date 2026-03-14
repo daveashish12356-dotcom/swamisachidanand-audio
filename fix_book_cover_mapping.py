@@ -62,6 +62,16 @@ MANUAL_IMG_OVERRIDE = {
     95: "munshi_premchand_punaravatar.jpg", # મુનશી પ્રેમચંદજીનો પુનરાવતાર
     96: "saurashtra_nu_shuratan.jpg", # સૌરાષ્ટ્રનું શૂરાતન
     98: "buddh_charit_chintan.jpg", # બુદ્ધ ચરિત્ર ચિંતન
+    99: "shree_hanuman_chalisha.jpg", # શ્રી હનુમાન ચાલીસા
+    100: "hampi_velur_halebidu_pravas.jpg", # હમ્પી, વેલુર અને હળેબીડુ પ્રવાસ
+    101: "kabirji_nu_chintan.jpg", # શ્રી કબીરજીનું ચિંતન
+    102: "lakshadweep_pravas.jpg", # લક્ષદ્વિપ-પ્રવાસ
+    103: "kolambas_vasko_gama_bharat.jpg", # કોલંબસ અને વાસ્કો દ ગામા ભારતમાં કેમ ન પાક્યાં ?
+    106: "koushani_rani_khet_pravas.jpg", # કૌસાની, રાણીખેત અને નૈનિતાલ ઊડતો પ્રવાસ
+    107: "gondal_bapu_maharaj.jpg", # ગોંડલ-બાપુ મહારાજા ભગવતસિંહજી
+    108: "tanot_mata_longowal_yuddh.jpg", # તનોટમાતા અને લોંગોવાલનું યુદ્ધ
+    109: "mahadevi_ahilyabai_holkar.jpg", # મહાદેવી અહલ્યાબાઇ હોળકર
+    110: "adi_sudharak_raja_rammohan_ray.jpg", # આદિ સુધારક રાજા રામમોહન રાય
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
