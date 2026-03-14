@@ -57,6 +57,11 @@ MANUAL_IMG_OVERRIDE = {
     87: "vishnusahasranam_part1.jpg", # વિષ્ણુસહસ્ત્રનામ ભાગ-1
     89: "prashn_yej_uttar.jpg",     # પ્રશ્ન એ જ ઉત્તર
     91: "sardar_saheb_vadapradhan.jpg", # જો સરદાર સાહેબ વડાપ્રધાન બન્યા હોત તો ?
+    93: "valmiki_ramayan_sar.jpg",  # વાલ્મીકી-રામાયણ-સાર
+    94: "chanakya_ni_vyavhar_niti.jpg", # ચાણક્યની વ્યવહારનિતિ
+    95: "munshi_premchand_punaravatar.jpg", # મુનશી પ્રેમચંદજીનો પુનરાવતાર
+    96: "saurashtra_nu_shuratan.jpg", # સૌરાષ્ટ્રનું શૂરાતન
+    98: "buddh_charit_chintan.jpg", # બુદ્ધ ચરિત્ર ચિંતન
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
