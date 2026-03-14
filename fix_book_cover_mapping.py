@@ -20,6 +20,8 @@ MANUAL_IMG_OVERRIDE = {
     26: "ijipt_isttrail_jankhi.jpg", # ઇજિપ્ત-ઇસ્ત્રાઇલની ઝાંખી
     27: "tanzaniya_17_divas.jpg",   # ટાન્ઝાનિયામાં 17 દિવસ
     29: "yurap_ni_atariye.jpg",     # યુરોપની અટારીએથી
+    31: "rastr_na_salgata_prashno.jpg", # રાષ્ટ્રના સળગતા પ્રશ્નો
+    32: "chin_mari_najare.jpg",     # ચીન-મારી નજરે
 }
 
 # Photo number (N in N.jpg) -> book id (from scanning cover; Gujarati title match)
