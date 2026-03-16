@@ -22,6 +22,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.text.TextWatcher;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -33,12 +35,14 @@ import java.io.InputStreamReader;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.textfield.TextInputEditText;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -49,11 +53,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.LoadAdError;
 
 public class HomeFragment extends Fragment implements BookAdapter.OnBookClickListener {
 
@@ -61,6 +71,9 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
     private static final String PREFS_NAME = "reading_progress";
     private static final String KEY_RECENT_BOOK = "recent_book_name";
     private static final String KEY_RECENT_BOOKS = "recent_books_list";
+    private static final String PREFS_SUVICHAR = "suvichar_prefs";
+    private static final String KEY_LAST_SUVICHAR_TEXT = "last_suvichar_text";
+    private static final String KEY_LAST_SUVICHAR_AUTHOR = "last_suvichar_author";
     private static final String PREFS_AUDIO = "audio_prefs";
     private static final String KEY_LAST_PART_ID = "last_part_id_";
     private static final int REQUEST_CODE_VOICE_SEARCH = 1001;
@@ -95,11 +108,20 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
 
     // Simple hero video at top (Padma Bhushan clip) – FitVideoView for fit-without-zoom
     private FitVideoView heroVideoView;
-    /** Last me hero box me photo animation, phir ye hi stay (suvichar → video → photo) */
+    /** Video ke baad: server gallery photos slideshow, nahi to static photo */
     private ImageView heroFinalPhoto;
+    private ViewPager2 heroPhotoSlideshow;
+    private GallerySlideshowPagerAdapter heroSlideshowAdapter;
+    private final List<String> heroPhotoUrls = new ArrayList<>();
+    private static final String HERO_GALLERY_BASE = "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/gallery/";
+    private static final String HERO_GALLERY_LIST_URL = HERO_GALLERY_BASE + "list.json";
     private static final long HERO_VIDEO_TO_PHOTO_MS = 45_000L;
+    // Hero box slideshow – 6 seconds so अगला photo आराम से load हो सके
+    private static final int HERO_SLIDESHOW_INTERVAL_MS = 6000;
     private final Handler heroPhotoHandler = new Handler(Looper.getMainLooper());
     private Runnable heroPhotoRunnable;
+    private final Handler heroSlideshowHandler = new Handler(Looper.getMainLooper());
+    private Runnable heroSlideshowRunnable;
     private boolean heroPhotoShown = false;
 
     // Best books = first N from assets (no fixed list). Purani books hatao, nayi PDFs dalo assets me — wahi dikhengi.
@@ -119,6 +141,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
     private final Handler suvicharHandler = new Handler(Looper.getMainLooper());
     private Runnable suvicharHideRunnable;
     private boolean suvicharShowing = false;
+    private AdView inlineBannerAd;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -134,6 +157,8 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             photoViewPager = null;
             heroVideoView = view.findViewById(R.id.hero_video_view);
             heroFinalPhoto = view.findViewById(R.id.hero_final_photo);
+            heroPhotoSlideshow = view.findViewById(R.id.hero_photo_slideshow);
+            setupHeroPhotoSlideshow();
             setupPhotoBannerAnimation(view);
 
             homeHistorySection = view.findViewById(R.id.home_history_section);
@@ -147,6 +172,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             setupHomeAudio();
             setupHistoryRow(view);
             setupViewAllClicks(view);
+            setupBookStoreSection(view);
             searchInput = view.findViewById(R.id.global_search_input);
             clearSearch = view.findViewById(R.id.global_clear_search);
             micButton = view.findViewById(R.id.global_mic_button);
@@ -172,6 +198,18 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             if (quickContact != null) {
                 quickContact.setOnClickListener(v -> switchToBottomNavTab(R.id.nav_about));
             }
+
+            View photoGalleryLink = view.findViewById(R.id.home_photo_gallery_link);
+            if (photoGalleryLink != null) {
+                photoGalleryLink.setOnClickListener(v -> {
+                    if (getContext() != null) {
+                        startActivity(new android.content.Intent(getContext(), PhotoGalleryActivity.class));
+                    }
+                });
+            }
+
+            // Inline banner ad between new audio and new books
+            setupInlineBannerAd(view);
 
         if (getContext() != null && searchResultsRecycler != null) {
             searchResultsRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -249,6 +287,41 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
         loadSuvichar();
     }
 
+    private void setupInlineBannerAd(View root) {
+        try {
+            inlineBannerAd = root.findViewById(R.id.home_inline_banner);
+            if (inlineBannerAd == null) return;
+            AdRequest request = new AdRequest.Builder().build();
+            inlineBannerAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    try {
+                        if (inlineBannerAd.getVisibility() != View.VISIBLE) {
+                            inlineBannerAd.setAlpha(0f);
+                            inlineBannerAd.setTranslationY(inlineBannerAd.getHeight());
+                            inlineBannerAd.setVisibility(View.VISIBLE);
+                            inlineBannerAd.animate()
+                                    .translationY(0f)
+                                    .alpha(1f)
+                                    .setDuration(350L)
+                                    .start();
+                        }
+                    } catch (Throwable t) {
+                        inlineBannerAd.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onAdFailedToLoad(LoadAdError adError) {
+                    Log.w(TAG, "home banner failed: " + adError);
+                }
+            });
+            inlineBannerAd.loadAd(request);
+        } catch (Throwable t) {
+            Log.e(TAG, "setupInlineBannerAd", t);
+        }
+    }
+
     private static List<SuvicharItem> onlyLatest(List<SuvicharItem> list) {
         if (list == null || list.isEmpty()) return list;
         return Collections.singletonList(list.get(list.size() - 1));
@@ -281,33 +354,59 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
     private void loadSuvichar() {
         Activity activity = getActivity();
         if (activity == null || activity.isFinishing()) return;
+
+        // 1) Try Firebase Cloud Function first (Firebase-only flow)
+        final String firebaseUrl = "https://us-central1-swami-sachidanand.cloudfunctions.net/sendSuvichar";
+
+        // 2) Old GitHub JSON (fallback only, in case Firebase not reachable)
         final String baseUrl;
+        final String primaryUrl;
+        final String fallbackUrl;
         try {
             String b = getString(R.string.server_books_base_url);
             b = b != null ? b.trim() : "";
-            baseUrl = b.isEmpty() ? "" : (b.endsWith("/") ? b : b + "/");
+            String normalized = b.isEmpty() ? "" : (b.endsWith("/") ? b : b + "/");
+            baseUrl = normalized;
+            primaryUrl = normalized + "public/suvichar_config.json";
+            fallbackUrl = buildSuvicharRawUrl(normalized);
         } catch (Exception e) {
             return;
         }
-        final String primaryUrl = baseUrl + "public/suvichar_config.json";
-        final String fallbackUrl = buildSuvicharRawUrl(baseUrl);
-        Log.d(TAG, "suvichar: loadSuvichar fetch primaryUrl=" + primaryUrl);
+
+        Log.d(TAG, "suvichar: loadSuvichar firebaseUrl=" + firebaseUrl + " primaryUrl=" + primaryUrl);
         new Thread(() -> {
             try {
                 OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(6, TimeUnit.SECONDS)
                     .readTimeout(10, TimeUnit.SECONDS)
                     .build();
+
                 String body = null;
-                Request req1 = new Request.Builder().url(primaryUrl).build();
-                try (Response response = client.newCall(req1).execute()) {
-                    if (response.isSuccessful() && response.body() != null)
+
+                // First try Firebase function (preferred)
+                try (Response response = client.newCall(new Request.Builder().url(firebaseUrl).build()).execute()) {
+                    if (response.isSuccessful() && response.body() != null) {
                         body = response.body().string();
+                        Log.d(TAG, "suvichar: firebase body ok, len=" + body.length());
+                    } else {
+                        Log.w(TAG, "suvichar: firebase response not ok code=" + (response != null ? response.code() : -1));
+                    }
+                } catch (Throwable tf) {
+                    Log.e(TAG, "suvichar: firebase fetch failed", tf);
                 }
-                if (body == null && fallbackUrl != null) {
-                    try (Response response = client.newCall(new Request.Builder().url(fallbackUrl).build()).execute()) {
+
+                // If Firebase failed, fall back to GitHub JSON (old behaviour)
+                if (body == null) {
+                    Request req1 = new Request.Builder().url(primaryUrl).build();
+                    try (Response response = client.newCall(req1).execute()) {
                         if (response.isSuccessful() && response.body() != null)
                             body = response.body().string();
+                    }
+                    if (body == null && fallbackUrl != null) {
+                        try (Response response = client.newCall(new Request.Builder().url(fallbackUrl).build()).execute()) {
+                            if (response.isSuccessful() && response.body() != null)
+                                body = response.body().string();
+                        }
                     }
                 }
                 if (body == null) {
@@ -330,6 +429,25 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                 int textLen = finalList.isEmpty() ? 0 : (finalList.get(0).text != null ? finalList.get(0).text.length() : 0);
                 long displayMs = finalList.isEmpty() ? SUVICHAR_DISPLAY_MS : suvicharDisplayMsFor(finalList.get(0));
                 Log.d(TAG, "suvichar: server enabled=" + enabled + " listSize=" + list.size() + " finalCount=" + finalList.size() + " textLen=" + textLen + " displayMs=" + displayMs);
+
+                // Server (Firebase) already sends suvichar notifications via FCM.
+                // Yahan sirf latest text local prefs me remember karte hain (UI ke liye), extra notification nahi.
+                if (enabled && !finalList.isEmpty()) {
+                    try {
+                        String latestText = finalList.get(0).text != null ? finalList.get(0).text.trim() : "";
+                        String latestAuthor = finalList.get(0).author != null ? finalList.get(0).author.trim() : "";
+                        if (!latestText.isEmpty()) {
+                            SharedPreferences prefs = activity.getSharedPreferences(PREFS_SUVICHAR, Context.MODE_PRIVATE);
+                            prefs.edit()
+                                    .putString(KEY_LAST_SUVICHAR_TEXT, latestText)
+                                    .putString(KEY_LAST_SUVICHAR_AUTHOR, latestAuthor)
+                                    .apply();
+                        }
+                    } catch (Throwable t) {
+                        Log.e(TAG, "suvichar: failed to store latest text", t);
+                    }
+                }
+
                 final long displayMsFinal = displayMs;
                 activity.runOnUiThread(() -> {
                     if (suvicharShowing && !finalList.isEmpty()) {
@@ -527,7 +645,8 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
         photo2.setAlpha(0f);
         photo1.setTranslationX(0f);
         photo2.setTranslationX(0f);
-        final int intervalMs = 5000;
+        // Slower interval so next photos get enough time to load (6 seconds instead of 5)
+        final int intervalMs = 6000;
         final int animDurationMs = 1000;
         final float slideDp = 40f;
         Handler h = new Handler(Looper.getMainLooper());
@@ -574,7 +693,114 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
         h.postDelayed(tick, intervalMs);
     }
 
-    /** Hero video: auto-play, muted, loop. If suvichar is showing, prepare but don't show/start – video will show after suvichar fade. */
+    /** Hero box me video ke baad server gallery photos slideshow – setup adapter, animation, load list. */
+    private void setupHeroPhotoSlideshow() {
+        if (heroPhotoSlideshow == null || getContext() == null) return;
+        heroSlideshowAdapter = new GallerySlideshowPagerAdapter();
+        heroSlideshowAdapter.setListener(new GallerySlideshowPagerAdapter.Listener() {
+            @Override
+            public void onSlideClick(int position) {
+                if (getContext() != null) {
+                    startActivity(new Intent(getContext(), PhotoGalleryActivity.class));
+                }
+            }
+            @Override
+            public void onSlideLoadFailed(int position) { /* ignore on home */ }
+        });
+        heroPhotoSlideshow.setAdapter(heroSlideshowAdapter);
+        heroPhotoSlideshow.setOffscreenPageLimit(1);
+        // हल्की zoom-out + fade animation – home hero ke liye soft feel
+        final float density = getResources().getDisplayMetrics().density;
+        heroPhotoSlideshow.setPageTransformer(new ViewPager2.PageTransformer() {
+            @Override
+            public void transformPage(@NonNull View page, float position) {
+                float abs = Math.abs(position);
+                int w = page.getWidth();
+                if (w <= 0) return;
+
+                page.setCameraDistance(density * 8000f);
+                page.setPivotX(w * 0.5f);
+                page.setPivotY(page.getHeight() * 0.5f);
+
+                // हल्का side slide
+                page.setTranslationX(position * w * 0.25f);
+
+                // center बड़ा, side थोड़ा छोटा
+                float scale = 1f - 0.15f * abs;
+                page.setScaleX(scale);
+                page.setScaleY(scale);
+
+                // side images थोड़ा fade
+                float alpha = 1f - 0.4f * abs;
+                page.setAlpha(Math.max(0.4f, alpha));
+            }
+        });
+        loadHeroGalleryUrls();
+    }
+
+    private void loadHeroGalleryUrls() {
+        Activity activity = getActivity();
+        if (activity == null) return;
+        new Thread(() -> {
+            try {
+                OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(15, TimeUnit.SECONDS)
+                    .build();
+                Request req = new Request.Builder().url(HERO_GALLERY_LIST_URL).build();
+                try (Response resp = client.newCall(req).execute()) {
+                    if (resp.isSuccessful() && resp.body() != null) {
+                        String json = resp.body().string();
+                        if (json != null && json.startsWith("\uFEFF")) json = json.substring(1);
+                        JSONArray arr = new JSONArray(json);
+                        List<String> urls = new ArrayList<>();
+                        for (int i = 0; i < arr.length(); i++) {
+                            String name = arr.optString(i, "").trim();
+                            if (!name.isEmpty()) urls.add(HERO_GALLERY_BASE + name);
+                        }
+                        synchronized (heroPhotoUrls) {
+                            heroPhotoUrls.clear();
+                            heroPhotoUrls.addAll(urls);
+                        }
+                        Log.d(TAG, "Hero gallery urls loaded: " + heroPhotoUrls.size());
+                    }
+                }
+            } catch (Throwable t) {
+                Log.e(TAG, "loadHeroGalleryUrls error", t);
+            }
+        }).start();
+    }
+
+    private void startHeroSlideshowAutoAdvance() {
+        stopHeroSlideshowAutoAdvance();
+        if (heroPhotoSlideshow == null || heroSlideshowAdapter == null || heroSlideshowAdapter.getItemCount() < 2) return;
+        heroSlideshowRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (heroPhotoSlideshow == null || heroSlideshowAdapter == null || !isAdded()) return;
+                int total = heroSlideshowAdapter.getItemCount();
+                if (total < 2) return;
+                int next = (heroPhotoSlideshow.getCurrentItem() + 1) % total;
+                // अगला hero photo jab tak ready na ho, tab tak रुक के wait karo
+                if (!heroSlideshowAdapter.isLoaded(next)) {
+                    heroSlideshowHandler.postDelayed(this, 500);
+                    return;
+                }
+                heroPhotoSlideshow.setCurrentItem(next, true);
+                heroSlideshowHandler.postDelayed(this, HERO_SLIDESHOW_INTERVAL_MS);
+            }
+        };
+        heroSlideshowHandler.postDelayed(heroSlideshowRunnable, HERO_SLIDESHOW_INTERVAL_MS);
+    }
+
+    private void stopHeroSlideshowAutoAdvance() {
+        if (heroSlideshowRunnable != null) {
+            heroSlideshowHandler.removeCallbacks(heroSlideshowRunnable);
+            heroSlideshowRunnable = null;
+        }
+    }
+
+    /** Hero video: in-app (res/raw), auto-play, muted, loop. */
     private void setupHeroVideo() {
         if (heroVideoView == null || getContext() == null) return;
         try {
@@ -625,7 +851,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
         }).start();
     }
 
-    /** Video ke 45 sec baad photo fade-in, video hide; photo last me stay. */
+    /** Video ke 45 sec baad photo dikhao: server gallery slideshow, nahi to static photo. */
     private void scheduleHeroPhotoAfterVideo() {
         if (heroPhotoRunnable != null) heroPhotoHandler.removeCallbacks(heroPhotoRunnable);
         heroPhotoRunnable = () -> {
@@ -635,18 +861,37 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                 try { heroVideoView.stopPlayback(); } catch (Throwable ignored) {}
                 heroVideoView.animate().alpha(0f).setDuration(600).withEndAction(() -> {
                     if (heroVideoView != null) heroVideoView.setVisibility(View.GONE);
-                    if (heroFinalPhoto != null) {
-                        heroFinalPhoto.setVisibility(View.VISIBLE);
-                        heroFinalPhoto.setAlpha(0f);
-                        heroFinalPhoto.animate().alpha(1f).setDuration(600).start();
-                    }
+                    showHeroPhotoAfterVideo();
                 }).start();
-            } else if (heroFinalPhoto != null) {
-                heroFinalPhoto.setVisibility(View.VISIBLE);
-                heroFinalPhoto.setAlpha(1f);
+            } else {
+                showHeroPhotoAfterVideo();
             }
         };
         heroPhotoHandler.postDelayed(heroPhotoRunnable, HERO_VIDEO_TO_PHOTO_MS);
+    }
+
+    private void showHeroPhotoAfterVideo() {
+        List<String> copy;
+        synchronized (heroPhotoUrls) {
+            copy = heroPhotoUrls.isEmpty() ? null : new ArrayList<>(heroPhotoUrls);
+        }
+        if (copy != null && !copy.isEmpty() && heroPhotoSlideshow != null && heroSlideshowAdapter != null) {
+            Collections.shuffle(copy);
+            heroSlideshowAdapter.setUrls(copy);
+            heroPhotoSlideshow.setCurrentItem(0, false);
+            heroPhotoSlideshow.setVisibility(View.VISIBLE);
+            heroPhotoSlideshow.setAlpha(0f);
+            heroPhotoSlideshow.animate().alpha(1f).setDuration(600).start();
+            if (heroFinalPhoto != null) heroFinalPhoto.setVisibility(View.GONE);
+            startHeroSlideshowAutoAdvance();
+        } else {
+            if (heroPhotoSlideshow != null) heroPhotoSlideshow.setVisibility(View.GONE);
+            if (heroFinalPhoto != null) {
+                heroFinalPhoto.setVisibility(View.VISIBLE);
+                heroFinalPhoto.setAlpha(0f);
+                heroFinalPhoto.animate().alpha(1f).setDuration(600).start();
+            }
+        }
     }
 
     private void setupPhotoCarousel() {
@@ -1222,7 +1467,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                 }
             }
             if (fromBooks != null && !fromBooks.isEmpty()) {
-                fixed.add(new ServerAudioBook(ab.getId(), ab.getTitle(), ab.getParts(), fromBooks));
+                fixed.add(new ServerAudioBook(ab.getId(), ab.getTitle(), ab.getParts(), fromBooks, ab.isNew(), ab.getCategory()));
             } else {
                 fixed.add(ab);
             }
@@ -1280,7 +1525,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                     base = base.trim();
                     if (!base.isEmpty() && !base.endsWith("/")) base += "/";
                 }
-                String url = (base != null ? base : "") + "audio_list.json";
+                String url = (base != null ? base : "") + "public/audio_list.json?v=9";
                 OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS).build();
                 try (okhttp3.Response resp = client.newCall(new okhttp3.Request.Builder().url(url).build()).execute()) {
                     if (resp.isSuccessful() && resp.body() != null)
@@ -1416,7 +1661,11 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                 android.app.Activity act = getActivity();
                 if (act == null) return;
                 List<Book> bestBooks = ServerBookLoader.load(act);
-                Collections.sort(bestBooks, (b1, b2) -> safeCompare(b1.getName(), b2.getName()));
+                // સર્વર newFileNames વાળાં પુસ્તકો પહેલાં, પછી બાકી – નવાં હોમ પર પહેલાં દેખાશે
+                Collections.sort(bestBooks, (b1, b2) -> {
+                    if (b1.isNew() != b2.isNew()) return b1.isNew() ? -1 : 1;
+                    return safeCompare(b1.getName(), b2.getName());
+                });
                 final List<Book> bestBooksToShow = bestBooks.size() > BEST_BOOKS_COUNT
                     ? new ArrayList<>(bestBooks.subList(0, BEST_BOOKS_COUNT)) : bestBooks;
 
@@ -1555,7 +1804,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                 java.util.List<ServerAudioBook> loaded = new ArrayList<>();
                 String base = act.getString(R.string.server_books_base_url);
                 if (base != null) { base = base.trim(); if (!base.isEmpty() && !base.endsWith("/")) base += "/"; }
-                String url = (base != null ? base : "") + "audio_list.json";
+                String url = (base != null ? base : "") + "public/audio_list.json?v=9";
                 OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS).build();
                 okhttp3.Request req = new okhttp3.Request.Builder().url(url).build();
                 try (okhttp3.Response resp = client.newCall(req).execute()) {
@@ -1575,7 +1824,11 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                 }
                 if (loaded == null) loaded = ServerAudioParser.demoBooks();
                 loaded = mapAudioThumbnails(act, loaded, base);
-                java.util.Collections.sort(loaded, (a, b) -> (b.getTitle() != null ? b.getTitle() : "").compareTo(a.getTitle() != null ? a.getTitle() : ""));
+                // સર્વર "new": true વાળાં ઓડિયો પહેલાં, પછી ટાઇટલ – નવા હોમ પર પહેલાં દેખાશે
+                java.util.Collections.sort(loaded, (a, b) -> {
+                    if (a.isNew() != b.isNew()) return a.isNew() ? -1 : 1;
+                    return (b.getTitle() != null ? b.getTitle() : "").compareTo(a.getTitle() != null ? a.getTitle() : "");
+                });
                 allHomeAudio = new ArrayList<>(loaded);
                 java.util.List<ServerAudioBook> toShow = loaded.size() > 6 ? loaded.subList(0, 6) : loaded;
                 java.util.List<ServerAudioBook> finalList = toShow;
@@ -1642,6 +1895,112 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                 }
             });
         }
+        TextView bookStoreViewAll = root.findViewById(R.id.home_book_store_view_all);
+        if (bookStoreViewAll != null) {
+            bookStoreViewAll.setOnClickListener(v -> {
+                if (getActivity() != null) {
+                    startActivity(new android.content.Intent(getActivity(), BookStoreActivity.class));
+                }
+            });
+        }
+    }
+
+    private static final String BOOKS_STORE_URL = "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/books_store.json?v=2";
+
+    private void setupBookStoreSection(View root) {
+        RecyclerView recycler = root.findViewById(R.id.home_book_store_recycler);
+        if (recycler == null || getContext() == null) return;
+        List<BookStoreItem> items = new ArrayList<>();
+        try {
+            java.io.InputStream is = getContext().getAssets().open("books_store_list.json");
+            byte[] buf = new byte[is.available()];
+            is.read(buf);
+            is.close();
+            String json = new String(buf, StandardCharsets.UTF_8);
+            JSONArray arr = new JSONArray(json);
+            int max = Math.min(arr.length(), 10);
+            for (int i = 0; i < max; i++) {
+                org.json.JSONObject o = arr.getJSONObject(i);
+                BookStoreItem item = new BookStoreItem();
+                item.id = o.optString("id", "");
+                item.name = o.optString("name", "");
+                item.price = o.optInt("price", 0);
+                item.img = o.optString("img", "");
+                items.add(item);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "load books_store_list", e);
+        }
+        recycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        recycler.setItemAnimator(new DefaultItemAnimator());
+        int spacing = (int) (10 * getResources().getDisplayMetrics().density);
+        recycler.addItemDecoration(new HorizontalSpacingItemDecoration(spacing));
+        BookStoreAdapter adapter = new BookStoreAdapter();
+        adapter.setItems(items);
+        adapter.setOnBookStoreClickListener(item -> {
+            if (getActivity() != null) {
+                startActivity(new android.content.Intent(getActivity(), BookStoreActivity.class));
+            }
+        });
+        recycler.setAdapter(adapter);
+
+        // Load from server: "new": true વાળાં પુસ્તકો પહેલાં, પછી બાકી – સર્વરમાં new ઉમેરો તો હોમ પર આપમેળે દેખાશે
+        new Thread(() -> {
+            String baseUrl = "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/";
+            String coversBase = baseUrl + "book_covers/";
+            List<BookStoreItem> serverItems = new ArrayList<>();
+            List<BookStoreItem> newOnes = new ArrayList<>();
+            List<BookStoreItem> others = new ArrayList<>();
+            try {
+                OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(15, TimeUnit.SECONDS)
+                    .build();
+                Request req = new Request.Builder().url(BOOKS_STORE_URL).build();
+                try (Response resp = client.newCall(req).execute()) {
+                    if (resp.isSuccessful() && resp.body() != null) {
+                        String js = resp.body().string();
+                        JSONObject jsonRoot = new JSONObject(js);
+                        JSONArray arr = jsonRoot.optJSONArray("books");
+                        if (arr != null) {
+                            for (int i = 0; i < arr.length(); i++) {
+                                JSONObject o = arr.getJSONObject(i);
+                                BookStoreItem item = new BookStoreItem();
+                                item.id = o.optString("id", "");
+                                item.name = o.optString("name", "");
+                                item.price = o.optInt("price", 0);
+                                item.img = o.optString("img", "");
+                                item.imageUrl = (item.img != null && !item.img.isEmpty()) ? (coversBase + item.img) : null;
+                                item.isNew = o.optBoolean("new", false);
+                                // નવાં = સર્વર "new" અથવા અગાઉની નામવાળી (મહાન રામાનુજાચાર્ય, દેવાલય થી દેહાલય) – હોમ પર પહેલાં દેખાડો
+                                boolean showFirst = item.isNew || isNewBookByName(item.name);
+                                if (showFirst) newOnes.add(item); else others.add(item);
+                            }
+                            for (BookStoreItem b : newOnes) {
+                                if (serverItems.size() >= 10) break;
+                                serverItems.add(b);
+                            }
+                            for (BookStoreItem b : others) {
+                                if (serverItems.size() >= 10) break;
+                                serverItems.add(b);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "book store from server", e);
+            }
+            if (!serverItems.isEmpty() && getActivity() != null) {
+                getActivity().runOnUiThread(() -> adapter.setItems(serverItems));
+            }
+        }).start();
+    }
+
+    /** અગાઉ book price પર નવાં પુસ્તકો માં હતાં એ નામ – હોમ પર પહેલાં દેખાડવા. */
+    private static boolean isNewBookByName(String name) {
+        if (name == null) return false;
+        String n = name.trim();
+        return n.contains("મહાન રામાનુજાચાર્ય") || n.contains("દેવાલય થી દેહાલય");
     }
 
     private String detectCategory(String bookName) {
@@ -1709,6 +2068,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
         super.onDestroyView();
         if (suvicharHideRunnable != null) suvicharHandler.removeCallbacks(suvicharHideRunnable);
         if (heroPhotoRunnable != null) heroPhotoHandler.removeCallbacks(heroPhotoRunnable);
+        stopHeroSlideshowAutoAdvance();
         if (autoScrollHandler != null && autoScrollRunnable != null) {
             autoScrollHandler.removeCallbacks(autoScrollRunnable);
         }
@@ -1719,6 +2079,8 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
         suvicharRecycler = null;
         suvicharAdapter = null;
         heroFinalPhoto = null;
+        heroPhotoSlideshow = null;
+        heroSlideshowAdapter = null;
         photoViewPager = null;
         heroVideoView = null;
         homeHistorySection = null;

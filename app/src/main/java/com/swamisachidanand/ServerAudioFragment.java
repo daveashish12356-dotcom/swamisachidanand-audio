@@ -20,6 +20,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.material.textfield.TextInputEditText;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -48,9 +52,11 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
     private static final int REQUEST_VOICE = 1002;
 
     private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshLayout;
-    private androidx.recyclerview.widget.RecyclerView booksRecycler;
+    private RecyclerView audioSectionsRecycler;
     private RecyclerView popularAudioRecycler;
     private View popularAudioSection;
+    private RecyclerView searchResultsRecycler;
+    private android.widget.TextView searchResultsTitle;
     private android.widget.ProgressBar progressBar;
     private android.widget.TextView errorText;
     private TextInputEditText searchInput;
@@ -65,8 +71,10 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final List<ServerAudioBook> allBooks = new ArrayList<>();
-    private AudioBookCardAdapter adapter;
+    private AudioSectionAdapter sectionAdapter;
     private AudioBookCardAdapter popularAdapter;
+    private AudioBookCardAdapter searchAdapter;
+    private AdView bottomBannerAd;
 
     @Nullable
     @Override
@@ -76,9 +84,11 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
         View root = inflater.inflate(R.layout.fragment_server_audio, container, false);
 
         swipeRefreshLayout = root.findViewById(R.id.audio_swipe_refresh);
-        booksRecycler = root.findViewById(R.id.audio_books_card_recycler);
-        popularAudioRecycler = root.findViewById(R.id.popular_audio_recycler);
-        popularAudioSection = root.findViewById(R.id.popular_audio_section);
+        audioSectionsRecycler = root.findViewById(R.id.audio_sections_recycler);
+        popularAudioRecycler = null;
+        popularAudioSection = null;
+        searchResultsRecycler = root.findViewById(R.id.audio_search_results_recycler);
+        searchResultsTitle = root.findViewById(R.id.audio_search_results_title);
         progressBar = root.findViewById(R.id.audio_progress);
         errorText = root.findViewById(R.id.audio_error_text);
         searchInput = root.findViewById(R.id.global_search_input);
@@ -99,14 +109,23 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
 
         Context ctx = requireContext();
         setupCategoryChips(ctx);
-        if (booksRecycler != null) {
-            booksRecycler.setLayoutManager(new GridLayoutManager(ctx, 2));
-            // setHasFixedSize omitted
-            booksRecycler.setItemAnimator(new DefaultItemAnimator());
-            booksRecycler.setItemViewCacheSize(20);
-            adapter = new AudioBookCardAdapter();
-            adapter.setOnAudioBookClickListener(this);
-            booksRecycler.setAdapter(adapter);
+        if (audioSectionsRecycler != null) {
+            audioSectionsRecycler.setLayoutManager(new LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false));
+            audioSectionsRecycler.setNestedScrollingEnabled(false);
+            audioSectionsRecycler.setItemViewCacheSize(15);
+            sectionAdapter = new AudioSectionAdapter(ctx);
+            sectionAdapter.setOnAudioBookClickListener(this);
+            audioSectionsRecycler.setAdapter(sectionAdapter);
+        }
+        if (searchResultsRecycler != null) {
+            searchResultsRecycler.setLayoutManager(new LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false));
+            searchResultsRecycler.setItemAnimator(new DefaultItemAnimator());
+            searchAdapter = new AudioBookCardAdapter();
+            searchAdapter.setUseCompactLayout(true);
+            searchAdapter.setOnAudioBookClickListener(this);
+            searchResultsRecycler.setAdapter(searchAdapter);
+            searchResultsRecycler.setVisibility(View.GONE);
+            if (searchResultsTitle != null) searchResultsTitle.setVisibility(View.GONE);
         }
         if (popularAudioRecycler != null) {
             popularAudioRecycler.setLayoutManager(new LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false));
@@ -158,7 +177,7 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     String q = s != null ? s.toString().trim() : "";
                     if (clearSearch != null) clearSearch.setVisibility(q.isEmpty() ? View.GONE : View.VISIBLE);
-                    filterBooks(q);
+                    updateSearchResults(q);
                 }
 
                 @Override
@@ -166,7 +185,8 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
             });
             searchInput.setOnEditorActionListener((v, actionId, event) -> {
                 if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
-                    openGlobalSearch();
+                    // Stay on same page; results already shown in search row
+                    v.clearFocus();
                     return true;
                 }
                 return false;
@@ -174,6 +194,9 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
         }
 
         loadBooksAsync();
+
+        // Banner ad at bottom of Audio page
+        setupBottomBannerAd(root);
 
         return root;
     }
@@ -198,6 +221,41 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
         }
     }
 
+    private void setupBottomBannerAd(View root) {
+        try {
+            bottomBannerAd = root.findViewById(R.id.audio_bottom_banner);
+            if (bottomBannerAd == null) return;
+            AdRequest request = new AdRequest.Builder().build();
+            bottomBannerAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    try {
+                        if (bottomBannerAd.getVisibility() != View.VISIBLE) {
+                            bottomBannerAd.setAlpha(0f);
+                            bottomBannerAd.setTranslationY(bottomBannerAd.getHeight());
+                            bottomBannerAd.setVisibility(View.VISIBLE);
+                            bottomBannerAd.animate()
+                                    .translationY(0f)
+                                    .alpha(1f)
+                                    .setDuration(350L)
+                                    .start();
+                        }
+                    } catch (Throwable t) {
+                        bottomBannerAd.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onAdFailedToLoad(LoadAdError adError) {
+                    android.util.Log.w("ServerAudioFragment", "audio banner failed: " + adError);
+                }
+            });
+            bottomBannerAd.loadAd(request);
+        } catch (Throwable t) {
+            android.util.Log.e("ServerAudioFragment", "setupBottomBannerAd", t);
+        }
+    }
+
     private void loadBooksAsync() {
         showError(null);
         showLoading(true);
@@ -210,8 +268,9 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
                     if (base == null) base = "";
                     base = base.trim();
                     if (!base.isEmpty() && !base.endsWith("/")) base += "/";
-                    // Audio pustako ka main JSON: audio_list.json
-                    String url = base + "audio_list.json";
+                    // Audio pustako ka main JSON: public/audio_list.json
+                    // Cache-buster query (?v=9) so GitHub/OkHttp purani copy na de.
+                    String url = base + "public/audio_list.json?v=9";
 
                     // Pehle server se full list (20+ books) lane ki koshish
                     try {
@@ -347,7 +406,7 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
                                         }
                                     }
                                     if (fromBooks != null && !fromBooks.isEmpty()) {
-                                        fixed.add(new ServerAudioBook(ab.getId(), ab.getTitle(), ab.getParts(), fromBooks));
+                                        fixed.add(new ServerAudioBook(ab.getId(), ab.getTitle(), ab.getParts(), fromBooks, ab.isNew(), ab.getCategory()));
                                         continue;
                                     }
                                 }
@@ -379,14 +438,14 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
                     allBooks.addAll(finalLoaded);
                 }
                 loadPopular(allBooks, progressMap);
-                if (adapter != null) {
-                    adapter.setProgressMap(progressMap);
-                    adapter.setDurationCache(durationCache);
+                if (sectionAdapter != null) {
+                    sectionAdapter.setProgressMap(progressMap);
+                    sectionAdapter.setDurationCache(durationCache);
                 }
                 applyFilters();
                 fetchDurationsIfNeeded(finalLoaded);
-                if (booksRecycler != null) {
-                    booksRecycler.setVisibility(allBooks.isEmpty() ? View.GONE : View.VISIBLE);
+                if (audioSectionsRecycler != null) {
+                    audioSectionsRecycler.setVisibility(allBooks.isEmpty() ? View.GONE : View.VISIBLE);
                 }
                 if (allBooks.isEmpty()) {
                     showError(getString(R.string.audio_empty));
@@ -448,46 +507,26 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
         durationLoader.loadDurations(books, result -> {
             if (result == null) return;
             durationCache.putAll(result);
-            if (adapter != null) adapter.setDurationCache(durationCache);
-            if (popularAdapter != null) popularAdapter.setDurationCache(durationCache);
-            if (adapter != null) adapter.notifyDataSetChanged();
-            if (popularAdapter != null) popularAdapter.notifyDataSetChanged();
+            if (sectionAdapter != null) {
+                sectionAdapter.setDurationCache(durationCache);
+                sectionAdapter.notifyDataSetChanged();
+            }
+            if (popularAdapter != null) {
+                popularAdapter.setDurationCache(durationCache);
+                popularAdapter.notifyDataSetChanged();
+            }
         });
     }
 
+    /** લોકપ્રિય section removed – same as Book Store. */
     private void loadPopular(List<ServerAudioBook> books, Map<String, Integer> progressMap) {
-        if (popularAdapter == null || popularAudioSection == null || books == null) return;
-        List<ServerAudioBook> popular = new ArrayList<>();
-        if (books.size() <= POPULAR_COUNT) {
-            popular.addAll(books);
-            Collections.reverse(popular);
-        } else {
-            for (int i = books.size() - 1; i >= books.size() - POPULAR_COUNT; i--) {
-                popular.add(books.get(i));
-            }
-        }
-        popularAdapter.setProgressMap(progressMap);
-        popularAdapter.setDurationCache(durationCache);
-        popularAdapter.setBooks(popular, true);
-        popularAudioSection.setVisibility(popular.isEmpty() ? View.GONE : View.VISIBLE);
+        if (popularAudioSection != null) popularAudioSection.setVisibility(View.GONE);
     }
 
     private void setupCategoryChips(Context ctx) {
         if (categoryChipsRecycler == null) return;
-        List<String> labels = new ArrayList<>();
-        labels.add("બધાં");
-        labels.add("ભક્તિ");
-        labels.add("યાત્રા");
-        labels.add("જીવન");
-        labels.add("ઉપદેશ");
-        labels.add("લોકપ્રિય");
-        List<String> ids = new ArrayList<>();
-        ids.add("all");
-        ids.add("Bhakti");
-        ids.add("Yatra");
-        ids.add("Jeevan");
-        ids.add("Updesh");
-        ids.add("popular");
+        List<String> labels = BookStoreCategoryHelper.getFilterLabelsForBooks();
+        List<String> ids = BookStoreCategoryHelper.getFilterIdsForBooks();
         chipAdapter = new CategoryChipAdapter(labels, ids);
         chipAdapter.setListener(catId -> {
             selectedCategoryId = catId;
@@ -505,81 +544,131 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
     }
 
     private void applyFilters() {
-        String query = searchInput != null ? searchInput.getText().toString().trim() : "";
-        filterBooks(query);
+        if (sectionAdapter == null) return;
+        List<ServerAudioBook> source = filterByCategory(allBooks);
+        List<AudioSectionAdapter.Section> sections = buildAudioSections(source);
+        sectionAdapter.setProgressMap(loadProgressMap(allBooks));
+        sectionAdapter.setDurationCache(durationCache);
+        sectionAdapter.setSections(sections);
+        if (audioSectionsRecycler != null) {
+            audioSectionsRecycler.setVisibility(sections.isEmpty() ? View.GONE : View.VISIBLE);
+        }
     }
 
-    private static String detectAudioCategory(String title) {
-        if (title == null) return "Updesh";
-        String lower = title.toLowerCase(java.util.Locale.ROOT);
-        if (lower.contains("ભક્તિ") || lower.contains("bhakti") || lower.contains("ભજન") || lower.contains("bhajan") ||
-            lower.contains("ભાગવત") || lower.contains("bhagwat") || lower.contains("વિષ્ણુ") || lower.contains("vishnu") ||
-            lower.contains("રામાયણ") || lower.contains("ramayan") || lower.contains("રામ") || lower.contains("ram") ||
-            lower.contains("કૃષ્ણ") || lower.contains("krishna") || lower.contains("ભર્તૃહરિ") || lower.contains("bhartrihari") ||
-            lower.contains("શતક") || lower.contains("shata") || lower.contains("સહસ્રનામ") || lower.contains("sahasranam")) {
-            return "Bhakti";
-        }
-        if (lower.contains("યાત્રા") || lower.contains("yatra") || lower.contains("પ્રવાસ") || lower.contains("travel") ||
-            lower.contains("પ્રવાસનાં") || lower.contains("પ્રવાસની") || lower.contains("તીર્થ") || lower.contains("tirth") ||
-            lower.contains("મુલાકાત") || lower.contains("mulakat") || lower.contains("આફ્રિકા") || lower.contains("africa") ||
-            lower.contains("યુરોપ") || lower.contains("europe") || lower.contains("ટર્કી") || lower.contains("turkey") ||
-            lower.contains("ઈજિપ્ત") || lower.contains("egypt") || lower.contains("આંદામાન") || lower.contains("andaman")) {
-            return "Yatra";
-        }
-        if (lower.contains("જીવન") || lower.contains("jeevan") || lower.contains("ચરિત્ર") || lower.contains("charitra") ||
-            lower.contains("જીવનકથા") || lower.contains("jeevankatha") || lower.contains("અનુભવ") || lower.contains("anubhav") ||
-            lower.contains("બાયપાસ") || lower.contains("bypass")) {
-            return "Jeevan";
-        }
-        return "Updesh";
-    }
-
-    private List<ServerAudioBook> filterByCategory(List<ServerAudioBook> list) {
-        if ("all".equals(selectedCategoryId)) return list;
-        if ("popular".equals(selectedCategoryId)) {
-            if (list.size() <= POPULAR_COUNT) {
-                List<ServerAudioBook> out = new ArrayList<>(list);
-                Collections.reverse(out);
-                return out;
+    private List<AudioSectionAdapter.Section> buildAudioSections(List<ServerAudioBook> source) {
+        List<AudioSectionAdapter.Section> out = new ArrayList<>();
+        if (source == null || source.isEmpty()) return out;
+        String[] labels = BookStoreCategoryHelper.getFilterLabels();
+        String[] ids = BookStoreCategoryHelper.getFilterIds();
+        if ("all".equals(selectedCategoryId)) {
+            // નવાં ઓડિયો – સર્વર new / category "new" અથવા નામથી
+            List<ServerAudioBook> newList = new ArrayList<>();
+            for (ServerAudioBook b : source) {
+                if (b == null) continue;
+                String t = b.getTitle();
+                String c = b.getCategory();
+                if (b.isNew() || "new".equals(c) || (t != null && BookStoreCategoryHelper.belongsToCategory(t, "new")))
+                    newList.add(b);
             }
-            List<ServerAudioBook> out = new ArrayList<>();
-            for (int i = list.size() - 1; i >= list.size() - POPULAR_COUNT; i--) {
-                out.add(list.get(i));
+            if (!newList.isEmpty()) {
+                AudioSectionAdapter.Section newSec = new AudioSectionAdapter.Section();
+                newSec.title = "📖 નવાં ઓડિયો";
+                newSec.filterId = "new";
+                newSec.books = newList;
+                out.add(newSec);
             }
-            return out;
-        }
-        List<ServerAudioBook> out = new ArrayList<>();
-        for (ServerAudioBook b : list) {
-            if (b != null && selectedCategoryId.equals(detectAudioCategory(b.getTitle()))) {
-                out.add(b);
+            for (int i = 1; i < ids.length; i++) {
+                String catId = ids[i];
+                String title = i < labels.length ? labels[i] : catId;
+                List<ServerAudioBook> list = new ArrayList<>();
+                for (ServerAudioBook b : source) {
+                    if (b == null) continue;
+                    String t = b.getTitle();
+                    String c = b.getCategory();
+                    if ((c != null && catId.equals(c)) || (t != null && BookStoreCategoryHelper.belongsToCategory(t, catId))) list.add(b);
+                }
+                if (!list.isEmpty()) {
+                    AudioSectionAdapter.Section sec = new AudioSectionAdapter.Section();
+                    sec.title = title;
+                    sec.filterId = catId;
+                    sec.books = list;
+                    out.add(sec);
+                }
+            }
+            AudioSectionAdapter.Section allSec = new AudioSectionAdapter.Section();
+            allSec.title = "બધાં ઓડિયો પુસ્તકો";
+            allSec.filterId = "all";
+            allSec.books = new ArrayList<>(source);
+            out.add(allSec);
+        } else {
+            List<ServerAudioBook> list = new ArrayList<>();
+            for (ServerAudioBook b : source) {
+                if (b == null) continue;
+                String t = b.getTitle();
+                String c = b.getCategory();
+                boolean match = "new".equals(selectedCategoryId)
+                    ? (b.isNew() || "new".equals(c) || (t != null && BookStoreCategoryHelper.belongsToCategory(t, "new")))
+                    : (c != null && selectedCategoryId.equals(c)) || (t != null && BookStoreCategoryHelper.belongsToCategory(t, selectedCategoryId));
+                if (match) list.add(b);
+            }
+            if (!list.isEmpty()) {
+                List<String> lab = BookStoreCategoryHelper.getFilterLabelsForBooks();
+                List<String> idArr = BookStoreCategoryHelper.getFilterIdsForBooks();
+                String title = "બધાં";
+                for (int i = 0; i < idArr.size() && i < lab.size(); i++) {
+                    if (selectedCategoryId.equals(idArr.get(i))) {
+                        title = lab.get(i);
+                        break;
+                    }
+                }
+                AudioSectionAdapter.Section sec = new AudioSectionAdapter.Section();
+                sec.title = title;
+                sec.filterId = selectedCategoryId;
+                sec.books = list;
+                out.add(sec);
             }
         }
         return out;
     }
 
-    private void filterBooks(String query) {
-        if (adapter == null) return;
-        List<ServerAudioBook> source = filterByCategory(allBooks);
-        if (query == null || query.trim().isEmpty()) {
-            adapter.setBooks(source, true);
+    private List<ServerAudioBook> filterByCategory(List<ServerAudioBook> list) {
+        if ("all".equals(selectedCategoryId)) return list;
+        List<ServerAudioBook> out = new ArrayList<>();
+        for (ServerAudioBook b : list) {
+            if (b == null) continue;
+            String title = b.getTitle();
+            String c = b.getCategory();
+            boolean match = "new".equals(selectedCategoryId)
+                ? (b.isNew() || "new".equals(c) || (title != null && BookStoreCategoryHelper.belongsToCategory(title, "new")))
+                : (c != null && selectedCategoryId.equals(c)) || (title != null && BookStoreCategoryHelper.belongsToCategory(title, selectedCategoryId));
+            if (match) out.add(b);
+        }
+        return out;
+    }
+
+    /**
+     * Show search results in a separate horizontal row, without changing main list.
+     */
+    private void updateSearchResults(String query) {
+        if (searchResultsRecycler == null || searchAdapter == null) return;
+        String q = query != null ? query.trim() : "";
+        if (q.isEmpty()) {
+            searchAdapter.setBooks(new ArrayList<>(), true);
+            searchResultsRecycler.setVisibility(View.GONE);
+            if (searchResultsTitle != null) searchResultsTitle.setVisibility(View.GONE);
             return;
         }
-        String q = query.trim();
+        List<ServerAudioBook> source = filterByCategory(allBooks);
         List<ServerAudioBook> filtered = new ArrayList<>();
         for (ServerAudioBook b : source) {
             if (b == null) continue;
             String t = b.getTitle() != null ? b.getTitle() : "";
             if (SearchHelper.matches(t, q)) filtered.add(b);
         }
-        adapter.setBooks(filtered, true);
-    }
-
-    private void openGlobalSearch() {
-        String q = searchInput != null && searchInput.getText() != null ? searchInput.getText().toString().trim() : "";
-        if (q.isEmpty()) return;
-        android.content.Intent i = new android.content.Intent(requireContext(), SearchResultActivity.class);
-        i.putExtra(SearchResultActivity.EXTRA_QUERY, q);
-        startActivity(i);
+        searchAdapter.setBooks(filtered, true);
+        boolean show = !filtered.isEmpty();
+        searchResultsRecycler.setVisibility(show ? View.VISIBLE : View.GONE);
+        if (searchResultsTitle != null) searchResultsTitle.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -590,7 +679,6 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
             if (results != null && !results.isEmpty() && searchInput != null) {
                 String spoken = results.get(0);
                 searchInput.setText(spoken);
-                if (!spoken.trim().isEmpty()) openGlobalSearch();
             }
         }
     }

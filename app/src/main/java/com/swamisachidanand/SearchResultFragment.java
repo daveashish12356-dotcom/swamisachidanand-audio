@@ -116,19 +116,24 @@ public class SearchResultFragment extends Fragment implements BookAdapter.OnBook
 
     private void openBook(Book book) {
         if (getContext() == null || book == null) return;
-        Intent i = new Intent(getContext(), PdfViewerActivity.class);
+        Intent intent = new Intent(getContext(), ModernPdfActivity.class);
         String pdfUrl = book.getPdfUrl();
         if (pdfUrl != null && !pdfUrl.trim().isEmpty()) {
-            i.putExtra("pdf_url", pdfUrl.trim());
-            i.putExtra("book_name", book.getName() != null ? book.getName() : "");
-            if (book.getThumbnailUrl() != null && !book.getThumbnailUrl().trim().isEmpty())
-                i.putExtra("thumbnail_url", book.getThumbnailUrl().trim());
+            intent.putExtra("pdf_url", pdfUrl.trim());
+            intent.putExtra("book_name", book.getName() != null ? book.getName() : "");
+            if (book.getThumbnailUrl() != null && !book.getThumbnailUrl().trim().isEmpty()) {
+                intent.putExtra("thumbnail_url", book.getThumbnailUrl().trim());
+            }
         } else {
             String fileName = book.getFileName();
-            if (fileName != null && !fileName.trim().isEmpty())
-                i.putExtra("book_name", fileName.trim());
+            if (fileName != null && !fileName.trim().isEmpty()) {
+                intent.putExtra("book_name", fileName.trim());
+            } else {
+                android.widget.Toast.makeText(getContext(), "આ વર્ઝનમાં PDF વાંચન એપમાં ઉપલબ્ધ નથી.", android.widget.Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
-        startActivity(i);
+        startActivity(intent);
     }
 
     private void onAudioClick(ServerAudioBook book) {
@@ -196,7 +201,7 @@ public class SearchResultFragment extends Fragment implements BookAdapter.OnBook
             if (base == null) base = "";
             base = base.trim();
             if (!base.isEmpty() && !base.endsWith("/")) base += "/";
-            String url = base + "audio_list.json";
+            String url = base + "public/audio_list.json?v=9";
             List<ServerAudioBook> loaded = null;
             try {
                 okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
