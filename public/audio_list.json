@@ -1,6 +1,6 @@
 {
-  "version": 16,
-  "updated": "2026-03-16T21:19:49Z",
+  "version": 17,
+  "updated": "2026-03-17T13:57:51Z",
   "books": [
     {
       "id": "amarakantak_madhyapradesh",
@@ -7460,6 +7460,290 @@
         }
       ],
       "thumbnailUrl": "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/thumbnails/aapne_ane_samaj.jpg"
+    },
+    {
+      "id": "chanakya_rajniti",
+      "title": "ચાણક્યની રાજનીતિ",
+      "thumbnailUrl": "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/thumbnails/chanakya_rajniti.jpg",
+      "parts": [
+        {
+          "id": "1",
+          "title": "1. ચાણક્યની રાજનીતિ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/1.mp3"
+        },
+        {
+          "id": "2",
+          "title": "2. અર્પણ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/2.mp3"
+        },
+        {
+          "id": "3",
+          "title": "3.1 ભૂમિકા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/3.mp3"
+        },
+        {
+          "id": "4",
+          "title": "3.2 ભૂમિકા",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/4.mp3"
+        },
+        {
+          "id": "5",
+          "title": "4. ચાણક્ય-સુધાસાર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/5.mp3"
+        },
+        {
+          "id": "6",
+          "title": "5.1 પ્રથમ અધિકરણ વિનયાધિકારિક",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/6.mp3"
+        },
+        {
+          "id": "7",
+          "title": "5.2 પ્રથમ અધિકરણ વિનયાધિકારિક",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/7.mp3"
+        },
+        {
+          "id": "8",
+          "title": "5.3 પ્રથમ અધિકરણ વિનયાધિકારિક",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/8.mp3"
+        },
+        {
+          "id": "9",
+          "title": "5.4 પ્રથમ અધિકરણ વિનયાધિકારિક",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/9.mp3"
+        },
+        {
+          "id": "10",
+          "title": "5.5 પ્રથમ અધિકરણ વિનયાધિકારિક",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/10.mp3"
+        },
+        {
+          "id": "11",
+          "title": "5.6 પ્રથમ અધિકરણ વિનયાધિકારિક",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/11.mp3"
+        },
+        {
+          "id": "12",
+          "title": "5.7 પ્રથમ અધિકરણ વિનયાધિકારિક",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/12.mp3"
+        },
+        {
+          "id": "13",
+          "title": "6.1 દ્રિતીય અધિકરણ અધ્યક્ષપ્રચાર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/13.mp3"
+        },
+        {
+          "id": "14",
+          "title": "6.10 દ્રિતીય અધિકરણ અધ્યક્ષપ્રચાર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/14.mp3"
+        },
+        {
+          "id": "15",
+          "title": "6.2 દ્રિતીય અધિકરણ અધ્યક્ષપ્રચાર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/15.mp3"
+        },
+        {
+          "id": "16",
+          "title": "6.3 દ્રિતીય અધિકરણ અધ્યક્ષપ્રચાર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/16.mp3"
+        },
+        {
+          "id": "17",
+          "title": "6.4 દ્રિતીય અધિકરણ અધ્યક્ષપ્રચાર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/17.mp3"
+        },
+        {
+          "id": "18",
+          "title": "6.5 દ્રિતીય અધિકરણ અધ્યક્ષપ્રચાર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/18.mp3"
+        },
+        {
+          "id": "19",
+          "title": "6.6 દ્રિતીય અધિકરણ અધ્યક્ષપ્રચાર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/19.mp3"
+        },
+        {
+          "id": "20",
+          "title": "6.7 દ્રિતીય અધિકરણ અધ્યક્ષપ્રચાર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/20.mp3"
+        },
+        {
+          "id": "21",
+          "title": "6.8 દ્રિતીય અધિકરણ અધ્યક્ષપ્રચાર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/21.mp3"
+        },
+        {
+          "id": "22",
+          "title": "6.9 દ્રિતીય અધિકરણ અધ્યક્ષપ્રચાર",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/22.mp3"
+        },
+        {
+          "id": "23",
+          "title": "7.1 તૃતીય અધિકરણ દીવાની તથા ફોજદારી કાયદાઓ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/23.mp3"
+        },
+        {
+          "id": "24",
+          "title": "7.2 તૃતીય અધિકરણ દીવાની તથા ફોજદારી કાયદાઓ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/24.mp3"
+        },
+        {
+          "id": "25",
+          "title": "7.3 તૃતીય અધિકરણ દીવાની તથા ફોજદારી કાયદાઓ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/25.mp3"
+        },
+        {
+          "id": "26",
+          "title": "7.4 તૃતીય અધિકરણ દીવાની તથા ફોજદારી કાયદાઓ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/26.mp3"
+        },
+        {
+          "id": "27",
+          "title": "7.5 તૃતીય અધિકરણ દીવાની તથા ફોજદારી કાયદાઓ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/27.mp3"
+        },
+        {
+          "id": "28",
+          "title": "8.1 ચતુર્થ અધિકરણ કંટકશોધન",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/28.mp3"
+        },
+        {
+          "id": "29",
+          "title": "8.2 ચતુર્થ અધિકરણ કંટકશોધન",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/29.mp3"
+        },
+        {
+          "id": "30",
+          "title": "8.3 ચતુર્થ અધિકરણ કંટકશોધન",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/30.mp3"
+        },
+        {
+          "id": "31",
+          "title": "8.4 ચતુર્થ અધિકરણ કંટકશોધન",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/31.mp3"
+        },
+        {
+          "id": "32",
+          "title": "9.1 પાંચમું અધિકરણ યોગવૃત્ત",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/32.mp3"
+        },
+        {
+          "id": "33",
+          "title": "9.2 પાંચમું અધિકરણ યોગવૃત્ત",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/33.mp3"
+        },
+        {
+          "id": "34",
+          "title": "10.1 છઠ્ઠું અધિકરણ મંડલયોનિ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/34.mp3"
+        },
+        {
+          "id": "35",
+          "title": "10.2 છઠ્ઠું અધિકરણ મંડલયોનિ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/35.mp3"
+        },
+        {
+          "id": "36",
+          "title": "11.1 સાતમું અધિકરણ ષડ્ગુણાત્મક નીતિ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/36.mp3"
+        },
+        {
+          "id": "37",
+          "title": "11.2 સાતમું અધિકરણ ષડ્ગુણાત્મક નીતિ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/37.mp3"
+        },
+        {
+          "id": "38",
+          "title": "11.3 સાતમું અધિકરણ ષડ્ગુણાત્મક નીતિ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/38.mp3"
+        },
+        {
+          "id": "39",
+          "title": "11.4 સાતમું અધિકરણ ષડ્ગુણાત્મક નીતિ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/39.mp3"
+        },
+        {
+          "id": "40",
+          "title": "11.5 સાતમું અધિકરણ ષડ્ગુણાત્મક નીતિ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/40.mp3"
+        },
+        {
+          "id": "41",
+          "title": "11.6 સાતમું અધિકરણ ષડ્ગુણાત્મક નીતિ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/41.mp3"
+        },
+        {
+          "id": "42",
+          "title": "12.1 આઠમું અધિકરણ વ્યસનાધિકારિક",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/42.mp3"
+        },
+        {
+          "id": "43",
+          "title": "12.2 આઠમું અધિકરણ વ્યસનાધિકારિક",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/43.mp3"
+        },
+        {
+          "id": "44",
+          "title": "12.3 આઠમું અધિકરણ વ્યસનાધિકારિક",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/44.mp3"
+        },
+        {
+          "id": "45",
+          "title": "12.4 આઠમું અધિકરણ વ્યસનાધિકારિક",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/45.mp3"
+        },
+        {
+          "id": "46",
+          "title": "12.5 આઠમું અધિકરણ વ્યસનાધિકારિક",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/46.mp3"
+        },
+        {
+          "id": "47",
+          "title": "13.1 નવમું અધિકરણ અભિયાસ્યત્કર્મ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/47.mp3"
+        },
+        {
+          "id": "48",
+          "title": "13.2 નવમું અધિકરણ અભિયાસ્યત્કર્મ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/48.mp3"
+        },
+        {
+          "id": "49",
+          "title": "13.3 નવમું અધિકરણ અભિયાસ્યત્કર્મ",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/49.mp3"
+        },
+        {
+          "id": "50",
+          "title": "14.1 દશમું અધિકરણ સાંગ્રામિક",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/50.mp3"
+        },
+        {
+          "id": "51",
+          "title": "14.2 દશમું અધિકરણ સાંગ્રામિક",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/51.mp3"
+        },
+        {
+          "id": "52",
+          "title": "15. બારમું અધિકરણ આબલીયસં",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/52.mp3"
+        },
+        {
+          "id": "53",
+          "title": "16.1 તેરમું અધિકરણ દુર્ગલંભોપાય",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/53.mp3"
+        },
+        {
+          "id": "54",
+          "title": "16.2 તેરમું અધિકરણ દુર્ગલંભોપાય",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/54.mp3"
+        },
+        {
+          "id": "55",
+          "title": "17.          ચાણક્યની રાજનાંતે",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/55.mp3"
+        }
+      ],
+      "new": true,
+      "category": "granth"
     }
   ]
 }

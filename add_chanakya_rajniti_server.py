@@ -6,6 +6,12 @@
 import os
 import shutil
 import json
+import sys
+
+# Ensure UTF-8 stdout for Gujarati file names on Windows console
+if sys.stdout.encoding != "utf-8":
+    import io as _io
+    sys.stdout = _io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 REPO = os.path.dirname(os.path.abspath(__file__))
 DESKTOP_PDF = r"C:\Users\davea\Desktop\ચાણક્યની રાજનીતિ.pdf"
