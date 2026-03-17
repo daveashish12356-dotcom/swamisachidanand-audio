@@ -10,6 +10,7 @@
     <string name="nav_music">ઓડિયો પુસ્તકો</string>
     <string name="nav_about">સંપર્ક</string>
     <string name="nav_audio">ઓડિયો પુસ્તકો</string>
+    <string name="nav_audio_pravachan">ઓડિયો પ્રવચન</string>
     <string name="nav_videos">વિડિઓ</string>
     <string name="audio_server_title">સર્વર ઓડિયો</string>
     <string name="audio_loading">લોડ થાય છે…</string>
@@ -37,10 +38,11 @@
     <string name="search_tab_audio">ઓડિયો</string>
     <string name="search_tab_videos">વિડિઓ</string>
     <string name="sampark_follow_us">અમને ફોલો કરો</string>
-    <string name="sampark_photo_caption">પ.પૂ.મહર્ષિ સ્વામી શ્રીસચ્ચિદાનંદજી પરમહંસ ભકિત નિકેતન આશ્રમ. દંતાલી-પેટલાદ</string>
+    <string name="sampark_photo_caption">પ.પૂ.મહર્ષિ સ્વામી શ્રીસચ્ચિદાનંદજી પરમહંસ — ભક્તિ નિકેતન આશ્રમ, દંતાલી-પેટલાદ.\n\nગુજરાતના આધ્યાત્મિક ગુરુ, સાહિત્યકાર અને સમાજસેવી. અનેક પુસ્તકો અને પ્રવચનો દ્વારા લોકોને માર્ગદર્શન આપનાર — પદ્મભૂષણથી સન્માનિત.</string>
     <string name="url_website">https://www.swamisachchidanandji.org/</string>
     <string name="url_youtube">https://www.youtube.com/@Sachchidanand-Dantali</string>
     <string name="url_facebook">https://www.facebook.com/groups/652422362330934/?ref=share</string>
     <string name="url_whatsapp">https://chat.whatsapp.com/Bw4cgCKmsLe0jQgMY1LAQr</string>
     <string name="url_telegram">https://t.me/S220432</string>
+    <string name="suvichar_notification_title">આજનું ચિંતન</string>
 </resources>

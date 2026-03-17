@@ -106,9 +106,13 @@ public class HomeHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
         String thumbUrl = book.getThumbnailUrl();
         if (thumbUrl != null && !thumbUrl.isEmpty()) {
-            Glide.with(h.itemView.getContext()).load(thumbUrl)
-                    .apply(new RequestOptions().transform(new RoundedCorners(8)).centerCrop())
-                    .placeholder(R.drawable.book_placeholder).error(R.drawable.book_placeholder)
+            Glide.with(h.itemView.getContext())
+                    .load(thumbUrl)
+                    .apply(new RequestOptions()
+                            .centerCrop()
+                            .transform(new RoundedCorners(8)))
+                    .placeholder(R.drawable.book_placeholder)
+                    .error(R.drawable.book_placeholder)
                     .into(h.thumb);
         } else if (book.getFileName() != null) {
             thumbnailLoader.loadThumbnail(h.itemView.getContext(), book.getFileName(), bm -> {
@@ -148,9 +152,11 @@ public class HomeHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
         }
         if (thumbUrl != null && !thumbUrl.isEmpty()) {
-            Glide.with(ctx).load(thumbUrl)
+            Glide.with(ctx)
+                    .load(thumbUrl)
                     .apply(new RequestOptions().centerCrop())
-                    .placeholder(R.drawable.book_placeholder).error(R.drawable.book_placeholder)
+                    .placeholder(R.drawable.book_placeholder)
+                    .error(R.drawable.book_placeholder)
                     .into(h.thumb);
         } else {
             h.thumb.setImageResource(R.drawable.book_placeholder);
@@ -167,8 +173,11 @@ public class HomeHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (thumbUrl == null && video.videoId != null)
             thumbUrl = "https://img.youtube.com/vi/" + video.videoId + "/default.jpg";
         if (thumbUrl != null) {
-            Glide.with(h.itemView.getContext()).load(thumbUrl)
-                    .centerCrop().placeholder(R.drawable.book_placeholder).error(R.drawable.book_placeholder)
+            Glide.with(h.itemView.getContext())
+                    .load(thumbUrl)
+                    .apply(new RequestOptions().centerCrop())
+                    .placeholder(R.drawable.book_placeholder)
+                    .error(R.drawable.book_placeholder)
                     .into(h.thumb);
         } else {
             h.thumb.setImageResource(R.drawable.book_placeholder);

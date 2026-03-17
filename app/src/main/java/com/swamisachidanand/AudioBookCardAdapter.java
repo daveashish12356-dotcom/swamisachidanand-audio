@@ -132,8 +132,7 @@ public class AudioBookCardAdapter extends RecyclerView.Adapter<AudioBookCardAdap
             Glide.with(ctx)
                     .load(thumbUrl)
                     .apply(new RequestOptions()
-                            .transform(new RoundedCorners(useCompactLayout ? 12 : 16))
-                            .centerCrop())
+                            .transform(new RoundedCorners(useCompactLayout ? 12 : 16)))
                     .placeholder(R.drawable.book_placeholder)
                     .error(R.drawable.book_placeholder)
                     .into(holder.thumbnail);

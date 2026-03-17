@@ -10,17 +10,20 @@ android {
     defaultConfig {
         applicationId = "com.swamisachidanand"
         minSdk = 26
-        targetSdk = 36
-        versionCode = 1000
-        versionName = "2.0-dev"
+        // Google Play requirement: target at least Android 15 (API 35)
+        targetSdk = 35
+        versionCode = 29
+        versionName = "3.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
         // Support for different screen sizes
         vectorDrawables.useSupportLibrary = true
 
-        // Build only for arm64-v8a (your device) to speed up builds
+        // Support both 32-bit and 64-bit ARM so more devices stay supported
         ndk {
+            abiFilters.clear()
+            abiFilters.add("armeabi-v7a")
             abiFilters.add("arm64-v8a")
         }
 
@@ -46,8 +49,15 @@ android {
     }
     
     buildTypes {
+        debug {
+            // Debug = release jaisi behaviour (sirf signing/minify alag)
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
         release {
-            isMinifyEnabled = false  // Temporarily disabled for faster builds
+            // Release / Play bundle = debug jaisi behaviour, sirf size chota
+            isMinifyEnabled = true
+            // Resource shrink band – koi drawable/layout na nikale, debug jaisa rahe
             isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -134,6 +144,9 @@ dependencies {
     // OkHttp for Google Cloud Text-to-Speech API
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
+    // Google Mobile Ads (AdMob) for banner ads
+    implementation("com.google.android.gms:play-services-ads:25.0.0")
+
     // In-app YouTube player (video opens in app, not external)
     implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
 
@@ -141,6 +154,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.common)
+    implementation(libs.firebase.messaging)
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

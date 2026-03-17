@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Track – thin line, light gray, pill (modern) -->
+    <item
+        android:id="@android:id/background"
+        android:top="10dp"
+        android:bottom="10dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#E0E0E0" />
+            <corners android:radius="3dp" />
+        </shape>
+    </item>
+    <!-- Progress – same thin pill -->
+    <item
+        android:id="@android:id/progress"
+        android:top="10dp"
+        android:bottom="10dp">
+        <clip>
+            <shape android:shape="rectangle">
+                <solid android:color="@color/bhagva" />
+                <corners android:radius="3dp" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>

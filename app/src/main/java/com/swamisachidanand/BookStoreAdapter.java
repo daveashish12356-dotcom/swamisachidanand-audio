@@ -1,8 +1,5 @@
 package com.swamisachidanand;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +12,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Adapter for book store cards (cover + title + price). */
+/** Adapter for book store cards (cover + title + price). Covers સર્વરથી જ – assets નો ઉપયોગ નહીં. */
 public class BookStoreAdapter extends RecyclerView.Adapter<BookStoreAdapter.ViewHolder> {
+
+    private static final String SERVER_COVERS_BASE = "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/book_covers/";
 
     private final List<BookStoreItem> items = new ArrayList<>();
     private OnBookStoreClickListener listener;
+    private OnBookStoreClickListener orderClickListener;
     private boolean useGridLayout;
 
     public void setUseGridLayout(boolean grid) {
@@ -44,6 +43,10 @@ public class BookStoreAdapter extends RecyclerView.Adapter<BookStoreAdapter.View
         listener = l;
     }
 
+    public void setOnOrderClickListener(OnBookStoreClickListener l) {
+        orderClickListener = l;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -60,25 +63,24 @@ public class BookStoreAdapter extends RecyclerView.Adapter<BookStoreAdapter.View
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onBookStoreClick(item);
         });
+        if (holder.orderBtn != null) {
+            holder.orderBtn.setText("ઓર્ડર કરો");
+            holder.orderBtn.setOnClickListener(v -> {
+                if (orderClickListener != null) orderClickListener.onBookStoreClick(item);
+                else if (listener != null) listener.onBookStoreClick(item);
+            });
+        }
 
         holder.cover.setImageDrawable(null);
         holder.cover.setBackgroundResource(R.drawable.book_placeholder);
-        if (item.imageUrl != null && !item.imageUrl.isEmpty()) {
+        String coverUrl = (item.imageUrl != null && !item.imageUrl.isEmpty())
+            ? item.imageUrl
+            : (item.img != null && !item.img.isEmpty() ? SERVER_COVERS_BASE + item.img : null);
+        if (coverUrl != null) {
             Glide.with(holder.itemView.getContext())
-                .load(item.imageUrl)
-                .apply(RequestOptions.placeholderOf(R.drawable.book_placeholder).centerCrop())
+                .load(coverUrl)
+                .apply(RequestOptions.placeholderOf(R.drawable.book_placeholder).fitCenter())
                 .into(holder.cover);
-        } else if (item.img != null && !item.img.isEmpty()) {
-            try {
-                InputStream is = holder.itemView.getContext().getAssets().open("book_covers/" + item.img);
-                Bitmap bmp = BitmapFactory.decodeStream(is);
-                if (bmp != null) {
-                    holder.cover.setImageBitmap(bmp);
-                    holder.cover.setBackground(null);
-                }
-                is.close();
-            } catch (Exception ignored) {
-            }
         }
     }
 
@@ -91,12 +93,14 @@ public class BookStoreAdapter extends RecyclerView.Adapter<BookStoreAdapter.View
         ImageView cover;
         TextView title;
         TextView price;
+        TextView orderBtn;
 
         ViewHolder(View v) {
             super(v);
             cover = v.findViewById(R.id.book_store_cover);
             title = v.findViewById(R.id.book_store_title);
             price = v.findViewById(R.id.book_store_price);
+            orderBtn = v.findViewById(R.id.book_store_order_btn);
         }
     }
 }

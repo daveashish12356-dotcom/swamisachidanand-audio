@@ -24,6 +24,11 @@ public class YouTubeSearchLoader {
     private static final String TAG = "YouTubeSearchLoader";
     private static final int MAX_RESULTS = 25;
     private static final int TIMEOUT_SEC = 15;
+    /**
+     * Restrict all video search to Swami Sachchidanand main channel only.
+     * Channel URL: https://www.youtube.com/@swamisachchidanandji
+     */
+    private static final String SWAMI_CHANNEL_ID = "UCba78apJ7Rw8crHxVPq9dow";
 
     public interface Callback {
         void onResults(List<HomeVideoLoader.HomeVideoItem> videos);
@@ -46,6 +51,7 @@ public class YouTubeSearchLoader {
                 String url = "https://www.googleapis.com/youtube/v3/search"
                     + "?part=snippet&q=" + Uri.encode(query.trim())
                     + "&order=relevance&type=video&maxResults=" + MAX_RESULTS
+                    + "&channelId=" + SWAMI_CHANNEL_ID
                     + "&key=" + apiKey;
 
                 OkHttpClient client = new OkHttpClient.Builder()

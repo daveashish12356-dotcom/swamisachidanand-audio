@@ -122,7 +122,14 @@
                             android:paddingBottom="2dp" />
                     </LinearLayout>
 
-                    <!-- Last: photo with animation, phir ye hi stay (suvichar → video → photo) -->
+                    <!-- Video ke baad: server gallery photos slideshow, nahi to static photo -->
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/hero_photo_slideshow"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"
+                        android:contentDescription="Hero photo slideshow" />
+
                     <ImageView
                         android:id="@+id/hero_final_photo"
                         android:layout_width="match_parent"
@@ -135,6 +142,26 @@
             </com.google.android.material.card.MaterialCardView>
         </FrameLayout>
 
+        <!-- ફોટા ગેલેરી લિંક – સુવિચાર/કેરોસેલ અને નેવ બાર વચ્ચે, જમણી બાજુ, ચોટા અક્ષર -->
+        <TextView
+            android:id="@+id/home_photo_gallery_link"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_large"
+            android:layout_marginEnd="@dimen/spacing_large"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:gravity="end"
+            android:text="ફોટા ગેલેરી જોવા માટે અહીં ક્લિક કરો"
+            android:textSize="14sp"
+            android:textColor="@color/deep_saffron"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Open photo gallery" />
+
         <!-- Quick nav buttons – ek bada pill box (Books / Audio / Videos / Live) -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/home_quick_nav_card"
@@ -142,7 +169,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_large"
             android:layout_marginEnd="@dimen/spacing_large"
-            android:layout_marginTop="@dimen/spacing_normal"
+            android:layout_marginTop="4dp"
             android:layout_marginBottom="@dimen/spacing_large"
             app:cardCornerRadius="28dp"
             app:cardElevation="4dp"
@@ -150,15 +177,17 @@
             app:strokeColor="#22E0E0E0"
             app:strokeWidth="1dp">
 
+            <!-- minHeight + extra padding: છોટા સ્ક્રીન / ફોન્ટ ઝૂમ પર લખાણ કાપાતું નહીં; સિસ્ટમ ઝૂમ સાથે એપ પણ સ્કેલ થાય -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="52dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:paddingStart="14dp"
                 android:paddingEnd="14dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp">
 
                 <!-- Books -->
                 <LinearLayout
@@ -168,7 +197,7 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingEnd="8dp"
+                    android:paddingEnd="4dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackgroundBorderless">
@@ -183,16 +212,19 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginStart="4dp"
                         android:text="@string/nav_books"
                         android:textSize="13sp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:textStyle="bold"
                         android:textColor="?attr/text_primary" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="18dp"
+                    android:layout_height="match_parent"
+                    android:minHeight="24dp"
                     android:background="#FFE0E0E0" />
 
                 <!-- Audio -->
@@ -203,8 +235,8 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackgroundBorderless">
@@ -218,16 +250,19 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginStart="4dp"
                         android:text="@string/nav_audio"
                         android:textSize="13sp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:textStyle="bold"
                         android:textColor="?attr/text_primary" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="18dp"
+                    android:layout_height="match_parent"
+                    android:minHeight="24dp"
                     android:background="#FFE0E0E0" />
 
                 <!-- Videos -->
@@ -238,8 +273,8 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackgroundBorderless">
@@ -253,16 +288,19 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginStart="4dp"
                         android:text="@string/nav_videos"
                         android:textSize="13sp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:textStyle="bold"
                         android:textColor="?attr/text_primary" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="18dp"
+                    android:layout_height="match_parent"
+                    android:minHeight="24dp"
                     android:background="#FFE0E0E0" />
 
                 <!-- Live / Sampark -->
@@ -273,7 +311,7 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingStart="8dp"
+                    android:paddingStart="4dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackgroundBorderless">
@@ -287,9 +325,11 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginStart="4dp"
                         android:text="@string/nav_about"
                         android:textSize="13sp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:textStyle="bold"
                         android:textColor="?attr/text_primary" />
                 </LinearLayout>
@@ -327,7 +367,7 @@
                 android:scrollbars="horizontal" />
         </LinearLayout>
 
-        <!-- 2. Latest Audio – pehle nav video ki jagah -->
+        <!-- 1. ઓડિયો પુસ્તકો -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -373,93 +413,7 @@
             android:clipToPadding="false"
             android:scrollbars="horizontal" />
 
-        <!-- Banner ad between new audio and new books -->
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/home_inline_banner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_large"
-            android:layout_marginEnd="@dimen/spacing_large"
-            android:layout_marginBottom="@dimen/spacing_large"
-            android:visibility="gone"
-            app:adSize="BANNER"
-            app:adUnitId="ca-app-pub-7592986107944664/4541738286" />
-
-        <!-- 6. New / Popular Books -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/spacing_large"
-            android:paddingEnd="@dimen/spacing_large"
-            android:paddingBottom="8dp"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="📚 નવા પુસ્તકો"
-                android:textSize="@dimen/section_title_size"
-                android:textStyle="bold"
-                android:textColor="?attr/text_primary" />
-
-            <TextView
-                android:id="@+id/home_books_view_all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="View All ›"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@color/deep_saffron"
-                android:paddingStart="12dp"
-                android:paddingEnd="4dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true" />
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/best_books_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_xxlarge"
-            android:paddingStart="@dimen/spacing_large"
-            android:paddingEnd="@dimen/spacing_large"
-            android:clipToPadding="false" />
-
-        <!-- 7. Bhakti Books -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/spacing_large"
-            android:paddingEnd="@dimen/spacing_large"
-            android:paddingBottom="8dp"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="🕉 ભક્તિ પુસ્તકો"
-                android:textSize="@dimen/section_title_size"
-                android:textStyle="bold"
-                android:textColor="?attr/text_primary" />
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/bhakti_books_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_xxlarge"
-            android:paddingStart="@dimen/spacing_large"
-            android:paddingEnd="@dimen/spacing_large"
-            android:clipToPadding="false" />
-
-        <!-- 8. નવા વિડિઓ – last me -->
+        <!-- 2. નવા વિડિઓ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -499,13 +453,99 @@
             android:id="@+id/home_videos_recycler"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginBottom="@dimen/spacing_xxlarge"
+            android:layout_marginBottom="@dimen/spacing_large"
             android:paddingStart="@dimen/spacing_large"
             android:paddingEnd="@dimen/spacing_large"
             android:clipToPadding="false"
             android:scrollbars="horizontal" />
 
-        <!-- સુરત પુસ્તક સેન્ટર - 40% ડિસ્કાઉન્ટ -->
+        <!-- Banner ad -->
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/home_inline_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_large"
+            android:layout_marginEnd="@dimen/spacing_large"
+            android:layout_marginBottom="@dimen/spacing_large"
+            android:visibility="gone"
+            app:adSize="BANNER"
+            app:adUnitId="ca-app-pub-7592986107944664/4541738286" />
+
+        <!-- 3. નવા પુસ્તકો -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:paddingBottom="8dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="📚 નવા પુસ્તકો"
+                android:textSize="@dimen/section_title_size"
+                android:textStyle="bold"
+                android:textColor="?attr/text_primary" />
+
+            <TextView
+                android:id="@+id/home_books_view_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View All ›"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/deep_saffron"
+                android:paddingStart="12dp"
+                android:paddingEnd="4dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/best_books_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_normal"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:clipToPadding="false" />
+
+        <!-- ભક્તિ પુસ્તકો -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:paddingBottom="8dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🕉 ભક્તિ પુસ્તકો"
+                android:textSize="@dimen/section_title_size"
+                android:textStyle="bold"
+                android:textColor="?attr/text_primary" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/bhakti_books_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_xxlarge"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:clipToPadding="false" />
+
+        <!-- 4. પુસ્તક કિંમત / Book Store -->
         <LinearLayout
             android:id="@+id/home_book_store_section"
             android:layout_width="match_parent"
@@ -526,7 +566,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="📚 સુરત પુસ્તક સેન્ટર - 40% ડિસ્કાઉન્ટ"
+                    android:text="સચ્ચિદાનંદજી પુસ્તકાલય"
                     android:textSize="@dimen/section_title_size"
                     android:textStyle="bold"
                     android:textColor="?attr/text_primary" />

@@ -1,12 +1,16 @@
 # Add project specific ProGuard rules here.
 # For more details, see http://developer.android.com/guide/developing/tools/proguard.html
+# Goal: release APK / Play bundle = debug jaisi behaviour (koi change na ho)
 
 # Preserve line numbers for deobfuscation (Play Console crash reports)
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
 
-# Application and activities
+# App classes – sab same rahe
 -keep class com.swamisachidanand.** { *; }
+
+# org.json – server JSON parse release me na toote
+-keep class org.json.** { *; }
 
 # Firebase
 -keep class com.google.firebase.** { *; }

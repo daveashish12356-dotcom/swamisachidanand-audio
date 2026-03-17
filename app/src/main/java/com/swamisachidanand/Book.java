@@ -11,6 +11,8 @@ public class Book {
     private String pdfUrl;
     /** When set, thumbnail loads from this URL (server). */
     private String thumbnailUrl;
+    /** Server "newFileNames" or "new": true – નવાં પુસ્તકો ફિલ્ટર અને હોમ પર પહેલાં. */
+    private boolean isNew;
 
     public Book(String name, String fileName, long size) {
         this.name = name != null ? name : "";
@@ -73,6 +75,9 @@ public class Book {
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
     }
+
+    public boolean isNew() { return isNew; }
+    public void setNew(boolean isNew) { this.isNew = isNew; }
 
     public String getFormattedSize() {
         if (size < 1024) {

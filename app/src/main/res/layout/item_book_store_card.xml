@@ -26,7 +26,7 @@
                 android:id="@+id/book_store_cover"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
+                android:scaleType="fitCenter"
                 android:background="@drawable/book_placeholder"
                 android:contentDescription="Book cover" />
 
@@ -59,12 +59,21 @@
             android:layout_marginTop="6dp"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
-            android:layout_marginBottom="8dp"
             android:textSize="12sp"
             android:textStyle="bold"
             android:textColor="?attr/text_primary"
             android:maxLines="2"
             android:ellipsize="end"
             tools:text="ભારતીય દર્શનો" />
+        <TextView
+            android:id="@+id/book_store_order_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="8dp"
+            android:text="ઓર્ડર કરો"
+            android:textSize="12sp"
+            android:textColor="?attr/colorPrimary" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

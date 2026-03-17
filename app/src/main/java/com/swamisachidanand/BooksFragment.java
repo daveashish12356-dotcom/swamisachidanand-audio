@@ -23,6 +23,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
@@ -35,12 +39,14 @@ import java.util.Map;
 public class BooksFragment extends Fragment implements BookAdapter.OnBookClickListener {
 
     private static final String TAG = "BooksFragment";
+    /** From MainActivity when opening Books tab from Book Store section (e.g. નવાં પુસ્તકો). */
+    public static final String ARG_FILTER_ID = "filter_id";
     private static final int REQUEST_CODE_VOICE_SEARCH = 1001;
     private static final String PREFS_NAME = "reading_progress";
     private static final int POPULAR_COUNT = 8;
 
     private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshLayout;
-    private RecyclerView booksRecyclerView;
+    private RecyclerView booksSectionsRecycler;
     private RecyclerView categoryChipsRecycler;
     private RecyclerView popularRecycler;
     private LinearLayout popularSection;
@@ -49,7 +55,7 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
     private TextView booksLoadingLine;
     private LinearLayout emptyText;
     private TextView emptyTextMessage;
-    private BookAdapter bookAdapter;
+    private BooksSectionAdapter sectionAdapter;
     private BookAdapter popularAdapter;
     private BookAdapter searchResultsAdapter;
     private CategoryChipAdapter chipAdapter;
@@ -60,6 +66,7 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
     private List<Book> books = new ArrayList<>();
     private List<Book> allBooks = new ArrayList<>();
     private String selectedCategoryId = "all";
+    private AdView bottomBannerAd;
     /** One placeholder book shown while server list is loading – thumbnail visible, no click. */
     private static List<Book> placeholderBooks() {
         List<Book> list = new ArrayList<>();
@@ -79,10 +86,10 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
             view = inflater.inflate(R.layout.fragment_books, container, false);
             if (view == null) return container != null ? new View(container.getContext()) : null;
             swipeRefreshLayout = view.findViewById(R.id.books_swipe_refresh);
-            booksRecyclerView = view.findViewById(R.id.books_recycler_view);
+            booksSectionsRecycler = view.findViewById(R.id.books_sections_recycler);
             categoryChipsRecycler = view.findViewById(R.id.category_chips_recycler);
-            popularRecycler = view.findViewById(R.id.popular_recycler);
-            popularSection = view.findViewById(R.id.popular_section);
+            popularRecycler = null;
+            popularSection = null;
             searchResultsSection = view.findViewById(R.id.books_search_results_section);
             searchResultsRecycler = view.findViewById(R.id.books_search_results_recycler);
             booksLoadingLine = view.findViewById(R.id.books_loading_line);
@@ -101,6 +108,13 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
                     if (act instanceof MainActivity) ((MainActivity) act).openSwamiInfoPage();
                 });
             }
+            View orderLink = view.findViewById(R.id.books_order_link);
+            if (orderLink != null) {
+                orderLink.setOnClickListener(v -> {
+                    android.app.Activity act = getActivity();
+                    if (act != null) act.startActivity(new Intent(act, BookStoreActivity.class));
+                });
+            }
             if (swipeRefreshLayout != null) {
                 swipeRefreshLayout.setOnRefreshListener(this::onRefreshRequested);
             }
@@ -117,9 +131,12 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
                 setupCategoryChips();
                 setupSearchResultsRecycler();
                 setupSearch();
-                if (bookAdapter != null) bookAdapter.updateBooks(placeholderBooks());
+                if (sectionAdapter != null) sectionAdapter.setSections(new ArrayList<>());
                 loadBooks();
             });
+
+            // Banner ad at the bottom of Books page
+            setupBottomBannerAd(view);
         } catch (Throwable t) {
             Log.e(TAG, "onCreateView error", t);
             if (view == null && container != null) view = new View(container.getContext());
@@ -132,17 +149,51 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
         loadBooks();
     }
 
+    private void setupBottomBannerAd(View root) {
+        try {
+            bottomBannerAd = root.findViewById(R.id.books_bottom_banner);
+            if (bottomBannerAd == null) return;
+            AdRequest request = new AdRequest.Builder().build();
+            bottomBannerAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    try {
+                        if (bottomBannerAd.getVisibility() != View.VISIBLE) {
+                            bottomBannerAd.setAlpha(0f);
+                            bottomBannerAd.setTranslationY(bottomBannerAd.getHeight());
+                            bottomBannerAd.setVisibility(View.VISIBLE);
+                            bottomBannerAd.animate()
+                                    .translationY(0f)
+                                    .alpha(1f)
+                                    .setDuration(350L)
+                                    .start();
+                        }
+                    } catch (Throwable t) {
+                        bottomBannerAd.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onAdFailedToLoad(LoadAdError adError) {
+                    Log.w(TAG, "books banner failed: " + adError);
+                }
+            });
+            bottomBannerAd.loadAd(request);
+        } catch (Throwable t) {
+            Log.e(TAG, "setupBottomBannerAd", t);
+        }
+    }
+
     private void setupRecyclerView() {
         android.content.Context ctx = getContext();
         if (ctx == null) return;
-        if (booksRecyclerView != null) {
-            int spanCount = getSpanCountForScreen();
-            booksRecyclerView.setLayoutManager(new GridLayoutManager(ctx, spanCount));
-            // setHasFixedSize not used: layout uses wrap_content in scroll direction
-            booksRecyclerView.setItemViewCacheSize(20);
-            bookAdapter = new BookAdapter(books, this);
-            bookAdapter.setReadingProgressMap(loadReadingProgressMap());
-            booksRecyclerView.setAdapter(bookAdapter);
+        if (booksSectionsRecycler != null) {
+            booksSectionsRecycler.setLayoutManager(new LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false));
+            booksSectionsRecycler.setNestedScrollingEnabled(false);
+            booksSectionsRecycler.setItemViewCacheSize(15);
+            sectionAdapter = new BooksSectionAdapter(ctx);
+            sectionAdapter.setOnBookClickListener(this);
+            booksSectionsRecycler.setAdapter(sectionAdapter);
         }
         if (popularRecycler != null) {
             popularRecycler.setLayoutManager(new LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false));
@@ -157,20 +208,8 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
 
     private void setupCategoryChips() {
         if (categoryChipsRecycler == null || getContext() == null) return;
-        List<String> labels = new ArrayList<>();
-        labels.add("બધાં");
-        labels.add("ભક્તિ");
-        labels.add("યાત્રા");
-        labels.add("જીવન");
-        labels.add("ઉપદેશ");
-        labels.add("લોકપ્રિય");
-        List<String> ids = new ArrayList<>();
-        ids.add("all");
-        ids.add("Bhakti");
-        ids.add("Yatra");
-        ids.add("Jeevan");
-        ids.add("Updesh");
-        ids.add("popular");
+        List<String> labels = BookStoreCategoryHelper.getFilterLabelsForBooks();
+        List<String> ids = BookStoreCategoryHelper.getFilterIdsForBooks();
         chipAdapter = new CategoryChipAdapter(labels, ids);
         chipAdapter.setListener(catId -> {
             selectedCategoryId = catId;
@@ -226,20 +265,9 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
         filterBooks("");
     }
 
-    /** લોકપ્રિય પુસ્તકો = નવાં પુસ્તકો (server list માં જે અંતે આવે તે – નવું add થયું તે પહેલા દેખાશે) */
+    /** લોકપ્રિય section removed – same as Book Store: only filter line + all books grid. */
     private void loadPopular(List<Book> serverBooks) {
-        if (popularAdapter == null || popularSection == null) return;
-        List<Book> popular = new ArrayList<>();
-        if (serverBooks.size() <= POPULAR_COUNT) {
-            popular.addAll(serverBooks);
-            Collections.reverse(popular);
-        } else {
-            for (int i = serverBooks.size() - 1; i >= serverBooks.size() - POPULAR_COUNT; i--) {
-                popular.add(serverBooks.get(i));
-            }
-        }
-        popularAdapter.updateBooks(popular);
-        popularSection.setVisibility(popular.isEmpty() ? View.GONE : View.VISIBLE);
+        if (popularSection != null) popularSection.setVisibility(View.GONE);
     }
 
     private void setupSearchResultsRecycler() {
@@ -454,41 +482,110 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
 
     private List<Book> filterByCategory(List<Book> list) {
         if ("all".equals(selectedCategoryId)) return list;
-        if ("popular".equals(selectedCategoryId)) {
-            if (list.size() <= POPULAR_COUNT) {
-                List<Book> out = new ArrayList<>(list);
-                Collections.reverse(out);
-                return out;
-            }
-            List<Book> out = new ArrayList<>();
-            for (int i = list.size() - 1; i >= list.size() - POPULAR_COUNT; i--) {
-                out.add(list.get(i));
-            }
-            return out;
-        }
         List<Book> out = new ArrayList<>();
         for (Book b : list) {
-            String cat = b.getCategory();
-            if (selectedCategoryId.equals(cat)) out.add(b);
+            if (b == null) continue;
+            String name = b.getName();
+            String serverCat = b.getCategory();
+            boolean match = "new".equals(selectedCategoryId)
+                ? (b.isNew() || "new".equals(serverCat) || (name != null && BookStoreCategoryHelper.belongsToCategory(name, "new")))
+                : (serverCat != null && selectedCategoryId.equals(serverCat)) || (name != null && BookStoreCategoryHelper.belongsToCategory(name, selectedCategoryId));
+            if (match) out.add(b);
         }
         return out;
     }
 
     private void updateBooksDisplay(List<Book> filtered) {
-        if (bookAdapter != null) {
-            bookAdapter.setReadingProgressMap(loadReadingProgressMap());
-            bookAdapter.updateBooks(filtered);
+        List<BooksSectionAdapter.Section> sections = buildSections(filtered);
+        if (sectionAdapter != null) {
+            sectionAdapter.setReadingProgressMap(loadReadingProgressMap());
+            sectionAdapter.setSections(sections);
         }
-        if (emptyText != null && booksRecyclerView != null) {
-            if (filtered.isEmpty()) {
+        if (emptyText != null && booksSectionsRecycler != null) {
+            if (sections.isEmpty()) {
                 emptyText.setVisibility(View.VISIBLE);
-                booksRecyclerView.setVisibility(View.GONE);
+                booksSectionsRecycler.setVisibility(View.GONE);
                 if (emptyTextMessage != null) emptyTextMessage.setText("કોઈ પુસ્તક મળ્યું નથી");
             } else {
                 emptyText.setVisibility(View.GONE);
-                booksRecyclerView.setVisibility(View.VISIBLE);
+                booksSectionsRecycler.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    /** Build sections by category (like Book Store photo): each section = title + horizontal list. */
+    private List<BooksSectionAdapter.Section> buildSections(List<Book> source) {
+        List<BooksSectionAdapter.Section> out = new ArrayList<>();
+        if (source == null || source.isEmpty()) return out;
+        String[] labels = BookStoreCategoryHelper.getFilterLabels();
+        String[] ids = BookStoreCategoryHelper.getFilterIds();
+        if ("all".equals(selectedCategoryId)) {
+            // નવાં પુસ્તકો – સર્વર new + category "new" અથવા નામથી
+            List<Book> newBooks = new ArrayList<>();
+            for (Book b : source) {
+                if (b == null) continue;
+                String n = b.getName();
+                String c = b.getCategory();
+                if (b.isNew() || "new".equals(c) || (n != null && BookStoreCategoryHelper.belongsToCategory(n, "new")))
+                    newBooks.add(b);
+            }
+            if (!newBooks.isEmpty()) {
+                BooksSectionAdapter.Section newSec = new BooksSectionAdapter.Section();
+                newSec.title = "📖 નવાં પુસ્તકો";
+                newSec.filterId = "new";
+                newSec.books = newBooks;
+                out.add(newSec);
+            }
+            for (int i = 1; i < ids.length; i++) {
+                String catId = ids[i];
+                String title = i < labels.length ? labels[i] : catId;
+                List<Book> list = new ArrayList<>();
+                for (Book b : source) {
+                    if (b == null) continue;
+                    String name = b.getName();
+                    String serverCat = b.getCategory();
+                    if ((serverCat != null && catId.equals(serverCat)) || (name != null && BookStoreCategoryHelper.belongsToCategory(name, catId))) list.add(b);
+                }
+                if (!list.isEmpty()) {
+                    BooksSectionAdapter.Section sec = new BooksSectionAdapter.Section();
+                    sec.title = title;
+                    sec.filterId = catId;
+                    sec.books = list;
+                    out.add(sec);
+                }
+            }
+            // નીચે એક વિભાગ: બધાં પુસ્તકો – સ્ક્રોલ નીચે 150+ દેખાય
+            BooksSectionAdapter.Section allSec = new BooksSectionAdapter.Section();
+            allSec.title = "બધાં પુસ્તકો";
+            allSec.filterId = "all";
+            allSec.books = new ArrayList<>(source);
+            out.add(allSec);
+        } else {
+            List<Book> list = new ArrayList<>();
+            for (Book b : source) {
+                if (b == null) continue;
+                String name = b.getName();
+                String serverCat = b.getCategory();
+                if ((serverCat != null && selectedCategoryId.equals(serverCat)) || (name != null && BookStoreCategoryHelper.belongsToCategory(name, selectedCategoryId))) list.add(b);
+            }
+            if (!list.isEmpty()) {
+                List<String> lab = BookStoreCategoryHelper.getFilterLabelsForBooks();
+                List<String> idArr = BookStoreCategoryHelper.getFilterIdsForBooks();
+                String title = "બધાં";
+                for (int i = 0; i < idArr.size() && i < lab.size(); i++) {
+                    if (selectedCategoryId.equals(idArr.get(i))) {
+                        title = lab.get(i);
+                        break;
+                    }
+                }
+                BooksSectionAdapter.Section sec = new BooksSectionAdapter.Section();
+                sec.title = title;
+                sec.filterId = selectedCategoryId;
+                sec.books = list;
+                out.add(sec);
+            }
+        }
+        return out;
     }
 
     private boolean containsAllWords(String query, String text) {
@@ -622,8 +719,8 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
         if (act == null) return;
         if (booksLoadingLine != null) booksLoadingLine.setVisibility(View.VISIBLE);
         if (emptyText != null) emptyText.setVisibility(View.GONE);
-        if (booksRecyclerView != null) booksRecyclerView.setVisibility(View.VISIBLE);
-        if (bookAdapter != null) bookAdapter.updateBooks(placeholderBooks());
+        if (booksSectionsRecycler != null) booksSectionsRecycler.setVisibility(View.VISIBLE);
+        if (sectionAdapter != null) sectionAdapter.setSections(new ArrayList<>());
         new Thread(() -> {
             try {
                 android.app.Activity activity = getActivity();
@@ -653,13 +750,23 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
                         books.addAll(sortedBooks);
                         allBooks.addAll(sortedAll);
                         if (booksLoadingLine != null) booksLoadingLine.setVisibility(View.GONE);
-                        loadPopular(sortedAll);
-                        if (bookAdapter != null) {
-                            bookAdapter.setReadingProgressMap(progressMap);
+                        // Open from Book Store section (e.g. નવાં પુસ્તકો) → apply that filter
+                        Bundle args = getArguments();
+                        if (args != null) {
+                            String filterId = args.getString(ARG_FILTER_ID);
+                            if (filterId != null && !filterId.isEmpty()) {
+                                selectedCategoryId = filterId;
+                                List<String> ids = BookStoreCategoryHelper.getFilterIdsForBooks();
+                                int idx = ids != null ? ids.indexOf(filterId) : -1;
+                                if (idx >= 0 && chipAdapter != null) chipAdapter.setSelectedIndex(idx);
+                            }
                         }
-                        // Defer filter so list draws first, no jank
-                        if (booksRecyclerView != null) {
-                            booksRecyclerView.post(() -> {
+                        loadPopular(sortedAll);
+                        if (sectionAdapter != null) {
+                            sectionAdapter.setReadingProgressMap(progressMap);
+                        }
+                        if (booksSectionsRecycler != null) {
+                            booksSectionsRecycler.post(() -> {
                                 if (isAdded()) applyFilters();
                             });
                         } else {
@@ -668,7 +775,7 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
                     } catch (Exception uiEx) {
                         Log.e(TAG, "Error updating books UI", uiEx);
                         if (emptyText != null) emptyText.setVisibility(View.VISIBLE);
-                        if (booksRecyclerView != null) booksRecyclerView.setVisibility(View.GONE);
+                        if (booksSectionsRecycler != null) booksSectionsRecycler.setVisibility(View.GONE);
                         if (emptyTextMessage != null) emptyTextMessage.setText("પુસ્તકો લોડ થયા નહીં.");
                     }
                 });
@@ -678,7 +785,7 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
                 if (activity != null) {
                     activity.runOnUiThread(() -> {
                         if (emptyText != null) emptyText.setVisibility(View.VISIBLE);
-                        if (booksRecyclerView != null) booksRecyclerView.setVisibility(View.GONE);
+                        if (booksSectionsRecycler != null) booksSectionsRecycler.setVisibility(View.GONE);
                         if (emptyTextMessage != null) emptyTextMessage.setText("પુસ્તકો લોડ થયા નહીં.");
                     });
                 }
@@ -701,7 +808,7 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        booksRecyclerView = null;
+        booksSectionsRecycler = null;
         categoryChipsRecycler = null;
         popularRecycler = null;
         popularSection = null;
@@ -712,7 +819,7 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
         clearSearch = null;
         micButton = null;
         filterButton = null;
-        bookAdapter = null;
+        sectionAdapter = null;
         popularAdapter = null;
         chipAdapter = null;
     }

@@ -1,7 +1,5 @@
 package com.swamisachidanand;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +13,24 @@ import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Carousel: pehla item VIDEO (thumbnail + play), baaki photos with different animations. */
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+/** Carousel: video in-app (asset), photos from server. */
 public class PhotoCarouselAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_VIDEO = 0;
     private static final int VIEW_TYPE_PHOTO = 1;
+
+    private static final String SERVER_CAROUSEL_BASE = "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/carousel/";
 
     private final List<String> photoFiles = new ArrayList<>();
     private final String videoAssetPath;
@@ -43,7 +49,6 @@ public class PhotoCarouselAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.videoAssetPath = "padma_bhushan_video.mp4";
         this.videoThumbAssetPath = "swamiji.jpg";
 
-        // Order: video is position 0 (added in getItemCount). Photos below.
         photoFiles.add("F0GoDmQacAAaPKX.jpg");
         photoFiles.add("6f93aa5c-c068-4363-825f-b07b253ac9bf-md.jpg");
         photoFiles.add("e18b218e-6ec2-4f2d-ac3c-1c9b894cc42b-md.jpg");
@@ -58,6 +63,7 @@ public class PhotoCarouselAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.videoPlayListener = listener;
     }
 
+    /** Asset path for carousel video (in-app). */
     public String getVideoAssetPath() {
         return videoAssetPath;
     }
@@ -104,7 +110,7 @@ public class PhotoCarouselAdapter extends RecyclerView.Adapter<RecyclerView.View
         ImageView playOverlay = holder.playOverlay;
         if (imageView != null) {
             imageView.setVisibility(View.VISIBLE);
-            loadBitmapInto(videoThumbAssetPath, imageView);
+            loadBitmapFromAsset(videoThumbAssetPath, imageView);
         }
         if (holder.carouselVideoView != null) {
             holder.carouselVideoView.setVisibility(View.GONE);
@@ -140,7 +146,7 @@ public class PhotoCarouselAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         if (imageView != null) {
             imageView.setVisibility(View.VISIBLE);
-            loadBitmapInto(photoFile, imageView);
+            loadImageFromServer(SERVER_CAROUSEL_BASE + photoFile, imageView);
             applyPhotoAnimation(imageView, photoIndex);
         }
     }
@@ -161,7 +167,16 @@ public class PhotoCarouselAdapter extends RecyclerView.Adapter<RecyclerView.View
         } catch (Exception ignored) {}
     }
 
-    private void loadBitmapInto(String assetPath, ImageView imageView) {
+    private void loadImageFromServer(String imageUrl, ImageView imageView) {
+        Glide.with(context)
+                .load(imageUrl)
+                .placeholder(android.R.drawable.ic_menu_gallery)
+                .error(android.R.drawable.ic_menu_gallery)
+                .transition(DrawableTransitionOptions.withCrossFade(200))
+                .into(imageView);
+    }
+
+    private void loadBitmapFromAsset(String assetPath, ImageView imageView) {
         InputStream is = null;
         try {
             is = assetManager.open(assetPath);

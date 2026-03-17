@@ -44,9 +44,14 @@ def main():
             w = min(400, page.rect.width)
             mat = fitz.Matrix(w / page.rect.width, w / page.rect.width)
             pix = page.get_pixmap(matrix=mat, alpha=False)
+            # Gujarati-named thumbnail for Books page
             thumb_dst = os.path.join(PUBLIC_THUMB, JPG_NAME)
             pix.save(thumb_dst)
             print("Generated thumbnail -> public/thumbnails/" + JPG_NAME)
+            # Latin-named thumbnail for server audio (chanakya_rajniti)
+            ascii_thumb = os.path.join(PUBLIC_THUMB, "chanakya_rajniti.jpg")
+            pix.save(ascii_thumb)
+            print("Generated thumbnail -> public/thumbnails/chanakya_rajniti.jpg")
         doc.close()
     except Exception as e:
         print("Thumbnail error:", e)

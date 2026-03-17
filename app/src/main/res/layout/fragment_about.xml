@@ -28,26 +28,50 @@
             android:layout_marginTop="12dp"
             android:layout_marginBottom="20dp">
 
-            <com.google.android.material.card.MaterialCardView
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="80dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="#E8E8E8"
-                app:strokeColor="#BBBBBB"
-                app:strokeWidth="2dp">
+                android:layout_gravity="center_horizontal">
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/sampark_photo"
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/sampark_first_photo_card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="80dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="#E8E8E8"
+                    app:strokeColor="#BBBBBB"
+                    app:strokeWidth="2dp">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/sampark_photo"
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/sampark_photo"
+                        app:shapeAppearanceOverlay="@style/SwamiAvatarShape"
+                        app:strokeColor="@color/deep_saffron"
+                        app:strokeWidth="2dp"
+                        android:contentDescription="સંપર્ક" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/sampark_slideshow_card"
                     android:layout_width="160dp"
                     android:layout_height="160dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/sampark_photo"
-                    app:shapeAppearanceOverlay="@style/SwamiAvatarShape"
+                    android:visibility="gone"
+                    app:cardCornerRadius="80dp"
+                    app:cardElevation="4dp"
                     app:strokeColor="@color/deep_saffron"
-                    app:strokeWidth="2dp"
-                    android:contentDescription="સંપર્ક" />
-            </com.google.android.material.card.MaterialCardView>
+                    app:strokeWidth="2dp">
+
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/sampark_photo_slideshow"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Sampark slideshow" />
+                </com.google.android.material.card.MaterialCardView>
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/sampark_photo_caption"
@@ -85,46 +109,87 @@
                 android:id="@+id/sampark_youtube"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:padding="8dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_social_youtube"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="@drawable/bg_social_icon_circle"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
                 android:contentDescription="YouTube" />
+
             <ImageView
                 android:id="@+id/sampark_facebook"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:padding="8dp"
-                android:layout_marginStart="12dp"
+                android:padding="10dp"
+                android:layout_marginStart="16dp"
                 android:src="@drawable/ic_social_facebook"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="@drawable/bg_social_icon_circle"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
                 android:contentDescription="Facebook" />
+
             <ImageView
                 android:id="@+id/sampark_whatsapp"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:padding="8dp"
-                android:layout_marginStart="12dp"
+                android:padding="10dp"
+                android:layout_marginStart="16dp"
                 android:src="@drawable/ic_social_whatsapp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="@drawable/bg_social_icon_circle"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
                 android:contentDescription="WhatsApp" />
+
             <ImageView
                 android:id="@+id/sampark_telegram"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:padding="8dp"
-                android:layout_marginStart="12dp"
+                android:padding="10dp"
+                android:layout_marginStart="16dp"
                 android:src="@drawable/ic_social_telegram"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="@drawable/bg_social_icon_circle"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
                 android:contentDescription="Telegram" />
         </LinearLayout>
+
+        <!-- ફોટા ગેલેરી – સોશિયલ આઇકન્સ નીચે, ઓર્ડર કાર્ડ ઉપર -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/sampark_photo_gallery_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="@android:color/white">
+
+            <TextView
+                android:id="@+id/sampark_photo_gallery_link"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:text="📷 વધુ ફોટા જોવા માટે અહીં ક્લિક કરો"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorPrimary"
+                android:gravity="center"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="ફોટા ગેલેરી ખોલો" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- પુસ્તક ઓર્ડર માટે સંપર્ક – ફોટા ગેલેરી કાર્ડ નીચે -->
+        <include
+            android:id="@+id/book_order_include"
+            layout="@layout/layout_book_order_contact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <!-- Ashrams Section Title -->
         <TextView
@@ -152,6 +217,19 @@
         <!-- Ashram 4 - Suigam -->
         <include layout="@layout/item_ashram"
             android:id="@+id/ashram4" />
+
+        <!-- Banner ad at very bottom of Sampark page -->
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/about_bottom_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:layout_marginBottom="@dimen/spacing_xlarge"
+            android:layout_marginStart="@dimen/spacing_large"
+            android:layout_marginEnd="@dimen/spacing_large"
+            android:visibility="gone"
+            app:adSize="BANNER"
+            app:adUnitId="ca-app-pub-7592986107944664/4541738286" />
 
     </LinearLayout>
 

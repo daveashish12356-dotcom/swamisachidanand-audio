@@ -74,6 +74,22 @@
             android:exported="false"
             android:theme="@style/Theme.Swami"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".BookDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Swami"
+            android:parentActivityName=".BookStoreActivity" />
+        <activity
+            android:name=".PhotoGalleryActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Swami"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".FullScreenSlideshowActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Swami"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".PhotoGalleryActivity" />
         <service
             android:name=".MyFirebaseService"
             android:exported="false">

@@ -1,0 +1,161 @@
+=== 10 min 55 sec (655 sec) parts ===
+
+Part: 5.સાંચી
+Book: અમરકંટક અને મધ્યપ્રદેશનો મહિમા (amarakantak_madhyapradesh)
+Duration: 655.1 sec
+
+Part: 8.અમરકંટક 2
+Book: અમરકંટક અને મધ્યપ્રદેશનો મહિમા (amarakantak_madhyapradesh)
+Duration: 655.1 sec
+
+Part: 10.ચિત્રકૂટ 2
+Book: અમરકંટક અને મધ્યપ્રદેશનો મહિમા (amarakantak_madhyapradesh)
+Duration: 655.1 sec
+
+Part: 12.ઝાંસી અને રાણી લક્ષ્મીબાઈ 2
+Book: અમરકંટક અને મધ્યપ્રદેશનો મહિમા (amarakantak_madhyapradesh)
+Duration: 655.1 sec
+
+Part: 13.ગ્વાલિયર
+Book: અમરકંટક અને મધ્યપ્રદેશનો મહિમા (amarakantak_madhyapradesh)
+Duration: 655.1 sec
+
+Part: 12.ઝાંસી અને રાણી લક્ષ્મીબાઈ 5
+Book: અમરકંટક અને મધ્યપ્રદેશનો મહિમા (amarakantak_madhyapradesh)
+Duration: 655.1 sec
+
+Part: 2.ભૂમિકા
+Book: આપણી દુર્બળતાઓ (aapni_durbalatao)
+Duration: 655.1 sec
+
+Part: 7.ગુરુવાદ કે બહુગુરુવાદ
+Book: આપણી દુર્બળતાઓ (aapni_durbalatao)
+Duration: 655.1 sec
+
+Part: 11.માનવ-ભગવાનવાદ
+Book: આપણી દુર્બળતાઓ (aapni_durbalatao)
+Duration: 655.1 sec
+
+Part: 8.બળવાન શરીર
+Book: આપણી દુર્બળતાઓ (aapni_durbalatao)
+Duration: 655.1 sec
+
+Part: 14.ઉપસંહાર
+Book: આપણી દુર્બળતાઓ (aapni_durbalatao)
+Duration: 655.1 sec
+
+Part: 12.નૈરોબીમાં
+Book: આફ્રિકા-પ્રવાસના સંસ્મરણો (africa_sansmaran)
+Duration: 655.1 sec
+
+Part: 20.ધનભૂખ અને વાસનાભૂખ
+Book: આફ્રિકા-પ્રવાસના સંસ્મરણો (africa_sansmaran)
+Duration: 655.1 sec
+
+Part: 21.ચોમાસાનું વરસાદી નાળું
+Book: આફ્રિકા-પ્રવાસના સંસ્મરણો (africa_sansmaran)
+Duration: 655.1 sec
+
+Part: 10.લગ્નસંસ્થા- 2 (1)
+Book: આવેગો અને લાગણીઓ (aavego_laganiyo)
+Duration: 655.1 sec
+
+Part: 18.લાગણીઓની સૃષ્ટિ- 6 (2)
+Book: આવેગો અને લાગણીઓ (aavego_laganiyo)
+Duration: 655.1 sec
+
+Part: 12.દુષ્યંતકથા
+Book: મહાભારતની જીવનકથાઓ (mahabharat_jeevankathao)
+Duration: 655.1 sec
+
+Part: 16.હિડિમ્બા
+Book: મહાભારતની જીવનકથાઓ (mahabharat_jeevankathao)
+Duration: 654.8 sec
+
+Part: 20.બ્રાહ્મણીનો શાપ
+Book: મહાભારતની જીવનકથાઓ (mahabharat_jeevankathao)
+Duration: 655.1 sec
+
+Part: 27.અગસ્ત્ય ત્રઠષિની કથા
+Book: મહાભારતની જીવનકથાઓ (mahabharat_jeevankathao)
+Duration: 655.1 sec
+
+Part: 33.ધર્મવ્યાધની કથા
+Book: મહાભારતની જીવનકથાઓ (mahabharat_jeevankathao)
+Duration: 655.1 sec
+
+Part: 41.શ્રીકૃષ્ણની મંત્રણા
+Book: મહાભારતની જીવનકથાઓ (mahabharat_jeevankathao)
+Duration: 655.1 sec
+
+Part: 44.અમ્બાડકથા
+Book: મહાભારતની જીવનકથાઓ (mahabharat_jeevankathao)
+Duration: 655.1 sec
+
+Part: 46.વૃદ્ધ કન્યા
+Book: મહાભારતની જીવનકથાઓ (mahabharat_jeevankathao)
+Duration: 655.1 sec
+
+Part: 37.અર્જુનની બાર વર્ષની તીર્થયાત્રા (1)
+Book: મહાભારતનું ચિંતન (mahabharat_chintan)
+Duration: 655.1 sec
+
+Part: 71.પાંડવોનો વનવાસ (1)
+Book: મહાભારતનું ચિંતન (mahabharat_chintan)
+Duration: 655.1 sec
+
+Part: 71.પાંડવોનો વનવાસ (2)
+Book: મહાભારતનું ચિંતન (mahabharat_chintan)
+Duration: 655.0 sec
+
+Part: 90.કર્ણવધ
+Book: મહાભારતનું ચિંતન (mahabharat_chintan)
+Duration: 654.9 sec
+
+Part: 7.અધ્યાય-૩ કર્મયોગ (5)
+Book: ગીતાજ્ઞાન ચિંતન (geetaji_chintan)
+Duration: 655.1 sec
+
+Part: 10.અધ્યાય-૬ આત્મસંયમયોગ (8)  1
+Book: ગીતાજ્ઞાન ચિંતન (geetaji_chintan)
+Duration: 655.1 sec
+
+Part: 22.અધ્યાય-૧૮ મોક્ષસંન્યાસયોગ (6)
+Book: ગીતાજ્ઞાન ચિંતન (geetaji_chintan)
+Duration: 655.1 sec
+
+Part: 6.સૈન્ય મારવાડ તરફ (2)
+Book: કાન્હડદેપ્રબંધ-સાર (kandadeprabandh_sar)
+Duration: 655.1 sec
+
+Part: 3.ભૂમિકા (1)
+Book: ક્રાંતિકથાઓ (krantikathao)
+Duration: 655.1 sec
+
+Part: 26.વિરાધવધ
+Book: રામાયણનું ચિંતન (ramayan_chintan)
+Duration: 655.1 sec
+
+Part: 29.શૂર્પણખાનાં નાકકાનનું છેદન
+Book: રામાયણનું ચિંતન (ramayan_chintan)
+Duration: 655.1 sec
+
+Part: 38.સુગ્રીવનો રાજ્યાભિષેક
+Book: રામાયણનું ચિંતન (ramayan_chintan)
+Duration: 655.1 sec
+
+Part: 51.સીતાજીનો ભૂમિપ્રવેશ (1)
+Book: રામાયણનું ચિંતન (ramayan_chintan)
+Duration: 655.1 sec
+
+Part: 56.સુગ્રીવનું મિલન (1)
+Book: વાલ્મીકિ-રામાયણ-સાર (valmiki_ramayan_sar)
+Duration: 655.1 sec
+
+Part: 6.ધર્મ, રૂઢિઓ (1)
+Book: ઉપસંહાર (upsanhar)
+Duration: 655.1 sec
+
+Part: 10.શોન (1)
+Book: ઉપસંહાર (upsanhar)
+Duration: 654.7 sec

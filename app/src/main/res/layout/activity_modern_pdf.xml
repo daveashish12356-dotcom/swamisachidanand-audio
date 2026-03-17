@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F6F0E6">
+
+    <!-- TOP BAR -->
+    <LinearLayout
+        android:id="@+id/pdf_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/pdf_back_btn"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Back"
+                android:padding="4dp"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="#333333" />
+
+            <TextView
+                android:id="@+id/pdf_book_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="મહાભારતનું ચિંતન"
+                android:textColor="#1A1A1A"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/pdf_search_btn"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Search"
+                android:padding="4dp"
+                android:src="@drawable/ic_search"
+                android:visibility="gone"
+                app:tint="#555555" />
+
+            <ImageButton
+                android:id="@+id/pdf_bookmark_btn"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Bookmark"
+                android:padding="4dp"
+                android:src="@drawable/ic_bookmark_outline"
+                android:visibility="gone"
+                app:tint="#FF9933" />
+
+            <ImageButton
+                android:id="@+id/day_night_toggle_btn"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Day / Night"
+                android:padding="4dp"
+                android:src="@drawable/ic_dark_mode"
+                android:visibility="gone"
+                app:tint="#FF9933" />
+
+            <ImageButton
+                android:id="@+id/pdf_top_more_btn"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="More"
+                android:padding="4dp"
+                android:src="@drawable/ic_more_vert"
+                android:visibility="gone"
+                app:tint="#555555" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/pdf_page_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="4dp"
+            android:text="Page 1 / 1"
+            android:textColor="#8A8A8A"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <!-- MAIN AREA -->
+    <FrameLayout
+        android:id="@+id/pdf_frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_pdf_reader_gradient">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/pdf_page_card"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardBackgroundColor="#FFF9EF"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="8dp"
+                app:strokeColor="#E5D4BD"
+                app:strokeWidth="1dp">
+
+                <FrameLayout
+                    android:id="@+id/pdf_content_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#FFF9EF"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/pdf_single_page_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#FFFFFF"
+                        android:contentDescription="PDF page"
+                        android:scaleType="fitCenter" />
+
+                    <TextView
+                        android:id="@+id/scanning_progress_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Scanning book to text..."
+                        android:textColor="#777777"
+                        android:textSize="16sp"
+                        android:visibility="gone" />
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <!-- Floating quick tools removed as per design -->
+
+        <!-- Bottom progress bar -->
+        <LinearLayout
+            android:id="@+id/bottom_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="16dp">
+
+            <ImageButton
+                android:id="@+id/chapters_menu_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/btn_chapters"
+                android:contentDescription="Chapters"
+                android:padding="10dp"
+                android:src="@android:drawable/ic_menu_sort_by_size"
+                app:tint="#FF9933" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <SeekBar
+                    android:id="@+id/progress_seekbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressTint="@color/bhagva"
+                    android:thumbTint="@color/bhagva_dark" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/pages_left_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:text="0 pages left"
+                            android:textColor="#A5A5A5"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/page_number_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:text="0 / 0"
+                            android:textColor="#A5A5A5"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/progress_watermark"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="2dp"
+                        android:text="0%"
+                        android:textColor="#B0B0B0"
+                        android:textSize="10sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- TEXT OVERLAY CARD -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/text_overlay_card"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_margin="18dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="#FFF9EF"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="14dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/text_overlay_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="વાંચન મોડ"
+                        android:textColor="#1A1A1A"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/text_font_smaller_btn"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Font smaller"
+                        android:src="@drawable/ic_chevron_left" />
+
+                    <ImageButton
+                        android:id="@+id/text_font_bigger_btn"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="4dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Font bigger"
+                        android:src="@drawable/ic_chevron_right" />
+                </LinearLayout>
+
+                <ScrollView
+                    android:id="@+id/text_scroll_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:scrollbars="vertical">
+
+                    <TextView
+                        android:id="@+id/extracted_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingMultiplier="1.3"
+                        android:padding="8dp"
+                        android:textColor="#1A1A1A"
+                        android:textSize="16sp" />
+                </ScrollView>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/close_text_overlay_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="બંધ કરો"
+                    app:backgroundTint="@color/bhagva" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- LOADING OVERLAY -->
+        <FrameLayout
+            android:id="@+id/pdf_dim_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#E6000000"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/pdf_loading_thumbnail"
+                    android:layout_width="180dp"
+                    android:layout_height="260dp"
+                    android:background="#2D2D2D"
+                    android:contentDescription="Book cover"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ProgressBar
+                    android:id="@+id/pdf_loading_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:indeterminate="true"
+                    android:indeterminateTint="#FFFFFF"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/pdf_loading_online_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="બુક લોડ થાય છે..."
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:visibility="visible" />
+            </LinearLayout>
+        </FrameLayout>
+
+    </FrameLayout>
+
+</LinearLayout>
+

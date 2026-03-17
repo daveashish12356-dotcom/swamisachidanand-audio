@@ -15,17 +15,30 @@ public class ServerAudioBook implements Parcelable {
     private final String title;
     private final List<ServerAudioPart> parts;
     private final String thumbnailUrl;
+    private final boolean isNew;
+    /** સર્વર "category": "adhyatm" – 13 ફિલ્ટર માં આપમેળે આ કેટેગરીમાં દેખાશે. */
+    private final String category;
     private boolean expanded = true;
 
     public ServerAudioBook(String id, String title, List<ServerAudioPart> parts) {
-        this(id, title, parts, null);
+        this(id, title, parts, null, false, null);
     }
 
     public ServerAudioBook(String id, String title, List<ServerAudioPart> parts, String thumbnailUrl) {
+        this(id, title, parts, thumbnailUrl, false, null);
+    }
+
+    public ServerAudioBook(String id, String title, List<ServerAudioPart> parts, String thumbnailUrl, boolean isNew) {
+        this(id, title, parts, thumbnailUrl, isNew, null);
+    }
+
+    public ServerAudioBook(String id, String title, List<ServerAudioPart> parts, String thumbnailUrl, boolean isNew, String category) {
         this.id = id != null ? id : "";
         this.title = title != null ? title : "";
         this.parts = parts != null ? new ArrayList<>(parts) : new ArrayList<>();
         this.thumbnailUrl = (thumbnailUrl != null && !thumbnailUrl.isEmpty()) ? thumbnailUrl : null;
+        this.isNew = isNew;
+        this.category = (category != null && !category.isEmpty()) ? category : null;
     }
 
     protected ServerAudioBook(Parcel in) {
@@ -33,6 +46,8 @@ public class ServerAudioBook implements Parcelable {
         title = in.readString();
         parts = in.createTypedArrayList(ServerAudioPart.CREATOR);
         thumbnailUrl = in.readString();
+        isNew = in.readByte() != 0;
+        category = in.readString();
         expanded = in.readByte() != 0;
     }
 
@@ -49,6 +64,8 @@ public class ServerAudioBook implements Parcelable {
         dest.writeString(title);
         dest.writeTypedList(parts);
         dest.writeString(thumbnailUrl);
+        dest.writeByte((byte) (isNew ? 1 : 0));
+        dest.writeString(category);
         dest.writeByte((byte) (expanded ? 1 : 0));
     }
 
@@ -60,6 +77,10 @@ public class ServerAudioBook implements Parcelable {
     public List<ServerAudioPart> getParts() { return parts; }
     /** Optional cover image URL from server – when set, app loads it automatically. */
     public String getThumbnailUrl() { return thumbnailUrl; }
+    /** Server JSON "new": true – નવા ઓડિયો ફિલ્ટર અને હોમ પર પહેલાં. */
+    public boolean isNew() { return isNew; }
+    /** Server JSON "category": "adhyatm" – 13 ફિલ્ટર મુજબ આપમેળે આ કેટેગરીમાં. */
+    public String getCategory() { return category; }
 
     /** Total duration in seconds (sum of all parts). 0 if unknown. */
     public int getTotalDurationSeconds() {

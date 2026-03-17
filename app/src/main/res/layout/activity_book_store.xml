@@ -6,33 +6,19 @@
     android:orientation="vertical"
     android:background="?attr/background_light">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/book_store_swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        app:title="📚 સુરત પુસ્તક સેન્ટર"
-        app:titleTextColor="@android:color/white"
-        app:navigationIcon="@drawable/ic_arrow_back"
-        app:navigationIconTint="@android:color/white" />
+        android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="8dp"
-        android:text="40% ડિસ્કાઉન્ટ • સંપર્ક: 98241 12625"
-        android:textSize="14sp"
-        android:textColor="#666666" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/book_store_grid"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="12dp"
-        android:clipToPadding="false"
-        android:scrollbars="vertical" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/book_store_sections"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="24dp"
+            android:clipToPadding="false"
+            android:scrollbars="vertical"
+            android:overScrollMode="always"
+            android:fadeScrollbars="false" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

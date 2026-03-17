@@ -1,0 +1,165 @@
+<Window x:Class="SwamiDesktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Swami Sachchidanand"
+        Width="1100" Height="750"
+        WindowStartupLocation="CenterScreen"
+        Background="#FFF3F0E9">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top bar -->
+        <DockPanel Grid.Row="0" Background="#FFEF6C00">
+            <TextBlock Text="સ્વામી સચ્ચિદાનંદ – Windows એપ"
+                       Margin="16,0"
+                       VerticalAlignment="Center"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Foreground="White"/>
+        </DockPanel>
+
+        <!-- Main content -->
+        <TabControl Grid.Row="1" Margin="16" x:Name="MainTabs">
+            <!-- Home -->
+            <TabItem Header="હોમ">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="16">
+                        <TextBlock Text="સ્વાગત છે"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock Text="આ Windows એપ Android એપનું સરળ સંસ્કરણ છે – पुस्तકો, ઓડિયો અને વિડિઓ અહીંથી જોઈ શકશો."
+                                   TextWrapping="Wrap"
+                                   FontSize="14"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- Books -->
+            <TabItem Header="પુસ્તક" x:Name="BooksTab">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <Button Content="પુસ્તકો લોડ કરો"
+                                Padding="12,6"
+                                Margin="0,0,8,0"
+                                Click="OnLoadBooksClicked"/>
+                        <TextBlock x:Name="BooksStatusText"
+                                   VerticalAlignment="Center"
+                                   Foreground="Gray"/>
+                    </StackPanel>
+
+                    <ListView Grid.Row="1"
+                              x:Name="BooksList"
+                              Margin="0"
+                              MouseDoubleClick="BooksList_OnMouseDoubleClick">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="પુસ્તક નામ" DisplayMemberBinding="{Binding Name}" Width="260"/>
+                                <GridViewColumn Header="ફાઇલ" DisplayMemberBinding="{Binding FileName}" Width="220"/>
+                                <GridViewColumn Header="PDF URL" DisplayMemberBinding="{Binding PdfUrl}" Width="450"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </TabItem>
+
+            <!-- Audio -->
+            <TabItem Header="ઓડિયો" x:Name="AudioTab">
+                <Grid Margin="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Row="0" Grid.ColumnSpan="2"
+                                Orientation="Horizontal"
+                                Margin="0,0,0,8">
+                        <Button Content="ઓડિયો પુસ્તકો લોડ કરો"
+                                Padding="12,6"
+                                Margin="0,0,8,0"
+                                Click="OnLoadAudioClicked"/>
+                        <TextBlock x:Name="AudioStatusText"
+                                   VerticalAlignment="Center"
+                                   Foreground="Gray"/>
+                    </StackPanel>
+
+                    <!-- Audio books list -->
+                    <GroupBox Grid.Row="1" Grid.Column="0"
+                              Header="ઓડિયો પુસ્તકો"
+                              Margin="0,0,8,0">
+                        <ListView x:Name="AudioBooksList"
+                                  SelectionChanged="AudioBooksList_OnSelectionChanged">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="શીર્ષક" DisplayMemberBinding="{Binding Title}" Width="220"/>
+                                    <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Id}" Width="120"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </GroupBox>
+
+                    <!-- Parts list -->
+                    <GroupBox Grid.Row="1" Grid.Column="1"
+                              Header="ભાગો"
+                              Margin="0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <ListView x:Name="AudioPartsList"
+                                      Grid.Row="0">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="#" DisplayMemberBinding="{Binding Id}" Width="40"/>
+                                        <GridViewColumn Header="શીર્ષક" DisplayMemberBinding="{Binding Title}" Width="260"/>
+                                        <GridViewColumn Header="URL" DisplayMemberBinding="{Binding Url}" Width="260"/>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                            <Button Grid.Row="1"
+                                    Content="પસંદ કરેલો ભાગ ચલાવો"
+                                    Margin="0,8,0,0"
+                                    HorizontalAlignment="Right"
+                                    Padding="12,6"
+                                    Click="OnPlaySelectedAudioPartClicked"/>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+
+            <!-- Videos -->
+            <TabItem Header="વિડિઓ">
+                <StackPanel Margin="16">
+                    <TextBlock Text="Videos section (બાદમાં ભરવું છે)"
+                               FontSize="16"/>
+                </StackPanel>
+            </TabItem>
+
+            <!-- Sampark -->
+            <TabItem Header="સંપર્ક">
+                <StackPanel Margin="16">
+                    <TextBlock Text="ભક્તિ નિકેતન આશ્રમ, દંતાલી"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="Server URLs yahan se open kar sakte ho (WhatsApp Web, Telegram, YouTube, Website)."
+                               FontSize="14"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

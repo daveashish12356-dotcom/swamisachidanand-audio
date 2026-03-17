@@ -10,8 +10,8 @@
         <item name="colorSecondary">@color/bhagva</item>
         <item name="colorSecondaryVariant">@color/bhagva_dark</item>
         <item name="colorOnSecondary">@color/white</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Edge-to-edge: transparent status bar, content handles insets in code -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <!-- Background color - White/Light -->
         <item name="android:windowBackground">@color/background_light</item>
         <!-- Custom attributes for theming -->

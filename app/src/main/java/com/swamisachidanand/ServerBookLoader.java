@@ -16,8 +16,10 @@ import okhttp3.Request;
 import okhttp3.Response;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Load 56 books from server list (books_server_list.json). Each book has pdfUrl and thumbnailUrl.
@@ -124,7 +126,7 @@ public final class ServerBookLoader {
                 String encodedPdf = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name()).replace("+", "%20");
                 String encodedThumb = URLEncoder.encode(thumbName, StandardCharsets.UTF_8.name()).replace("+", "%20");
                 String pdfUrl = booksBase + encodedPdf;
-                String thumbnailUrl = thumbBase + encodedThumb;
+                String thumbnailUrl = thumbBase + encodedThumb + "?v=2";
                 Book book = new Book(displayName, fileName, 0);
                 book.setPdfUrl(pdfUrl);
                 book.setThumbnailUrl(thumbnailUrl);
@@ -132,6 +134,22 @@ public final class ServerBookLoader {
                 if (year != null) book.setPublishYear(year);
                 book.setCategory(detectCategory(displayName));
                 list.add(book);
+            }
+            // સર્વર પર "newFileNames": ["file1.pdf", ...] ઉમેરો તો આ પુસ્તકો નવાં ફિલ્ટર અને હોમ પર પહેલાં
+            JSONArray newArr = root.optJSONArray("newFileNames");
+            if (newArr != null) {
+                Set<String> newSet = new HashSet<>();
+                for (int i = 0; i < newArr.length(); i++) newSet.add(newArr.optString(i, "").trim());
+                for (Book b : list) if (b != null && newSet.contains(b.getFileName())) b.setNew(true);
+            }
+            // સર્વર "bookCategories": {"fileName.pdf": "adhyatm", ...} – નવું પુસ્તક આપમેળે તેની કેટેગરી (13 ફિલ્ટર) માં જશે
+            JSONObject bookCategories = root.optJSONObject("bookCategories");
+            if (bookCategories != null) {
+                for (Book b : list) {
+                    if (b == null) continue;
+                    String cat = bookCategories.optString(b.getFileName(), null);
+                    if (cat != null && !cat.trim().isEmpty()) b.setCategory(cat.trim());
+                }
             }
             if (fromServer && list.isEmpty()) {
                 android.util.Log.w("ServerBookLoader", "Server returned empty list, using assets");
@@ -155,7 +173,7 @@ public final class ServerBookLoader {
                             String encodedThumb = URLEncoder.encode(thumbName, StandardCharsets.UTF_8.name()).replace("+", "%20");
                             Book book = new Book(displayName, fileName, 0);
                             book.setPdfUrl(booksBase + encodedPdf);
-                            book.setThumbnailUrl(thumbBase + encodedThumb);
+                            book.setThumbnailUrl(thumbBase + encodedThumb + "?v=2");
                             String year = PdfYearExtractor.extractYearSimple(fileName);
                             if (year != null) book.setPublishYear(year);
                             book.setCategory(detectCategory(displayName));

@@ -1,8 +1,11 @@
 package com.swamisachidanand;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +13,47 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
+
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.LoadAdError;
 
 public class AboutFragment extends Fragment {
 
     private static final String TAG = "AboutFragment";
+    private static final String SAMPARK_GALLERY_BASE = "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/gallery/";
+    private static final String SAMPARK_GALLERY_LIST_URL = SAMPARK_GALLERY_BASE + "list.json";
+    private static final long SAMPARK_FIRST_PHOTO_MS = 10_000L;
+    // Sampark photo slideshow – 6 seconds per photo
+    private static final int SAMPARK_SLIDESHOW_INTERVAL_MS = 6000;
+
+    private AdView bottomBannerAd;
+    private ImageView samparkPhoto;
+    private View samparkFirstPhotoCard;
+    private ViewPager2 samparkSlideshow;
+    private View samparkSlideshowCard;
+    private GallerySlideshowPagerAdapter samparkSlideshowAdapter;
+    private final List<String> samparkPhotoUrls = new ArrayList<>();
+    private final List<Integer> samparkOrder = new ArrayList<>();
+    private int samparkOrderIndex = 0;
+    private final Handler samparkHandler = new Handler(Looper.getMainLooper());
+    private Runnable samparkFirstDoneRunnable;
+    private Runnable samparkAdvanceRunnable;
 
     public AboutFragment() {
         // Required empty public constructor
@@ -32,11 +71,53 @@ public class AboutFragment extends Fragment {
             return container != null ? new View(container.getContext()) : null;
         }
 
+        // પુસ્તક ઓર્ડર – Call, WhatsApp, Book Store link
+        bindBookOrderSection(view);
+
+        samparkPhoto = view.findViewById(R.id.sampark_photo);
+        samparkFirstPhotoCard = view.findViewById(R.id.sampark_first_photo_card);
+        samparkSlideshow = view.findViewById(R.id.sampark_photo_slideshow);
+        samparkSlideshowCard = view.findViewById(R.id.sampark_slideshow_card);
+        setupSamparkSlideshow(view);
+
         // Sampark: YouTube, Facebook, WhatsApp, Telegram – website (swamisachchidanandji.org) links
         bindSocialLink(view, R.id.sampark_youtube, getString(R.string.url_youtube));
         bindSocialLink(view, R.id.sampark_facebook, getString(R.string.url_facebook));
         bindSocialLink(view, R.id.sampark_whatsapp, getString(R.string.url_whatsapp));
         bindSocialLink(view, R.id.sampark_telegram, getString(R.string.url_telegram));
+
+        View galleryLink = view.findViewById(R.id.sampark_photo_gallery_link);
+        if (galleryLink != null) {
+            galleryLink.setOnClickListener(v -> {
+                if (getContext() != null) startActivity(new Intent(getContext(), PhotoGalleryActivity.class));
+            });
+        }
+
+        // Hidden suvichar admin page – 10 taps on top photo
+        if (samparkPhoto != null) {
+            ImageView photo = samparkPhoto;
+            final int[] tapCount = {0};
+            final long[] lastTapTime = {0L};
+            photo.setOnClickListener(v -> {
+                long now = System.currentTimeMillis();
+                if (now - lastTapTime[0] > 4000) {
+                    tapCount[0] = 0;
+                }
+                lastTapTime[0] = now;
+                tapCount[0]++;
+                if (tapCount[0] >= 10) {
+                    tapCount[0] = 0;
+                    try {
+                        if (getContext() != null) {
+                            Intent intent = new Intent(getContext(), SuvicharAdminActivity.class);
+                            startActivity(intent);
+                        }
+                    } catch (Throwable t) {
+                        Log.e(TAG, "open SuvicharAdminActivity", t);
+                    }
+                }
+            });
+        }
 
         // Ashram cards - bind each directly
         bindAshram(view, R.id.ashram1, "શ્રી ભક્તિ નિકેતન આશ્રમ, દંતાલી",
@@ -71,6 +152,166 @@ public class AboutFragment extends Fragment {
         }
 
         return view;
+    }
+
+    private void setupSamparkSlideshow(View root) {
+        if (samparkSlideshow == null) return;
+        samparkSlideshowAdapter = new GallerySlideshowPagerAdapter();
+        samparkSlideshowAdapter.setListener(new GallerySlideshowPagerAdapter.Listener() {
+            @Override
+            public void onSlideClick(int position) {
+                if (getContext() != null) startActivity(new Intent(getContext(), PhotoGalleryActivity.class));
+            }
+            @Override
+            public void onSlideLoadFailed(int position) { }
+        });
+        samparkSlideshow.setAdapter(samparkSlideshowAdapter);
+        samparkSlideshow.setOffscreenPageLimit(1);
+        // Sampark page ke liye हल्की depth + slide animation
+        final float density = getResources().getDisplayMetrics().density;
+        samparkSlideshow.setPageTransformer(new ViewPager2.PageTransformer() {
+            @Override
+            public void transformPage(@NonNull View page, float position) {
+                float abs = Math.abs(position);
+                int w = page.getWidth();
+                if (w <= 0) return;
+
+                page.setCameraDistance(density * 9000f);
+                page.setPivotX(w * 0.5f);
+                page.setPivotY(page.getHeight() * 0.5f);
+
+                // थोड़ा ज्यादा side slide
+                page.setTranslationX(position * w * 0.3f);
+
+                // halki depth rotation
+                page.setRotationY(position * -28f);
+
+                float scale = 1f - 0.18f * abs;
+                page.setScaleX(scale);
+                page.setScaleY(scale);
+
+                float alpha = 1f - 0.5f * abs;
+                page.setAlpha(Math.max(0.35f, alpha));
+            }
+        });
+        loadSamparkGalleryUrls();
+        samparkFirstDoneRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (!isAdded()) return;
+                synchronized (samparkPhotoUrls) {
+                    if (samparkPhotoUrls.isEmpty()) {
+                        samparkHandler.postDelayed(this, 2000);
+                        return;
+                    }
+                }
+                if (samparkFirstPhotoCard != null) samparkFirstPhotoCard.setVisibility(View.GONE);
+                if (samparkSlideshowCard != null) samparkSlideshowCard.setVisibility(View.VISIBLE);
+                if (samparkSlideshowAdapter == null) return;
+                List<String> copy;
+                synchronized (samparkPhotoUrls) { copy = new ArrayList<>(samparkPhotoUrls); }
+                samparkSlideshowAdapter.setUrls(copy);
+                if (samparkOrder.size() != copy.size()) {
+                    samparkOrder.clear();
+                    for (int i = 0; i < copy.size(); i++) samparkOrder.add(i);
+                    Collections.shuffle(samparkOrder);
+                    samparkOrderIndex = 0;
+                }
+                if (samparkSlideshow != null && !samparkOrder.isEmpty()) {
+                    int pos = samparkOrder.get(samparkOrderIndex);
+                    samparkSlideshow.setCurrentItem(pos, false);
+                    startSamparkAdvance();
+                }
+            }
+        };
+        samparkHandler.postDelayed(samparkFirstDoneRunnable, SAMPARK_FIRST_PHOTO_MS);
+    }
+
+    private void loadSamparkGalleryUrls() {
+        Activity activity = getActivity();
+        if (activity == null) return;
+        new Thread(() -> {
+            try {
+                OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(15, TimeUnit.SECONDS)
+                    .build();
+                try (Response resp = client.newCall(new Request.Builder().url(SAMPARK_GALLERY_LIST_URL).build()).execute()) {
+                    if (resp.isSuccessful() && resp.body() != null) {
+                        String json = resp.body().string();
+                        if (json != null && json.startsWith("\uFEFF")) json = json.substring(1);
+                        JSONArray arr = new JSONArray(json);
+                        synchronized (samparkPhotoUrls) {
+                            samparkPhotoUrls.clear();
+                            for (int i = 0; i < arr.length(); i++) {
+                                String name = arr.optString(i, "").trim();
+                                if (!name.isEmpty()) samparkPhotoUrls.add(SAMPARK_GALLERY_BASE + name);
+                            }
+                        }
+                    }
+                }
+            } catch (Throwable t) { Log.e(TAG, "loadSamparkGalleryUrls", t); }
+        }).start();
+    }
+
+    private void startSamparkAdvance() {
+        if (samparkAdvanceRunnable != null) samparkHandler.removeCallbacks(samparkAdvanceRunnable);
+        if (samparkSlideshow == null || samparkSlideshowAdapter == null || samparkOrder.isEmpty()) return;
+        samparkAdvanceRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (samparkSlideshow == null || samparkSlideshowAdapter == null || !isAdded()) return;
+                int total = samparkOrder.size();
+                if (total == 0) return;
+                samparkOrderIndex++;
+                if (samparkOrderIndex >= total) {
+                    samparkOrder.clear();
+                    for (int i = 0; i < samparkSlideshowAdapter.getItemCount(); i++) samparkOrder.add(i);
+                    Collections.shuffle(samparkOrder);
+                    samparkOrderIndex = 0;
+                }
+                int nextPos = samparkOrder.get(samparkOrderIndex);
+                if (nextPos < 0 || nextPos >= samparkSlideshowAdapter.getItemCount()) {
+                    samparkOrderIndex = 0;
+                    nextPos = samparkOrder.isEmpty() ? 0 : samparkOrder.get(0);
+                }
+                // अगला Sampark photo jab tak ready na ho, tab tak slide आगे मत बढ़ाओ
+                if (!samparkSlideshowAdapter.isLoaded(nextPos)) {
+                    samparkHandler.postDelayed(this, 500);
+                    return;
+                }
+                samparkSlideshow.setCurrentItem(nextPos, true);
+                samparkHandler.postDelayed(this, SAMPARK_SLIDESHOW_INTERVAL_MS);
+            }
+        };
+        samparkHandler.postDelayed(samparkAdvanceRunnable, SAMPARK_SLIDESHOW_INTERVAL_MS);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (samparkFirstDoneRunnable != null) samparkHandler.removeCallbacks(samparkFirstDoneRunnable);
+        if (samparkAdvanceRunnable != null) samparkHandler.removeCallbacks(samparkAdvanceRunnable);
+        samparkPhoto = null;
+        samparkFirstPhotoCard = null;
+        samparkSlideshow = null;
+        samparkSlideshowCard = null;
+        samparkSlideshowAdapter = null;
+    }
+
+    private void bindBookOrderSection(View root) {
+        View storeLink = root.findViewById(R.id.book_order_store_link);
+        if (storeLink != null) {
+            storeLink.setOnClickListener(v -> {
+                try {
+                    if (getContext() != null) {
+                        startActivity(new Intent(getContext(), BookStoreActivity.class));
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Book Store", e);
+                }
+            });
+        }
     }
 
     private void bindSocialLink(View root, int viewId, String url) {
@@ -131,6 +372,41 @@ public class AboutFragment extends Fragment {
         }
         if (m != null && mapUrl != null && !mapUrl.isEmpty()) {
             m.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mapUrl))));
+        }
+    }
+
+    private void setupBottomBannerAd(View root) {
+        try {
+            bottomBannerAd = root.findViewById(R.id.about_bottom_banner);
+            if (bottomBannerAd == null) return;
+            AdRequest request = new AdRequest.Builder().build();
+            bottomBannerAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    try {
+                        if (bottomBannerAd.getVisibility() != View.VISIBLE) {
+                            bottomBannerAd.setAlpha(0f);
+                            bottomBannerAd.setTranslationY(bottomBannerAd.getHeight());
+                            bottomBannerAd.setVisibility(View.VISIBLE);
+                            bottomBannerAd.animate()
+                                    .translationY(0f)
+                                    .alpha(1f)
+                                    .setDuration(350L)
+                                    .start();
+                        }
+                    } catch (Throwable t) {
+                        bottomBannerAd.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onAdFailedToLoad(LoadAdError adError) {
+                    Log.w(TAG, "about banner failed: " + adError);
+                }
+            });
+            bottomBannerAd.loadAd(request);
+        } catch (Throwable t) {
+            Log.e(TAG, "setupBottomBannerAd", t);
         }
     }
 }

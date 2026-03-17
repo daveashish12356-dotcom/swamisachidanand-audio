@@ -25,10 +25,10 @@ import okhttp3.Response;
 public class HomeVideoLoader {
 
     private static final String TAG = "HomeVideoLoader";
-    /** Channel handle: youtube.com/@Sachchidanand-Dantali */
-    private static final String CHANNEL_HANDLE = "Sachchidanand-Dantali";
+    /** Only official Dantali channel – youtube.com/@Sachchidanand-Dantali */
+    private static final String[] CHANNEL_HANDLES = {"Sachchidanand-Dantali"};
     private static final String[] CHANNEL_IDS_FALLBACK = {
-            "UC8dFOaY-lLRR_hk0U8mXdhA"
+            "UCba78apJ7Rw8crHxVPq9dow"   // SWAMI SACHCHIDANANDJI OFFICIAL (Dantali)
     };
 
     private static final int MAX_VIDEOS = 5;
@@ -57,11 +57,28 @@ public class HomeVideoLoader {
             }
             if (context != null && apiKeyOk) {
                 try {
-                    List<HomeVideoItem> fromApi = fetchLatestViaApi(context, client, apiKey);
-                    if (fromApi == null || fromApi.isEmpty()) {
-                        fromApi = fetchLatestByChannelId(context, client, apiKey, CHANNEL_IDS_FALLBACK[0]);
+                    List<HomeVideoItem> fromApi = new ArrayList<>();
+                    for (int i = 0; i < CHANNEL_HANDLES.length; i++) {
+                        List<HomeVideoItem> part = fetchLatestViaApi(context, client, apiKey, CHANNEL_HANDLES[i]);
+                        if (part == null || part.isEmpty()) {
+                            part = fetchLatestByChannelId(context, client, apiKey, CHANNEL_IDS_FALLBACK[i]);
+                        }
+                        if (part != null) {
+                            for (HomeVideoItem v : part) {
+                                boolean dup = false;
+                                for (HomeVideoItem e : fromApi) {
+                                    if (v.videoId != null && v.videoId.equals(e.videoId)) { dup = true; break; }
+                                }
+                                if (!dup) fromApi.add(v);
+                            }
+                        }
                     }
-                    if (fromApi != null && !fromApi.isEmpty()) {
+                    if (!fromApi.isEmpty()) {
+                        java.util.Collections.sort(fromApi, (a, b) -> {
+                            String pa = a.publishedAt != null ? a.publishedAt : "";
+                            String pb = b.publishedAt != null ? b.publishedAt : "";
+                            return pb.compareTo(pa);
+                        });
                         final List<HomeVideoItem> toSend = fromApi.size() > MAX_VIDEOS ? fromApi.subList(0, MAX_VIDEOS) : fromApi;
                         Log.d(TAG, "Home videos from API: " + toSend.size());
                         main.post(() -> callback.onVideosLoaded(toSend));
@@ -117,8 +134,8 @@ public class HomeVideoLoader {
     }
 
     /** Resolve handle to channel, get uploads playlist, fetch latest videos. */
-    private static List<HomeVideoItem> fetchLatestViaApi(Context context, OkHttpClient client, String apiKey) throws Exception {
-        String handle = CHANNEL_HANDLE.startsWith("@") ? CHANNEL_HANDLE.substring(1) : CHANNEL_HANDLE;
+    private static List<HomeVideoItem> fetchLatestViaApi(Context context, OkHttpClient client, String apiKey, String channelHandle) throws Exception {
+        String handle = channelHandle != null && channelHandle.startsWith("@") ? channelHandle.substring(1) : channelHandle;
         String channelUrl = "https://www.googleapis.com/youtube/v3/channels"
                 + "?part=id,contentDetails"
                 + "&forHandle=" + Uri.encode(handle)

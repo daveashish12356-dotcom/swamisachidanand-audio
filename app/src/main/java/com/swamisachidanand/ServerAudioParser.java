@@ -27,6 +27,9 @@ public final class ServerAudioParser {
                 String id = obj.optString("id", "");
                 String title = obj.optString("title", "");
                 String thumb = obj.optString("thumbnailUrl", null);
+                boolean isNew = obj.optBoolean("new", false);
+                String category = obj.optString("category", null);
+                if (category != null && category.isEmpty()) category = null;
                 JSONArray partsArr = obj.optJSONArray("parts");
                 List<ServerAudioPart> parts = new ArrayList<>();
                 if (partsArr != null) {
@@ -40,7 +43,7 @@ public final class ServerAudioParser {
                         parts.add(new ServerAudioPart(pid, ptitle, url, dur));
                     }
                 }
-                books.add(new ServerAudioBook(id, title, parts, thumb));
+                books.add(new ServerAudioBook(id, title, parts, thumb, isNew, category));
             }
         } catch (Throwable ignored) {
         }

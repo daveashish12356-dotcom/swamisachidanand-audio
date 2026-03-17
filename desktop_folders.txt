@@ -1,0 +1,9 @@
+DIR: New folder
+  exts: {'.py': 36, '.bat': 5, '.txt': 7, '.epub': 2, '.acsm': 1, '.ps1': 1, '.pdf': 11, '.png': 1}
+  count: 64
+DIR: swami sachidanand
+  exts: {'': 7, '.kts': 2, '.properties': 2, '.bat': 1}
+  count: 12
+DIR: ગીતાજીનું ચિતન
+  exts: {'.wav': 139}
+  count: 139

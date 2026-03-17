@@ -89,13 +89,26 @@ public class BookChapterScanner {
         try {
             PDDocument doc = PDDocument.load(pdfFile);
             try {
-                PDDocumentCatalog catalog = doc.getDocumentCatalog();
-                if (catalog == null) return null;
-                PDDocumentOutline outline = catalog.getDocumentOutline();
-                if (outline == null) return null;
                 List<JSONObject> list = new ArrayList<>();
-                PDOutlineItem first = outline.getFirstChild();
-                if (first != null) collectOutlineItems(first, doc, list);
+
+                // 1) Prefer the real PDF outline (TOC) if present.
+                PDDocumentCatalog catalog = doc.getDocumentCatalog();
+                if (catalog != null) {
+                    PDDocumentOutline outline = catalog.getDocumentOutline();
+                    if (outline != null) {
+                        PDOutlineItem first = outline.getFirstChild();
+                        if (first != null) collectOutlineItems(first, doc, list);
+                    }
+                }
+
+                // 2) If no outline found, try to infer chapters from text headings on each page.
+                if (list.isEmpty()) {
+                    List<JSONObject> inferred = inferChaptersFromText(doc);
+                    if (inferred != null && !inferred.isEmpty()) {
+                        list.addAll(inferred);
+                    }
+                }
+
                 if (list.isEmpty()) return null;
                 JSONArray arr = new JSONArray();
                 for (JSONObject o : list) arr.put(o);
@@ -138,5 +151,86 @@ public class BookChapterScanner {
 
     public static File getCacheFile(Context context) {
         return context == null ? null : new File(context.getFilesDir(), CACHE_FILE);
+    }
+
+    /**
+     * For PDFs without a formal outline, try to guess chapter titles
+     * by scanning each page's text for Gujarati headings (like "અધ્યાય", "ભૂમિકા")
+     * and collecting the first occurrence per page.
+     */
+    private static List<JSONObject> inferChaptersFromText(PDDocument doc) {
+        try {
+            int pageCount = doc.getNumberOfPages();
+            if (pageCount <= 0) return null;
+
+            com.tom_roush.pdfbox.text.PDFTextStripper stripper =
+                    new com.tom_roush.pdfbox.text.PDFTextStripper();
+
+            List<JSONObject> out = new ArrayList<>();
+            String lastTitle = null;
+
+            for (int pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+                int pageNumber = pageIndex + 1;
+                stripper.setStartPage(pageNumber);
+                stripper.setEndPage(pageNumber);
+                String text = stripper.getText(doc);
+                if (text == null) continue;
+
+                String[] lines = text.split("\\r?\\n");
+                String bestLine = null;
+                for (String raw : lines) {
+                    String line = raw.trim();
+                    if (line.length() < 3) continue;
+
+                    // Basic Gujarati + general chapter heading heuristics.
+                    boolean looksLikeChapter =
+                            line.contains("અધ્યાય") ||
+                            line.contains("અધ્યાયક") ||
+                            line.startsWith("ભૂમિકા") ||
+                            line.startsWith("પ્રસ્તાવના") ||
+                            line.toLowerCase().startsWith("chapter") ||
+                            line.startsWith("અધ્યાય ") ||
+                            line.startsWith("અધ્યાયઃ");
+
+                    // Also treat all-uppercase-ish short headings as potential chapter titles.
+                    if (!looksLikeChapter && line.length() <= 30) {
+                        boolean hasLetter = false;
+                        boolean allNonLower = true;
+                        for (int i = 0; i < line.length(); i++) {
+                            char ch = line.charAt(i);
+                            if (Character.isLetter(ch)) {
+                                hasLetter = true;
+                                if (Character.isLowerCase(ch)) {
+                                    allNonLower = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (hasLetter && allNonLower) looksLikeChapter = true;
+                    }
+
+                    if (looksLikeChapter) {
+                        bestLine = line;
+                        break;
+                    }
+                }
+
+                if (bestLine != null) {
+                    // Avoid duplicates if same heading appears on consecutive pages.
+                    if (lastTitle != null && lastTitle.equals(bestLine)) continue;
+                    lastTitle = bestLine;
+
+                    JSONObject o = new JSONObject();
+                    o.put("t", bestLine);
+                    o.put("p", pageIndex);
+                    out.add(o);
+                }
+            }
+
+            return out.isEmpty() ? null : out;
+        } catch (Throwable t) {
+            Log.d(TAG, "inferChaptersFromText failed", t);
+            return null;
+        }
     }
 }

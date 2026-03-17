@@ -37,51 +37,70 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <ProgressBar
-                android:id="@+id/videos_loading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:id="@+id/videos_error_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/videos_message"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="24dp"
-                    android:textSize="16sp"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:gravity="center" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/videos_retry_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ફરી પ્રયાસ કરો"
-                    android:layout_marginTop="16dp" />
-            </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/videos_recycler"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:paddingTop="8dp"
-                android:paddingBottom="16dp"
-                android:visibility="gone" />
-        </FrameLayout>
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <ProgressBar
+                    android:id="@+id/videos_loading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/videos_error_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/videos_message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="24dp"
+                        android:textSize="16sp"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:gravity="center" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/videos_retry_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ફરી પ્રયાસ કરો"
+                        android:layout_marginTop="16dp" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/videos_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="16dp"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+            <!-- Banner ad at very bottom of Videos page -->
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/videos_bottom_banner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_large"
+                android:layout_marginEnd="@dimen/spacing_large"
+                android:layout_marginBottom="@dimen/spacing_xlarge"
+                android:visibility="gone"
+                app:adSize="BANNER"
+                app:adUnitId="ca-app-pub-7592986107944664/4541738286" />
+        </LinearLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

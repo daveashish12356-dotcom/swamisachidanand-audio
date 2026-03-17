@@ -109,8 +109,7 @@ exports.sendSuvichar = functions.https.onRequest(app);
 // ---------- Scheduled YouTube poller for new videos ----------
 
 const YT_CHANNELS = [
-  // Labels are used in notification body for clarity
-  { id: "UC8dFOaY-lLRR_hk0U8mXdhA", label: "Swami Sachchidanand Acharya" },
+  // Only this channel will send new video notifications now
   { id: "UCba78apJ7Rw8crHxVPq9dow", label: "SWAMI SACHCHIDANANDJI_ OFFICIAL" },
 ];
 

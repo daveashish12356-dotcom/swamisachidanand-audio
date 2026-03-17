@@ -1,0 +1,13 @@
+=== VERIFY: App vs Server book list (sirf verify) ===
+
+App: Koi bundled list nahi. App runtime pe SERVER se books_server_list.json fetch karta hai.
+     (Fallback assets/books_server_list.json repo me hai hi nahi.)
+
+Server (repo) public/books_server_list.json: 60 books
+Live server (URL se abhi fetch): 58 books
+
+--- Repo list me hai, LIVE (app ko jo milta hai) me NAHI: 2
+  ramayan_chintan.pdf
+  શ્રી હનુમાન ચાલીસા.pdf
+
+--- Live list me hai, REPO me NAHI: 0

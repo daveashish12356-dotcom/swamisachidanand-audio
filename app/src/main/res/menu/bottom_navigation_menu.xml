@@ -13,6 +13,10 @@
         android:icon="@drawable/ic_quick_audio"
         android:title="@string/nav_audio" />
     <item
+        android:id="@+id/nav_pravachan"
+        android:icon="@drawable/ic_nav_pravachan"
+        android:title="@string/nav_audio_pravachan" />
+    <item
         android:id="@+id/nav_videos"
         android:icon="@drawable/ic_quick_video"
         android:title="@string/nav_videos" />

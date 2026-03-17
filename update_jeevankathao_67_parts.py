@@ -1,0 +1,66 @@
+# -*- coding: utf-8 -*-
+"""Update mahabharat_jeevankathao to 67 parts"""
+import json
+import shutil
+from pathlib import Path
+
+audio_list_path = Path("public/audio_list.json")
+fallback_path = Path("app/src/main/assets/audio_list_fallback.json")
+
+# Current titles (61 parts)
+TITLES_61 = [
+    "1.મહાભારતની જીવનકથાઓ", "2.અર્પણ", "3.ભૂમિકા 1", "3.ભૂમિકા 2", "4.પાંડુરાજા",
+    "5.ઉત્તંકકથા", "6.ઉત્તકકથા-2", "7.પુલોમા", "8.જરહ્કારુ", "9.નાગકન્યાનો ત્યાગ",
+    "10.આસ્તિક", "11.શકુંતલા", "12.દુષ્યંતકથા", "13.કંચની કથા", "14.યયાતિ",
+    "15. મત્સ્યગંધા", "16.હિડિમ્બા", "17. બકાસુરવધ", "18.તપતીકથા", "19.ઔર્વની કથા",
+    "20.બ્રાહ્મણીનો શાપ", "21.તિલોત્તમા", "22.વર્ચાની કથા", "23.અર્જુંન-સુભદ્રાની કથા",
+    "24.જરિતાની કથા", "25.કિર્મીરવધ", "26.ઉર્વશીનો અર્જુનને શાપ", "27.અગસ્ત્ય ત્રઠષિની કથા",
+    "28.ગ્રષ્યશુંગની કથા", "29.યવકીત કથા", "30.સુશોભનાકથા", "32.પતિવ્રતા કથા",
+    "33.ધર્મવ્યાધની કથા", "34.સ્કન્દજન્મ", "35.દુર્વાસાની તૃપ્તિ", "36. દ્રૌપદીહરણ 1",
+    "36. દ્રૌપદીહરણ 2", "37.સત્યવાન-સાવિત્રી 1", "37.સત્યવાન-સાવિત્રી 2",
+    "38.કીચકવધ 1", "38.કીચકવધ 2", "39.ઉત્તરાવિવાહ", "40.નહુષવધ",
+    "41.શ્રીકૃષ્ણની મંત્રણા", "42.માધવી કન્યાની કથા 1", "42.માધવી કન્યાની કથા 2",
+    "43.વિદુલાની કથા", "44.અમ્બાડકથા", "45.સોનાનો રાજકુમાર", "46.વૃદ્ધ કન્યા",
+    "47.અશ્વત્થામાનો બદલો", "48. મૃત્યુકથા", "49.યુધિષ્ઠિરની સંન્યાસ ઇચ્છા",
+    "50.શંખ અને લિખિત", "51.અન્તર્વામી કથા", "52.કૃતઘ્ન ગૌતમ", "53.તુલાધાર વૈશ્ય",
+    "54.સુલભાની કથા 1", "54.સુલભાની કથા 2", "55.ગૌતમી", "56.પુરુષ-સ્રીઃ રતિસુખ",
+    "57.અષ્ટાવકરની કથા 1", "57.અષ્ટાવકરની કથા 2", "58.વિપુલની કથા",
+    "59.ઉતથ્યત્રકષિની કથા", "60.બભ્રુવાહનની કથા", "61.સાચો વજ્ઞ",
+]
+
+# Add 6 more parts (62-67) - using generic titles for now
+TITLES_67 = TITLES_61 + [
+    "62.ભાગ 62", "63.ભાગ 63", "64.ભાગ 64", "65.ભાગ 65", "66.ભાગ 66", "67.ભાગ 67"
+]
+
+BASE = "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/mahabharat_jeevankathao/"
+
+# Read audio_list.json
+with open(audio_list_path, encoding='utf-8-sig') as f:
+    data = json.load(f)
+
+# Find mahabharat_jeevankathao book
+for book in data['books']:
+    if book['id'] == 'mahabharat_jeevankathao':
+        # Update to 67 parts
+        parts = []
+        for i in range(1, 68):
+            title = TITLES_67[i - 1] if i <= len(TITLES_67) else f"ભાગ {i}"
+            parts.append({
+                "id": str(i),
+                "title": title,
+                "url": BASE + str(i) + ".wav"
+            })
+        book['parts'] = parts
+        print(f"Updated mahabharat_jeevankathao to {len(parts)} parts")
+        break
+
+# Write back
+with open(audio_list_path, 'w', encoding='utf-8') as f:
+    json.dump(data, f, ensure_ascii=False, separators=(',', ':'))
+
+print(f"Updated {audio_list_path}")
+
+# Copy to fallback
+shutil.copy2(audio_list_path, fallback_path)
+print(f"Copied to {fallback_path}")

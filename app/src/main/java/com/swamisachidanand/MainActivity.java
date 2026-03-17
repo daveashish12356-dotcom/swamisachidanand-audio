@@ -1,20 +1,23 @@
 package com.swamisachidanand;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -46,6 +49,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         BookChapterScanner.scanAllAndSave(this);
+
+        // Android 13+ par suvichar notification ke liye permission maango
+        if (Build.VERSION.SDK_INT >= 33) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != 0) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 2000);
+            }
+        }
 
         // Pehle fragment turant load karo — white screen na dikhe (commitNow = sync)
         if (savedInstanceState == null) {
@@ -80,8 +90,9 @@ public class MainActivity extends AppCompatActivity {
                         else if (itemId == R.id.nav_books) selectedFragment = new BooksFragment();
                         else if (itemId == R.id.nav_audio) {
                             selectedFragment = new ServerAudioFragment();
-                        }
-                        else if (itemId == R.id.nav_videos) selectedFragment = new VideosFragment();
+                        } else if (itemId == R.id.nav_pravachan) {
+                            selectedFragment = new AudioPravachanFragment();
+                        } else if (itemId == R.id.nav_videos) selectedFragment = new VideosFragment();
                         else if (itemId == R.id.nav_about) selectedFragment = new AboutFragment();
                         if (selectedFragment != null && !isFinishing()) {
                             getSupportFragmentManager().beginTransaction()
@@ -103,6 +114,64 @@ public class MainActivity extends AppCompatActivity {
             // Start me Home dikh raha hai, isliye Home par nav bar hide
             setBottomNavVisible(false);
             bottomNavVisible = false;
+        }
+
+        // Handle intent: open Books tab with filter (from Book Store section tap) or other target tab
+        try {
+            Intent intent = getIntent();
+            if (intent != null) {
+                int tabId = intent.getIntExtra(EXTRA_TARGET_TAB, 0);
+                String booksFilterId = intent.getStringExtra(EXTRA_BOOKS_FILTER_ID);
+                if (tabId == R.id.nav_books && booksFilterId != null && !booksFilterId.isEmpty()) {
+                    Fragment f = new BooksFragment();
+                    Bundle args = new Bundle();
+                    args.putString(BooksFragment.ARG_FILTER_ID, booksFilterId);
+                    f.setArguments(args);
+                    getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+                        .replace(R.id.fragment_container, f)
+                        .commit();
+                    if (bottomNavigation != null) bottomNavigation.setSelectedItemId(R.id.nav_books);
+                    setBottomNavVisible(true);
+                    intent.removeExtra(EXTRA_BOOKS_FILTER_ID);
+                } else if (tabId != 0) {
+                    switchToTab(tabId);
+                }
+            }
+        } catch (Throwable t) {
+            Log.e(TAG, "handle initial EXTRA_TARGET_TAB", t);
+        }
+    }
+
+    public static final String EXTRA_TARGET_TAB = "target_tab";
+    /** Open Books tab with this category filter (e.g. "new"). Passed to BooksFragment via arguments. */
+    public static final String EXTRA_BOOKS_FILTER_ID = "books_filter_id";
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        try {
+            if (intent == null) return;
+            int tabId = intent.getIntExtra(EXTRA_TARGET_TAB, 0);
+            String booksFilterId = intent.getStringExtra(EXTRA_BOOKS_FILTER_ID);
+            if (tabId == R.id.nav_books && booksFilterId != null && !booksFilterId.isEmpty()) {
+                Fragment f = new BooksFragment();
+                Bundle args = new Bundle();
+                args.putString(BooksFragment.ARG_FILTER_ID, booksFilterId);
+                f.setArguments(args);
+                getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+                    .replace(R.id.fragment_container, f)
+                    .commit();
+                if (bottomNavigation != null) bottomNavigation.setSelectedItemId(R.id.nav_books);
+                setBottomNavVisible(true);
+                intent.removeExtra(EXTRA_BOOKS_FILTER_ID);
+            } else if (tabId != 0) {
+                switchToTab(tabId);
+            }
+        } catch (Throwable t) {
+            Log.e(TAG, "onNewIntent", t);
         }
     }
 
@@ -244,24 +313,32 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Method for BooksFragment/HomeFragment to open books
+    // Method for BooksFragment/HomeFragment to open books in in-app PDF reader
     public void openBook(Book book) {
         try {
             if (book == null) return;
-            Intent intent = new Intent(this, PdfViewerActivity.class);
             String pdfUrl = book.getPdfUrl();
             if (pdfUrl != null && !pdfUrl.trim().isEmpty()) {
+                Intent intent = new Intent(this, ModernPdfActivity.class);
                 intent.putExtra("pdf_url", pdfUrl.trim());
                 intent.putExtra("book_name", book.getName() != null ? book.getName() : "");
                 String thumb = book.getThumbnailUrl();
-                if (thumb != null && !thumb.trim().isEmpty()) intent.putExtra("thumbnail_url", thumb.trim());
+                if (thumb != null && !thumb.trim().isEmpty()) {
+                    intent.putExtra("thumbnail_url", thumb.trim());
+                }
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             } else {
                 String fileName = book.getFileName();
-                if (fileName == null || (fileName = fileName.trim()).isEmpty()) return;
+                if (fileName == null || (fileName = fileName.trim()).isEmpty()) {
+                    android.widget.Toast.makeText(this, "આ વર્ઝનમાં PDF વાંચન એપમાં ઉપલબ્ધ નથી.", android.widget.Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent intent = new Intent(this, ModernPdfActivity.class);
                 intent.putExtra("book_name", fileName);
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
-            startActivity(intent);
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         } catch (Throwable t) {
             Log.e(TAG, "openBook failed", t);
             android.widget.Toast.makeText(this, "બુક ખોલી શકાઈ નહીં.", android.widget.Toast.LENGTH_SHORT).show();

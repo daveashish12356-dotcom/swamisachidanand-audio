@@ -35,6 +35,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.LoadAdError;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -61,18 +65,16 @@ public class VideosFragment extends Fragment {
     private static final String TAG = "VideosFragment";
     private static final int VIDEOS_PER_PLAYLIST = 50;  // YouTube API max per request
 
-    /** 3 channels – merged in playlist. Handles resolved to IDs at runtime. */
+    /** Only official Dantali channel – videos + Shorts from:
+     *   https://www.youtube.com/@Sachchidanand-Dantali
+     */
     private static final String[] CHANNEL_HANDLES = {
-        "Sachchidanand-Dantali",   // SWAMI SACHCHIDANANDJI_ OFFICIAL
-        "SwamiSachidanand",        // Swami Sachidanand
-        "swamisachchidanandji"     // @swamisachchidanandji
+        "Sachchidanand-Dantali"
     };
 
-    /** Placeholder IDs – overwritten by resolveChannelIdFromHandle at runtime. */
+    /** Channel IDs – fallback when API cannot resolve handle. */
     private static final String[] CHANNEL_IDS = {
-        "UCk1V0R5Vn8X6HPy5Y8C7H9A",
-        "UCba78apJ7Rw8crHxVPq9dow",
-        "UCba78apJ7Rw8crHxVPq9dow"  // fallback if resolve fails
+        "UCba78apJ7Rw8crHxVPq9dow"   // SWAMI SACHCHIDANANDJI OFFICIAL (Dantali)
     };
 
     private static final Pattern VIDEO_ID_PATTERN = Pattern.compile("\"videoId\"\\s*:\\s*\"([a-zA-Z0-9_-]{11})\"");
@@ -109,6 +111,7 @@ public class VideosFragment extends Fragment {
     private static final long SEARCH_DEBOUNCE_MS = 500;
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable;
+    private AdView bottomBannerAd;
 
     @Override
     public @Nullable View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -165,6 +168,9 @@ public class VideosFragment extends Fragment {
                 if (act instanceof MainActivity) ((MainActivity) act).openSwamiInfoPage();
             });
         }
+
+        // Banner ad at bottom of Videos page
+        setupBottomBannerAd(view);
 
         setLoading(true);
         loadVideos();
@@ -250,6 +256,41 @@ public class VideosFragment extends Fragment {
             }
         });
         micButton.setOnClickListener(v -> startVoiceSearch());
+    }
+
+    private void setupBottomBannerAd(View root) {
+        try {
+            bottomBannerAd = root.findViewById(R.id.videos_bottom_banner);
+            if (bottomBannerAd == null) return;
+            AdRequest request = new AdRequest.Builder().build();
+            bottomBannerAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    try {
+                        if (bottomBannerAd.getVisibility() != View.VISIBLE) {
+                            bottomBannerAd.setAlpha(0f);
+                            bottomBannerAd.setTranslationY(bottomBannerAd.getHeight());
+                            bottomBannerAd.setVisibility(View.VISIBLE);
+                            bottomBannerAd.animate()
+                                    .translationY(0f)
+                                    .alpha(1f)
+                                    .setDuration(350L)
+                                    .start();
+                        }
+                    } catch (Throwable t) {
+                        bottomBannerAd.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onAdFailedToLoad(LoadAdError adError) {
+                    Log.w(TAG, "videos banner failed: " + adError);
+                }
+            });
+            bottomBannerAd.loadAd(request);
+        } catch (Throwable t) {
+            Log.e(TAG, "setupBottomBannerAd", t);
+        }
     }
 
     private void openGlobalSearch() {
@@ -394,10 +435,7 @@ public class VideosFragment extends Fragment {
         new Thread(() -> {
             try {
                 String apiKey = BuildConfig.YOUTUBE_API_KEY;
-                if (apiKey == null || apiKey.isEmpty() || apiKey.startsWith("YOUR_")) {
-                    activity.runOnUiThread(() -> setErrorState("YouTube API key સેટ નથી."));
-                    return;
-                }
+                boolean apiKeyOk = apiKey != null && !apiKey.isEmpty() && !apiKey.startsWith("YOUR_");
 
                 OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(8, TimeUnit.SECONDS)
@@ -415,11 +453,11 @@ public class VideosFragment extends Fragment {
                 loadMorePlaylistIds.clear();
                 loadMorePageTokens.clear();
 
-                // Resolve handles to channel IDs
+                // Resolve handles to channel IDs (use CHANNEL_IDS when API key not available)
                 String[] resolvedIds = new String[CHANNEL_HANDLES.length];
                 for (int i = 0; i < CHANNEL_HANDLES.length; i++) {
                     resolvedIds[i] = CHANNEL_IDS[i];
-                    if (apiKey != null && !apiKey.isEmpty() && CHANNEL_HANDLES[i] != null) {
+                    if (apiKeyOk && CHANNEL_HANDLES[i] != null) {
                         try {
                             String r = resolveChannelIdFromHandle(client, apiKey, CHANNEL_HANDLES[i]);
                             if (r != null && !r.isEmpty()) resolvedIds[i] = r;
@@ -429,23 +467,9 @@ public class VideosFragment extends Fragment {
                     }
                 }
 
-                // 1) Proxy (if set) – fast when working
-                if (videos.isEmpty()) {
-                    String proxyUrl = BuildConfig.YOUTUBE_PROXY_URL;
-                    if (proxyUrl != null && !proxyUrl.isEmpty()) {
-                        Log.d(TAG, "Trying proxy " + proxyUrl);
-                        try {
-                            fetchFromProxy(client, proxyUrl, resolvedIds, videos);
-                            if (!videos.isEmpty()) lastFetchSource = "proxy";
-                        } catch (Exception e) {
-                            Log.e(TAG, "Proxy failed", e);
-                        }
-                    }
-                }
-
-                // 2) playlistItems API – fetch from BOTH channels and merge
-                if (videos.isEmpty()) {
-                    Log.d(TAG, "Trying playlistItems API (merged channels)");
+                // 1) YouTube Data API – uploads playlist from BOTH channels (videos + Shorts)
+                if (videos.isEmpty() && apiKeyOk) {
+                    Log.d(TAG, "Trying playlistItems API – merge from all channels (videos + Shorts)");
                     for (int i = 0; i < CHANNEL_HANDLES.length; i++) {
                         String channelId = resolvedIds[i];
                         String handle = CHANNEL_HANDLES[i];
@@ -460,11 +484,17 @@ public class VideosFragment extends Fragment {
                             for (int p = 0; p < 2 && np != null && !np.isEmpty(); p++) {
                                 np = fetchPlaylistVideos(client, apiKey, playlistId, np, videos, i);
                             }
-                            if (!videos.isEmpty()) lastFetchSource = "playlist";
-                            lastChannelId = channelId;
-                            lastPlaylistId = playlistId;
-                            nextPageToken = (np != null && !np.isEmpty()) ? np : null;
-                            if (np != null && !np.isEmpty()) {
+                            if (!videos.isEmpty() && lastFetchSource == null) {
+                                lastFetchSource = "playlist";
+                                lastChannelId = channelId;
+                                lastPlaylistId = playlistId;
+                                nextPageToken = (np != null && !np.isEmpty()) ? np : null;
+                                if (np != null && !np.isEmpty()) {
+                                    loadMorePlaylistIds.add(playlistId);
+                                    loadMorePageTokens.add(np);
+                                }
+                            }
+                            if (np != null && !np.isEmpty() && playlistId != null && !loadMorePlaylistIds.contains(playlistId)) {
                                 loadMorePlaylistIds.add(playlistId);
                                 loadMorePageTokens.add(np);
                             }
@@ -472,38 +502,39 @@ public class VideosFragment extends Fragment {
                             Log.e(TAG, "playlist failed " + channelId, e);
                         }
                     }
+                    if (!videos.isEmpty()) Log.d(TAG, "Playlist API OK: " + videos.size() + " items (both channels, videos+Shorts)");
                 }
 
-                // 3) Search API
+                // 2) Invidious API – merge from BOTH channels (/videos + /shorts each)
                 if (videos.isEmpty()) {
-                    Log.d(TAG, "Trying search API");
+                    Log.d(TAG, "Trying Invidious API – merge from all channels (videos + Shorts)");
                     for (int i = 0; i < CHANNEL_HANDLES.length; i++) {
                         String channelId = resolvedIds[i];
+                        String handle = CHANNEL_HANDLES[i];
                         try {
-                            String np = fetchFromSearchApi(client, apiKey, channelId, null, videos, i);
-                            if (!videos.isEmpty()) {
-                                lastFetchSource = "search";
+                            boolean got = fetchFromInvidious(client, channelId, videos, i);
+                            if (!got && handle != null) got = fetchFromInvidious(client, handle, videos, i);
+                            if (got && lastFetchSource == null) {
+                                lastFetchSource = "invidious";
                                 lastChannelId = channelId;
-                                nextPageToken = (np != null && !np.isEmpty()) ? np : null;
-                                break;
                             }
                         } catch (Exception e) {
-                            Log.e(TAG, "search API failed " + channelId, e);
+                            Log.e(TAG, "Invidious failed " + channelId, e);
                         }
                     }
+                    if (!videos.isEmpty()) Log.d(TAG, "Invidious OK: " + videos.size() + " items (both channels, videos+Shorts)");
                 }
 
-                // 4) RSS feed
+                // 3) RSS feed – merge from all channels (latest 15 per channel)
                 if (videos.isEmpty()) {
-                    Log.d(TAG, "Trying RSS feed");
-                    for (int i = 0; i < CHANNEL_HANDLES.length; i++) {
+                    Log.d(TAG, "Trying RSS feed – merge from all channels");
+                    for (int i = 0; i < resolvedIds.length; i++) {
                         String channelId = resolvedIds[i];
                         try {
                             fetchFromRssFeed(client, channelId, videos, i);
-                            if (!videos.isEmpty()) {
+                            if (lastFetchSource == null && !videos.isEmpty()) {
                                 lastFetchSource = "rss";
                                 lastChannelId = channelId;
-                                break;
                             }
                         } catch (Exception e) {
                             Log.e(TAG, "RSS failed " + channelId, e);
@@ -511,43 +542,51 @@ public class VideosFragment extends Fragment {
                     }
                 }
 
-                // 5) HTML scrape
+                // 4) Proxy (if set)
                 if (videos.isEmpty()) {
-                    Log.d(TAG, "Trying HTML scrape");
-                    for (int i = 0; i < CHANNEL_HANDLES.length; i++) {
-                        String channelId = resolvedIds[i];
+                    String proxyUrl = BuildConfig.YOUTUBE_PROXY_URL;
+                    if (proxyUrl != null && !proxyUrl.isEmpty()) {
+                        Log.d(TAG, "Trying proxy " + proxyUrl);
                         try {
-                            fetchFromChannelHtml(client, channelId, videos, i);
-                            if (!videos.isEmpty()) {
-                                lastFetchSource = "html";
-                                lastChannelId = channelId;
-                                break;
-                            }
+                            fetchFromProxy(client, proxyUrl, resolvedIds, videos);
+                            if (!videos.isEmpty()) lastFetchSource = "proxy";
                         } catch (Exception e) {
-                            Log.e(TAG, "HTML failed " + channelId, e);
+                            Log.e(TAG, "Proxy failed", e);
                         }
                     }
                 }
 
-                // 6) Invidious API – fetches BOTH /videos and /shorts (all content)
-                if (videos.isEmpty()) {
-                    Log.d(TAG, "Trying Invidious API (videos + shorts)");
+                // 5) Search API – merge from all channels
+                if (videos.isEmpty() && apiKeyOk) {
+                    Log.d(TAG, "Trying search API – merge from all channels");
                     for (int i = 0; i < CHANNEL_HANDLES.length; i++) {
                         String channelId = resolvedIds[i];
-                        String handle = CHANNEL_HANDLES[i];
                         try {
-                            if (fetchFromInvidious(client, channelId, videos, i)) {
-                                lastFetchSource = "invidious";
+                            String np = fetchFromSearchApi(client, apiKey, channelId, null, videos, i);
+                            if (lastFetchSource == null && !videos.isEmpty()) {
+                                lastFetchSource = "search";
                                 lastChannelId = channelId;
-                                break;
-                            }
-                            if (handle != null && fetchFromInvidious(client, handle, videos, i)) {
-                                lastFetchSource = "invidious";
-                                lastChannelId = channelId;
-                                break;
+                                nextPageToken = (np != null && !np.isEmpty()) ? np : null;
                             }
                         } catch (Exception e) {
-                            Log.e(TAG, "Invidious failed " + channelId, e);
+                            Log.e(TAG, "search API failed " + channelId, e);
+                        }
+                    }
+                }
+
+                // 6) HTML scrape – merge from all channels
+                if (videos.isEmpty()) {
+                    Log.d(TAG, "Trying HTML scrape – merge from all channels");
+                    for (int i = 0; i < CHANNEL_HANDLES.length; i++) {
+                        String channelId = resolvedIds[i];
+                        try {
+                            fetchFromChannelHtml(client, channelId, videos, i);
+                            if (lastFetchSource == null && !videos.isEmpty()) {
+                                lastFetchSource = "html";
+                                lastChannelId = channelId;
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "HTML failed " + channelId, e);
                         }
                     }
                 }
@@ -578,7 +617,18 @@ public class VideosFragment extends Fragment {
                     }
                 }
 
-                // 8) Sample videos when all fail
+                // 7b) Augment with Shorts – RSS/proxy/playlist/search/HTML don't include Shorts
+                if (!videos.isEmpty() && ("rss".equals(lastFetchSource) || "proxy".equals(lastFetchSource)
+                        || "playlist".equals(lastFetchSource) || "search".equals(lastFetchSource) || "html".equals(lastFetchSource))) {
+                    int beforeShorts = videos.size();
+                    Log.d(TAG, "Augmenting with Shorts from Invidious (source=" + lastFetchSource + ", videos=" + beforeShorts + ")");
+                    for (int i = 0; i < resolvedIds.length; i++) {
+                        fetchFromInvidiousShortsOnly(client, resolvedIds[i], videos, i);
+                    }
+                    Log.d(TAG, "Shorts augment done: total videos=" + videos.size() + " (added " + (videos.size() - beforeShorts) + " shorts)");
+                }
+
+                // 8) Sample videos when all methods fail
                 if (videos.isEmpty()) {
                     addSampleVideos(videos);
                 }
@@ -1255,6 +1305,72 @@ public class VideosFragment extends Fragment {
             } catch (Exception e) {
                 Log.w(TAG, "Invidious /videos augment failed " + base, e);
             }
+        }
+    }
+
+    /** Fetches only /shorts from Invidious. Used to augment RSS/proxy etc when they return long-form only. */
+    private void fetchFromInvidiousShortsOnly(OkHttpClient client, String channelId, List<YouTubeVideo> out, int channelIndex) {
+        int sizeBefore = out.size();
+        Set<String> seenIds = new HashSet<>();
+        for (YouTubeVideo v : out) {
+            if (v.videoId != null) seenIds.add(v.videoId);
+        }
+        Log.d(TAG, "Shorts augment: trying channel " + channelId);
+        String[] instances = {
+            "https://inv.nadeko.net", "https://yewtu.be", "https://vid.puffyan.us",
+            "https://invidious.nerdvpn.de", "https://invidious.privacydev.net", "https://invidious.protokolla.fi"
+        };
+        for (String base : instances) {
+            try {
+                String url = base + "/api/v1/channels/" + channelId + "/shorts";
+                Request request = new Request.Builder().url(url)
+                    .addHeader("User-Agent", "SwamiSachidanand/1.0").build();
+                try (Response response = client.newCall(request).execute()) {
+                    if (!response.isSuccessful() || response.body() == null) continue;
+                    String body = response.body().string();
+                    if (body == null || body.isEmpty()) continue;
+                    JSONObject root = new JSONObject(body);
+                    JSONArray items = root.optJSONArray("videos");
+                    if (items == null) continue;
+                    int added = 0;
+                    for (int i = 0; i < items.length(); i++) {
+                        JSONObject item = items.optJSONObject(i);
+                        if (item == null) continue;
+                        String videoId = item.optString("videoId", null);
+                        if (videoId == null || videoId.isEmpty() || seenIds.contains(videoId)) continue;
+                        seenIds.add(videoId);
+                        String title = item.optString("title", "");
+                        long published = item.optLong("published", 0);
+                        String thumbUrl = null;
+                        JSONArray thumbs = item.optJSONArray("videoThumbnails");
+                        if (thumbs != null && thumbs.length() > 0) {
+                            thumbUrl = thumbs.optJSONObject(0).optString("url", null);
+                        }
+                        if (thumbUrl == null || thumbUrl.isEmpty()) {
+                            thumbUrl = "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg";
+                        }
+                        YouTubeVideo v = new YouTubeVideo();
+                        v.videoId = videoId;
+                        v.title = title != null ? title : "";
+                        v.thumbnailUrl = thumbUrl;
+                        v.publishedAt = published > 0 ? String.valueOf(published) : "";
+                        v.channelIndex = channelIndex;
+                        v.durationSeconds = item.optInt("lengthSeconds", -1);
+                        v.viewCount = item.optLong("viewCount", -1);
+                        out.add(v);
+                        added++;
+                    }
+                    if (added > 0) {
+                        Log.d(TAG, "Invidious /shorts added " + added + " from " + base);
+                        return;
+                    }
+                }
+            } catch (Exception e) {
+                Log.w(TAG, "Invidious /shorts failed " + base + ": " + e.getMessage());
+            }
+        }
+        if (out.size() == sizeBefore) {
+            Log.w(TAG, "Shorts augment: no shorts from any Invidious instance for " + channelId);
         }
     }
 
