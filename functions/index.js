@@ -3,11 +3,14 @@
  * POST body: { text: string, author?: string, key: string }
  * Set secret: firebase functions:config:set admin.key="YOUR_SECRET"
  */
-const functions = require("firebase-functions");
+const functions = require("firebase-functions/v1");
 const admin = require("firebase-admin");
 const express = require("express");
 const fetch = require("node-fetch");
+const axios = require("axios");
 
+// Firestore only – pravachan audio direct Telegram URL se stream hoga,
+// Firebase Storage ki jaroorat nahi.
 admin.initializeApp();
 const db = admin.firestore();
 
@@ -212,3 +215,97 @@ exports.pollYouTubeNewVideos = functions.pubsub
 
     return null;
   });
+
+// ----------------- Telegram Audio Pravachan webhook -----------------
+// NOTE: Bot token directly in code so Cloud Functions runtime always has it.
+// If you rotate the bot token, update this value and redeploy.
+const BOT_TOKEN = "8752969355:AAGuOLnNWl-NGbsbh7BfmvFvGKj7Bsyi-Y4";
+const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
+
+exports.telegramPravachanWebhook = functions.https.onRequest(async (req, res) => {
+  if (!BOT_TOKEN || !TELEGRAM_API) {
+    console.warn("telegramPravachanWebhook: BOT_TOKEN not set");
+    res.status(200).send("Bot token not configured");
+    return;
+  }
+
+  try {
+    const update = req.body || {};
+    const msg = update.message || {};
+    const audio = msg.audio || msg.document;
+
+    if (!audio) {
+      res.status(200).send("No audio/document, ignored");
+      return;
+    }
+
+    const mime = audio.mime_type || "";
+    const fileName = audio.file_name || "";
+    const lowerName = fileName.toLowerCase();
+
+    // Accept:
+    // - Telegram audio (mime starts with audio/)
+    // - Document where mime may be generic but filename looks like audio (.mp3/.m4a/.wav)
+    const looksLikeAudio =
+      (mime && mime.startsWith("audio/")) ||
+      lowerName.endsWith(".mp3") ||
+      lowerName.endsWith(".m4a") ||
+      lowerName.endsWith(".wav");
+
+    if (!looksLikeAudio) {
+      res.status(200).send("Not an audio file, ignored");
+      return;
+    }
+
+    const fileId = audio.file_id;
+    const titleRaw = msg.caption || fileName || "Pravachan";
+    const title = String(titleRaw).trim() || "Pravachan";
+
+    // 1) Get file path info from Telegram
+    const fileInfo = await axios.get(`${TELEGRAM_API}/getFile`, {
+      params: { file_id: fileId },
+    });
+    const filePath =
+      fileInfo &&
+      fileInfo.data &&
+      fileInfo.data.result &&
+      fileInfo.data.result.file_path;
+    if (!filePath) {
+      console.error("telegramPravachanWebhook: missing file_path");
+      res.status(200).send("file_path missing");
+      return;
+    }
+
+    // 2) Direct Telegram file URL (no re-upload to Firebase Storage)
+    const audioUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${filePath}`;
+
+    // Use stable document id based on Telegram file_id so duplicates overwrite
+    const docId = fileId || audio.file_unique_id || String(Date.now());
+    await db.collection("pravachan").doc(docId).set({
+      title,
+      speaker: "સ્વામી સચ્ચિદાનંદ",
+      audioUrl,
+      durationSec: 0,
+      tags: ["pravachan"],
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+
+    if (msg.chat && msg.chat.id) {
+      try {
+        await axios.post(`${TELEGRAM_API}/sendMessage`, {
+          chat_id: msg.chat.id,
+          text: `પ્રવચન મળ્યું અને સેઇવ થયું:\n${title}`,
+        });
+      } catch (e) {
+        console.warn("telegramPravachanWebhook: sendMessage failed", e);
+      }
+    }
+
+    res.status(200).send("OK");
+  } catch (e) {
+    console.error("telegramPravachanWebhook error", e);
+    res.status(200).send("Error");
+  }
+});
+
