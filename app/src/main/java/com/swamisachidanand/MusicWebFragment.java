@@ -45,6 +45,9 @@ public class MusicWebFragment extends Fragment {
             settings.setLoadWithOverviewMode(true);
             settings.setUseWideViewPort(true);
 
+            // Pravachan page: pure black background, no white flash
+            webView.setBackgroundColor(0xFF000000);
+
             webView.setWebViewClient(new WebViewClient() {
                 @Override
                 public void onPageFinished(WebView view, String url) {
