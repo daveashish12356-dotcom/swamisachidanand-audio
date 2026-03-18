@@ -54,9 +54,13 @@ public class PravachanAdapter extends RecyclerView.Adapter<PravachanAdapter.View
             meta.append(df.format(new Date(item.createdAtMillis)));
         }
         holder.meta.setText(meta.toString());
-        holder.itemView.setOnClickListener(v -> {
+        View.OnClickListener click = v -> {
             if (listener != null) listener.onPravachanClick(item);
-        });
+        };
+        holder.itemView.setOnClickListener(click);
+        if (holder.playButton != null) {
+            holder.playButton.setOnClickListener(click);
+        }
     }
 
     @Override
@@ -67,11 +71,13 @@ public class PravachanAdapter extends RecyclerView.Adapter<PravachanAdapter.View
     static class ViewHolder extends RecyclerView.ViewHolder {
         final TextView title;
         final TextView meta;
+        final View playButton;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.pravachan_item_title);
             meta = itemView.findViewById(R.id.pravachan_item_meta);
+            playButton = itemView.findViewById(R.id.pravachan_item_play);
         }
     }
 }

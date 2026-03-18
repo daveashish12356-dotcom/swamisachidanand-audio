@@ -119,6 +119,7 @@ public class AudioBookCardAdapter extends RecyclerView.Adapter<AudioBookCardAdap
         String thumbUrl = book.getThumbnailUrl();
         android.content.Context ctx = holder.itemView.getContext();
 
+        // Pure server-based thumbnails: first use explicit URL, else fallback to /public/thumbnails/<id>.jpg
         if ((thumbUrl == null || thumbUrl.isEmpty()) && ctx != null && book.getId() != null && !book.getId().isEmpty()) {
             String base = ctx.getString(R.string.server_books_base_url);
             if (base != null) {

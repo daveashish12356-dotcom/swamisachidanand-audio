@@ -1,6 +1,6 @@
-# Deploy public/books and public/thumbnails so all 56 PDFs are online.
+# Deploy full public/ folder (audio_list, thumbnails, suvichar, etc.) plus books
 # Repo Settings > Pages > Source: "Deploy from a branch" > Branch: gh-pages > / (root)
-name: Deploy books and thumbnails to Pages
+name: Deploy public data to Pages
 
 on:
   push:
@@ -17,14 +17,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Copy books, thumbnails and suvichar to site root
+      - name: Copy public data (audio list, books, thumbnails, suvichar) to _site
         run: |
           mkdir -p _site
-          cp -r public/books _site/
-          cp -r public/thumbnails _site/
-          cp public/suvichar_config.json _site/ 2>/dev/null || true
-          cp public/suvichar_control.html _site/ 2>/dev/null || true
-          echo "56 books + 56 thumbnails" > _site/index.html
+          # Full public folder under /public so existing app URLs keep working
+          cp -r public _site/public
+
+          # Convenience copies at root (as before) for books/thumbnails
+          cp -r public/books _site/ 2>/dev/null || true
+          cp -r public/thumbnails _site/ 2>/dev/null || true
+
+          # Ensure suvichar files exist in both places
+          cp public/suvichar_config.json _site/public/ 2>/dev/null || true
+          cp public/suvichar_control.html _site/public/ 2>/dev/null || true
+
+          # Simple index so site root opens
+          cp public/index.html _site/index.html 2>/dev/null || echo "Swami Sachchidanand audio server" > _site/index.html
           ls -la _site/
 
       - name: Deploy to gh-pages
