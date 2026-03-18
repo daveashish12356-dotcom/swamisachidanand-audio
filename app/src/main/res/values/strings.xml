@@ -9,6 +9,7 @@
     <string name="nav_books">પુસ્તક</string>
     <string name="nav_music">ઓડિયો પુસ્તકો</string>
     <string name="nav_about">સંપર્ક</string>
+    <!-- Bottom nav labels -->
     <string name="nav_audio">ઓડિયો પુસ્તકો</string>
     <string name="nav_audio_pravachan">ઓડિયો પ્રવચન</string>
     <string name="nav_videos">વિડિઓ</string>

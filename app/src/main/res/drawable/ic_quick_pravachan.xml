@@ -5,19 +5,19 @@
     android:viewportWidth="24"
     android:viewportHeight="24">
 
-    <!-- Mic + play + waves, Swamiji green, NO background circle -->
+    <!-- Quick nav icon: mic + play + waves, Swamiji green -->
 
     <!-- Play button -->
     <path
         android:fillColor="#22C55E"
         android:pathData="M11,8l6,4 -6,4z" />
 
-    <!-- Microphone body -->
+    <!-- Mic body -->
     <path
         android:fillColor="#22C55E"
         android:pathData="M6,7h4v8H6z" />
 
-    <!-- Microphone base -->
+    <!-- Mic base -->
     <path
         android:fillColor="#22C55E"
         android:pathData="M7,15h2v2H7z" />
@@ -25,7 +25,7 @@
         android:fillColor="#22C55E"
         android:pathData="M5,18h6a1,1 0 0 1 0,2H5a1,1 0 0 1 0,-2z" />
 
-    <!-- Sound waves -->
+    <!-- Waves -->
     <path
         android:fillColor="@android:color/transparent"
         android:strokeColor="#22C55E"

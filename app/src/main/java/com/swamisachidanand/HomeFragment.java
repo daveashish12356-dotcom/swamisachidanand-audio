@@ -186,6 +186,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             View quickAudio = view.findViewById(R.id.home_quick_audio);
             View quickVideos = view.findViewById(R.id.home_quick_videos);
             View quickContact = view.findViewById(R.id.home_quick_contact);
+            View quickPravachan = view.findViewById(R.id.home_quick_pravachan);
             if (quickBooks != null) {
                 quickBooks.setOnClickListener(v -> switchToBottomNavTab(R.id.nav_books));
             }
@@ -197,6 +198,9 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             }
             if (quickContact != null) {
                 quickContact.setOnClickListener(v -> switchToBottomNavTab(R.id.nav_about));
+            }
+            if (quickPravachan != null) {
+                quickPravachan.setOnClickListener(v -> switchToBottomNavTab(R.id.nav_pravachan));
             }
 
             View photoGalleryLink = view.findViewById(R.id.home_photo_gallery_link);
