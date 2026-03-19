@@ -1,6 +1,6 @@
 {
-  "version": 17,
-  "updated": "2026-03-17T13:57:51Z",
+  "version": 18,
+  "updated": "2026-03-19T16:30:42Z",
   "books": [
     {
       "id": "amarakantak_madhyapradesh",
@@ -7464,7 +7464,7 @@
     {
       "id": "chanakya_rajniti",
       "title": "ચાણક્યની રાજનીતિ",
-      "thumbnailUrl": "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/book_covers/63.jpg",
+      "thumbnailUrl": "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/thumbnails/chanakya_rajniti.jpg",
       "parts": [
         {
           "id": "1",
@@ -7738,8 +7738,188 @@
         },
         {
           "id": "55",
-          "title": "17.          ચાણક્યની રાજનાંતે",
+          "title": "17.           ચાણક્યની રાજનીતિ",
           "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/55.mp3"
+        },
+        {
+          "id": "56",
+          "title": "18. સૂત્ર 1",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/56.mp3"
+        },
+        {
+          "id": "57",
+          "title": "19. સૂત્ર 2",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/57.mp3"
+        },
+        {
+          "id": "58",
+          "title": "20. સૂત્ર 3",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/58.mp3"
+        },
+        {
+          "id": "59",
+          "title": "21. સૂત્ર 4 થી 10",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/59.mp3"
+        },
+        {
+          "id": "60",
+          "title": "22. સૂત્ર 11",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/60.mp3"
+        },
+        {
+          "id": "61",
+          "title": "23. સૂત્ર 12 થી 14",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/61.mp3"
+        },
+        {
+          "id": "62",
+          "title": "24. સૂત્ર 15 થી 19",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/62.mp3"
+        },
+        {
+          "id": "63",
+          "title": "25. સૂત્ર 20 થી 22",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/63.mp3"
+        },
+        {
+          "id": "64",
+          "title": "26. સૂત્ર 23 થી 30",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/64.mp3"
+        },
+        {
+          "id": "65",
+          "title": "27. સૂત્ર 31 થી 40",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/65.mp3"
+        },
+        {
+          "id": "66",
+          "title": "28. સૂત્ર 41 થી 43",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/66.mp3"
+        },
+        {
+          "id": "67",
+          "title": "29. સૂત્ર 44",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/67.mp3"
+        },
+        {
+          "id": "68",
+          "title": "30. સૂત્ર 45 થી 53",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/68.mp3"
+        },
+        {
+          "id": "69",
+          "title": "31. સૂત્ર 54 થી 60",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/69.mp3"
+        },
+        {
+          "id": "70",
+          "title": "32. સૂત્ર 61 થી 65",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/70.mp3"
+        },
+        {
+          "id": "71",
+          "title": "33. સૂત્ર 66 થી 73",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/71.mp3"
+        },
+        {
+          "id": "72",
+          "title": "34. સૂત્ર 74 થી 78",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/72.mp3"
+        },
+        {
+          "id": "73",
+          "title": "35. સૂત્ર 79 થી 86",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/73.mp3"
+        },
+        {
+          "id": "74",
+          "title": "36. સૂત્ર 87 થી 95",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/74.mp3"
+        },
+        {
+          "id": "75",
+          "title": "37. સૂત્ર 96 થી 103",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/75.mp3"
+        },
+        {
+          "id": "76",
+          "title": "38. સૂત્ર 104 થી 110",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/76.mp3"
+        },
+        {
+          "id": "77",
+          "title": "39. સૂત્ર 111 થી 116",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/77.mp3"
+        },
+        {
+          "id": "78",
+          "title": "40. સૂત્ર 117 થી 124",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/78.mp3"
+        },
+        {
+          "id": "79",
+          "title": "41. સૂત્ર 125 થી 135",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/79.mp3"
+        },
+        {
+          "id": "80",
+          "title": "43. સૂત્ર 136 થી 145",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/80.mp3"
+        },
+        {
+          "id": "81",
+          "title": "44. સૂત્ર 146 થી 153",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/81.mp3"
+        },
+        {
+          "id": "82",
+          "title": "45. સૂત્ર 154 થી 155",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/82.mp3"
+        },
+        {
+          "id": "83",
+          "title": "46. સૂત્ર 156 થી 163",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/83.mp3"
+        },
+        {
+          "id": "84",
+          "title": "47. સૂત્ર 164 થી 169",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/84.mp3"
+        },
+        {
+          "id": "85",
+          "title": "48. સૂત્ર 170 થી 183",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/85.mp3"
+        },
+        {
+          "id": "86",
+          "title": "49. સૂત્ર 184 થી 190",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/86.mp3"
+        },
+        {
+          "id": "87",
+          "title": "50. સૂત્ર 191 થી 197",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/87.mp3"
+        },
+        {
+          "id": "88",
+          "title": "51. સૂત્ર 198 થી 206",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/88.mp3"
+        },
+        {
+          "id": "89",
+          "title": "52. સૂત્ર 207 થી 222",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/89.mp3"
+        },
+        {
+          "id": "90",
+          "title": "53. સૂત્ર 223 થી 238",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/90.mp3"
+        },
+        {
+          "id": "91",
+          "title": "54. સૂત્ર 239 થી 250",
+          "url": "https://github.com/daveashish12356-dotcom/swamisachidanand-audio/releases/download/chanakya_rajniti/91.mp3"
         }
       ],
       "new": true,
