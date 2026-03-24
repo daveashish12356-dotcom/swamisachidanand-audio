@@ -21,29 +21,25 @@ public final class DainikPravachanServer {
     public static final String BASE =
             "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/audio_pravachan/";
     /** Bump when list.json changes (cache bust). */
-    private static final String LIST_QUERY = "list.json?v=3";
+    private static final String LIST_QUERY = "list.json?v=4";
 
     /**
-     * Map exact {@link DainikPravachanCategories} title to URL-safe folder name under {@code public/audio_pravachan/}.
+     * Folder name is same as category title (Gujarati); URL encoding is applied when building URLs.
      */
     @Nullable
     public static String slugForCategoryTitle(@Nullable String title) {
-        if (title == null) return null;
-        if ("મારા_અનુભવો".equals(title)) {
-            return "mara_anubhavo";
-        }
-        return null;
+        return title;
     }
 
     @NonNull
     public static String listUrl(@NonNull String slug) {
-        return BASE + slug + "/" + LIST_QUERY;
+        return BASE + encodeOneSegment(slug) + "/" + LIST_QUERY;
     }
 
     @NonNull
     public static String folderBaseUrl(@NonNull String slug) {
         String s = slug.endsWith("/") ? slug.substring(0, slug.length() - 1) : slug;
-        return BASE + s + "/";
+        return BASE + encodeOneSegment(s) + "/";
     }
 
     /**
