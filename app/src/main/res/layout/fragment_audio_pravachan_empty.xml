@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_light"
@@ -12,7 +13,7 @@
         android:orientation="vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingTop="16dp"
+        android:paddingTop="8dp"
         android:paddingBottom="16dp">
 
         <TextView
@@ -20,18 +21,179 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ઓડિયો પ્રવચન"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="?attr/text_primary" />
+            android:textColor="?attr/text_primary"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/pravachan_recycler"
+        <!-- Search bar (with Swami avatar on the side) -->
+        <include
+            layout="@layout/layout_global_search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/pravachan_search_bar_include" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4dp"
+            android:paddingBottom="6dp"
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/pravachan_filter_chips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleLine="true"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_pravachan_all"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="બધું"
+                    android:textColor="@android:color/white"
+                    android:checkable="true"
+                    android:checked="true"
+                    app:chipBackgroundColor="@color/bhagva"
+                    app:checkedIconVisible="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_pravachan_ramayan"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="રામાયણ"
+                    android:textColor="@android:color/white"
+                    android:checkable="true"
+                    app:chipBackgroundColor="#E65100"
+                    app:checkedIconVisible="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_pravachan_geeta"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ગીતા"
+                    android:textColor="@android:color/white"
+                    android:checkable="true"
+                    app:chipBackgroundColor="#F9A825"
+                    app:checkedIconVisible="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_pravachan_swadhyay"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="સ્વાધ્યાય"
+                    android:textColor="@android:color/white"
+                    android:checkable="true"
+                    app:chipBackgroundColor="#1565C0"
+                    app:checkedIconVisible="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_pravachan_dharm"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ધર્મ"
+                    android:textColor="@android:color/white"
+                    android:checkable="true"
+                    app:chipBackgroundColor="#C62828"
+                    app:checkedIconVisible="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_pravachan_dainik"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pravachan_filter_dainik"
+                    android:textColor="@android:color/white"
+                    android:checkable="true"
+                    app:chipBackgroundColor="#6A1B9A"
+                    app:checkedIconVisible="false" />
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+
+        <TextView
+            android:id="@+id/pravachan_search_results_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="4dp"
+            android:text="🔍 મળેલા પ્રવચનો"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="?attr/text_primary"
+            android:visibility="gone" />
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:paddingTop="8dp"
-            android:clipToPadding="false"
-            tools:listitem="@layout/item_pravachan" />
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/pravachan_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="6dp"
+                android:clipToPadding="false"
+                tools:listitem="@layout/item_pravachan" />
+
+            <LinearLayout
+                android:id="@+id/pravachan_dainik_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/pravachan_dainik_detail_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingBottom="4dp"
+                    android:visibility="gone">
+
+                    <ImageButton
+                        android:id="@+id/pravachan_dainik_detail_back"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/dainik_pravachan_back"
+                        android:padding="8dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_arrow_back"
+                        app:tint="?attr/text_primary" />
+
+                    <TextView
+                        android:id="@+id/pravachan_dainik_detail_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:textColor="?attr/text_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        tools:text="મારા_અનુભવો" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/pravachan_dainik_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:clipToPadding="false"
+                    android:paddingTop="2dp"
+                    tools:listitem="@layout/item_dainik_pravachan_category" />
+            </LinearLayout>
+        </FrameLayout>
 
         <TextView
             android:id="@+id/pravachan_empty"
@@ -52,6 +214,17 @@
             android:visibility="gone"
             android:indeterminate="true"
             android:paddingTop="8dp" />
+
+        <!-- Banner ad at the very bottom of Pravachan page (scroll to see it) -->
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/pravachan_bottom_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_normal"
+            android:layout_marginBottom="2dp"
+            android:visibility="gone"
+            app:adSize="BANNER"
+            app:adUnitId="@string/admob_banner_unit_id" />
 
     </LinearLayout>
 

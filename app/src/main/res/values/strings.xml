@@ -10,8 +10,8 @@
     <string name="nav_music">ઓડિયો પુસ્તકો</string>
     <string name="nav_about">સંપર્ક</string>
     <!-- Bottom nav labels -->
-    <string name="nav_audio">ઓડિયો પુસ્તકો</string>
-    <string name="nav_audio_pravachan">ઓડિયો પ્રવચન</string>
+    <string name="nav_audio">ઓડિયોબુક</string>
+    <string name="nav_audio_pravachan">પ્રવચન</string>
     <string name="nav_videos">વિડિઓ</string>
     <string name="audio_server_title">સર્વર ઓડિયો</string>
     <string name="audio_loading">લોડ થાય છે…</string>
@@ -40,10 +40,25 @@
     <string name="search_tab_videos">વિડિઓ</string>
     <string name="sampark_follow_us">અમને ફોલો કરો</string>
     <string name="sampark_photo_caption">પ.પૂ.મહર્ષિ સ્વામી શ્રીસચ્ચિદાનંદજી પરમહંસ — ભક્તિ નિકેતન આશ્રમ, દંતાલી-પેટલાદ.\n\nગુજરાતના આધ્યાત્મિક ગુરુ, સાહિત્યકાર અને સમાજસેવી. અનેક પુસ્તકો અને પ્રવચનો દ્વારા લોકોને માર્ગદર્શન આપનાર — પદ્મભૂષણથી સન્માનિત.</string>
+    <string name="sampark_credits_line">પ્રકાશક: Shiv Shakti · ડેવલપર: Ashish Dave</string>
     <string name="url_website">https://www.swamisachchidanandji.org/</string>
     <string name="url_youtube">https://www.youtube.com/@Sachchidanand-Dantali</string>
     <string name="url_facebook">https://www.facebook.com/groups/652422362330934/?ref=share</string>
     <string name="url_whatsapp">https://chat.whatsapp.com/Bw4cgCKmsLe0jQgMY1LAQr</string>
     <string name="url_telegram">https://t.me/S220432</string>
+    <string name="url_instagram">https://www.instagram.com/swamisachchidanandji?igsh=MXZuNGwxZnJsOW96MA==</string>
     <string name="suvichar_notification_title">આજનું ચિંતન</string>
+    <string name="new_video_notification_title">નવું YouTube વિડિયો</string>
+    <string name="new_pravachan_notification_title">નવું પ્રવચન</string>
+    <string name="pravachan_filter_dainik">દૈનિક પ્રવચન</string>
+    <string name="dainik_pravachan_coming_soon">આ વિષય માટે ઑડિયો ટૂંક સમયમાં ઉમેરાશે.</string>
+    <string name="pravachan_dainik_no_match">આ શોધ માટે કોઈ વિષય મળ્યો નહીં.</string>
+    <string name="dainik_pravachan_back">પાછા</string>
+    <string name="dainik_pravachan_load_error">સર્વરથી યાદી લોડ થઈ નહીં. ઇન્ટરનેટ અથવા list.json ચેક કરો.</string>
+    <string name="dainik_pravachan_empty_tracks">હજુ આ વિષય માટે કોઈ ઑડિયો ઉમેર્યું નથી. GitHub પર list.json અને MP3 ઉમેરો.</string>
+    <string name="about_show_app_tour">📱 એપ ટૂર ફરી જુઓ (નવા યુઝર માટે મદદ)</string>
+    <string name="tour_skip">છોડો</string>
+    <string name="tour_next">આગળ</string>
+    <string name="tour_done">સમજાઈ ગયું</string>
+    <string name="tour_step_format">પગલું %1$d / %2$d</string>
 </resources>

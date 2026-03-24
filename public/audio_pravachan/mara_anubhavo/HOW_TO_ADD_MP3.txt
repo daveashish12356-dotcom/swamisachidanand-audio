@@ -1,0 +1,11 @@
+Folder: public/audio_pravachan/mara_anubhavo/
+Display name in app: મારા_અનુભવો
+
+1) Copy your .mp3 files into this folder (same folder as list.json).
+2) Edit list.json — JSON array, each item:
+   {"title": "ગુજરાતી શીર્ષક", "file": "yourfile.mp3"}
+   OR full URL:
+   {"title": "શીર્ષક", "url": "https://..."}
+
+3) Push to GitHub main; Pages workflow deploys public/ to gh-pages.
+4) App uses list.json?v=1 — bump ?v= in DainikPravachanServer.java if you need to bust cache.
