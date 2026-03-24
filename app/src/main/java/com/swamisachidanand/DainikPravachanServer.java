@@ -21,7 +21,7 @@ public final class DainikPravachanServer {
     public static final String BASE =
             "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/audio_pravachan/";
     /** Bump when list.json changes (cache bust). */
-    private static final String LIST_QUERY = "list.json?v=1";
+    private static final String LIST_QUERY = "list.json?v=3";
 
     /**
      * Map exact {@link DainikPravachanCategories} title to URL-safe folder name under {@code public/audio_pravachan/}.

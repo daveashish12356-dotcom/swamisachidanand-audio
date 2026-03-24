@@ -1,6 +1,9 @@
 Folder: public/audio_pravachan/mara_anubhavo/
 Display name in app: મારા_અનુભવો
 
+GitHub (no Git LFS): single file must be UNDER 100 MB. Long recordings: split into two MP3s
+(e.g. name_A.mp3 / name_B.mp3) and add two rows in list.json with titles "(ભાગ ૧)" / "(ભાગ ૨)".
+
 1) Copy your .mp3 files into this folder (same folder as list.json).
 2) Edit list.json — JSON array, each item:
    {"title": "ગુજરાતી શીર્ષક", "file": "yourfile.mp3"}
