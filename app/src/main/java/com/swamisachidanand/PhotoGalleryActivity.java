@@ -30,7 +30,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 public class PhotoGalleryActivity extends AppCompatActivity {
 
     private static final String GALLERY_BASE = "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/gallery/";
-    private static final String LIST_URL = GALLERY_BASE + "list.json";
+    private static final String LIST_URL = GALLERY_BASE + "list.json?v=2";
 
     private static List<String> galleryUrls = new ArrayList<>();
 
