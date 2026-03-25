@@ -1171,6 +1171,18 @@ public class AudioPravachanFragment extends Fragment implements PravachanAdapter
             }
         }
         dainikTracksAdapter.setItems(filtered);
+        if (playingItemId != null && !q.isEmpty()) {
+            boolean still = false;
+            for (PravachanItem p : filtered) {
+                if (p != null && playingItemId.equals(p.id)) {
+                    still = true;
+                    break;
+                }
+            }
+            if (!still) {
+                dainikTracksAdapter.setExpandedItemId(null);
+            }
+        }
         if (emptyView != null) {
             if (filtered.isEmpty()) {
                 emptyView.setText(q.isEmpty()
@@ -1341,7 +1353,23 @@ public class AudioPravachanFragment extends Fragment implements PravachanAdapter
         currentItem = item;
         currentItemId = item.id;
 
-        if (adapter != null) adapter.setExpandedItemId(item.id);
+        // Dainik server track list uses dainikTracksAdapter; other topics use adapter. Expanding the
+        // wrong adapter leaves inline player GONE while audio still starts.
+        if (dainikShowingServerTracks) {
+            if (dainikTracksAdapter != null) {
+                dainikTracksAdapter.setExpandedItemId(item.id);
+            }
+            if (adapter != null) {
+                adapter.setExpandedItemId(null);
+            }
+        } else {
+            if (adapter != null) {
+                adapter.setExpandedItemId(item.id);
+            }
+            if (dainikTracksAdapter != null) {
+                dainikTracksAdapter.setExpandedItemId(null);
+            }
+        }
 
         // Smooth scroll so user sees the expanded inline player.
         try {
@@ -1362,7 +1390,9 @@ public class AudioPravachanFragment extends Fragment implements PravachanAdapter
                 if (toPlay.id == null || currentItemId == null || !currentItemId.equals(toPlay.id)) return;
                 startPlayback(toPlay);
             };
-            if (recyclerView != null) {
+            if (dainikShowingServerTracks && dainikRecycler != null) {
+                dainikRecycler.post(doPlay);
+            } else if (recyclerView != null) {
                 recyclerView.post(doPlay);
             } else {
                 mainHandler.post(doPlay);
@@ -1633,9 +1663,21 @@ public class AudioPravachanFragment extends Fragment implements PravachanAdapter
         super.onResume();
         // Agar user wapas Audio Pravachan aaye aur pehle play chal raha tha,
         // to inline player ko same item me show karke dobara start kar do.
-        if (adapter != null && currentItem != null && currentItemId != null) {
-            adapter.setExpandedItemId(currentItemId);
-            if (wasPlayingBeforePause) startPlayback(currentItem);
+        if (currentItem != null && currentItemId != null) {
+            if (dainikShowingServerTracks && dainikTracksAdapter != null) {
+                dainikTracksAdapter.setExpandedItemId(currentItemId);
+                if (adapter != null) {
+                    adapter.setExpandedItemId(null);
+                }
+            } else if (adapter != null) {
+                adapter.setExpandedItemId(currentItemId);
+                if (dainikTracksAdapter != null) {
+                    dainikTracksAdapter.setExpandedItemId(null);
+                }
+            }
+            if (wasPlayingBeforePause) {
+                startPlayback(currentItem);
+            }
         }
     }
 
