@@ -1,11 +1,14 @@
 package com.swamisachidanand;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,7 +31,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -39,6 +44,8 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.LoadAdError;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -64,22 +71,33 @@ public class VideosFragment extends Fragment {
 
     private static final String TAG = "VideosFragment";
     private static final int VIDEOS_PER_PLAYLIST = 50;  // YouTube API max per request
+    /** Pehli baar page par aate hi zyada items — har channel uploads playlist se extra pages (API). */
+    private static final int INITIAL_PLAYLIST_EXTRA_PAGES = 4;
 
-    /** Only official Dantali channel – videos + Shorts from:
-     *   https://www.youtube.com/@Sachchidanand-Dantali
+    /** Videos page: merge videos + shorts from multiple channels.
+     *  Only these handles are included (Aacharya channel is NOT included intentionally).
      */
     private static final String[] CHANNEL_HANDLES = {
-        "Sachchidanand-Dantali"
+        // Existing
+        "Sachchidanand-Dantali",
+        // Added
+        "swamisachchidanandji",
+        "SwamiSachchidanand"
     };
 
-    /** Channel IDs – fallback when API cannot resolve handle. */
-    private static final String[] CHANNEL_IDS = {
-        "UCba78apJ7Rw8crHxVPq9dow"   // SWAMI SACHCHIDANANDJI OFFICIAL (Dantali)
-    };
+    /** Must never appear anywhere in the videos feed. */
+    private static final String DISALLOWED_CHANNEL_HANDLE = "SwamiSachchidanandAacharya";
 
     private static final Pattern VIDEO_ID_PATTERN = Pattern.compile("\"videoId\"\\s*:\\s*\"([a-zA-Z0-9_-]{11})\"");
     private static final Pattern WATCH_VIDEO_PATTERN = Pattern.compile("/watch\\?v=([a-zA-Z0-9_-]{11})");
     private static final int REQUEST_CODE_VOICE_SEARCH = 9001;
+    private static final String VIDEOS_CACHE_PREFS = "videos_cache_prefs";
+    private static final String VIDEOS_CACHE_KEY = "videos_cache_json";
+    private static final String VIDEOS_CACHE_UPDATED_AT = "videos_cache_updated_at";
+    /** Latest video at top of feed — when this id changes, show local notification (FCM is optional). */
+    private static final String PREF_LAST_NEWEST_VIDEO_ID = "videos_last_newest_video_id";
+    private static final String FIREBASE_FEED_COLLECTION = "yt_feed";
+    private static final String FIREBASE_FEED_DOC = "latest";
 
     private ProgressBar loadingView;
     private View errorLayout;
@@ -91,7 +109,7 @@ public class VideosFragment extends Fragment {
     private volatile boolean loadingMore = false;
     private String nextPageToken = null;
     private long lastLoadMoreTime = 0;
-    private static final long LOAD_MORE_THROTTLE_MS = 3000;
+    private static final long LOAD_MORE_THROTTLE_MS = 1200;
     /** For load-more: which source succeeded. "piped", "invidious", "playlist", "search" */
     private String lastFetchSource = null;
     private String lastPipedBase = null;
@@ -112,6 +130,12 @@ public class VideosFragment extends Fragment {
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable;
     private AdView bottomBannerAd;
+
+    /** Page open hote hi niche ki videos prefetch (scroll ki zaroorat na ho). */
+    private final Runnable autoPrefetchBelowFoldRunnable = () -> {
+        if (!isAdded() || isSearchMode) return;
+        loadMoreVideos(true);
+    };
 
     @Override
     public @Nullable View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -151,7 +175,10 @@ public class VideosFragment extends Fragment {
                 if (lm == null) return;
                 int last = lm.findLastVisibleItemPosition();
                 int total = adapter != null ? adapter.getItemCount() : 0;
-                if (total > 15 && last >= total - 8) loadMoreVideos();
+                if (total <= 0) return;
+                // Pehle total>15 tha — chhoti list par niche videos kabhi load nahi hoti thi
+                int prefetch = Math.max(1, Math.min(6, total / 2));
+                if (last >= total - prefetch) loadMoreVideos(false);
             }
         });
 
@@ -172,13 +199,35 @@ public class VideosFragment extends Fragment {
         // Banner ad at bottom of Videos page
         setupBottomBannerAd(view);
 
-        setLoading(true);
+        List<YouTubeVideo> cached = loadCachedVideos(view.getContext());
+        if (cached != null && !cached.isEmpty()) {
+            allVideos.clear();
+            allVideos.addAll(cached);
+            applyDisplayVideos(new ArrayList<>(allVideos));
+            setLoading(false);
+        } else {
+            setLoading(true);
+        }
+        loadFromFirebaseFeed();
         loadVideos();
         return view;
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        // Cache se list pehle se ho to turant prefetch + screen-fill (tab par aate hi)
+        if (!isSearchMode && recyclerView != null && adapter != null && adapter.getItemCount() > 0) {
+            recyclerView.post(this::scheduleLoadMoreIfScreenNotFull);
+            scheduleAutoPrefetchBelowFold();
+        }
+    }
+
+    @Override
     public void onDestroyView() {
+        if (recyclerView != null) {
+            recyclerView.removeCallbacks(autoPrefetchBelowFoldRunnable);
+        }
         super.onDestroyView();
     }
 
@@ -263,18 +312,19 @@ public class VideosFragment extends Fragment {
             bottomBannerAd = root.findViewById(R.id.videos_bottom_banner);
             if (bottomBannerAd == null) return;
             AdRequest request = new AdRequest.Builder().build();
-            bottomBannerAd.setAdListener(new AdListener() {
+            bottomBannerAd.setAdListener(AdLog.wrapBannerListener("videos_bottom", new AdListener() {
                 @Override
                 public void onAdLoaded() {
                     try {
                         if (bottomBannerAd.getVisibility() != View.VISIBLE) {
                             bottomBannerAd.setAlpha(0f);
-                            bottomBannerAd.setTranslationY(bottomBannerAd.getHeight());
+                            bottomBannerAd.setTranslationY(12f);
                             bottomBannerAd.setVisibility(View.VISIBLE);
                             bottomBannerAd.animate()
                                     .translationY(0f)
                                     .alpha(1f)
-                                    .setDuration(350L)
+                                    .setDuration(400L)
+                                    .setInterpolator(new android.view.animation.DecelerateInterpolator(1.5f))
                                     .start();
                         }
                     } catch (Throwable t) {
@@ -284,10 +334,20 @@ public class VideosFragment extends Fragment {
 
                 @Override
                 public void onAdFailedToLoad(LoadAdError adError) {
-                    Log.w(TAG, "videos banner failed: " + adError);
+                    try {
+                        String code = adError != null ? String.valueOf(adError.getCode()) : "null";
+                        String msg = adError != null ? adError.getMessage() : "null";
+                        String domain = adError != null ? adError.getDomain() : "null";
+                        Log.w(TAG, "videos banner failed: code=" + code + ", domain=" + domain + ", message=" + msg);
+                        if (bottomBannerAd != null) {
+                            bottomBannerAd.setVisibility(View.VISIBLE);
+                            bottomBannerAd.setAlpha(0.25f); // visible slot (debug)
+                        }
+                    } catch (Throwable ignore) {}
                 }
-            });
-            bottomBannerAd.loadAd(request);
+            }));
+            AdLog.bannerRequest("videos_bottom");
+            BannerAdHelper.loadWhenReady(requireContext(), bottomBannerAd, request);
         } catch (Throwable t) {
             Log.e(TAG, "setupBottomBannerAd", t);
         }
@@ -330,12 +390,16 @@ public class VideosFragment extends Fragment {
 
                 String[] resolvedIds = new String[CHANNEL_HANDLES.length];
                 for (int i = 0; i < CHANNEL_HANDLES.length; i++) {
-                    resolvedIds[i] = CHANNEL_IDS[i];
-                    if (apiKey != null && !apiKey.isEmpty() && CHANNEL_HANDLES[i] != null) {
+                    resolvedIds[i] = null;
+                    if (CHANNEL_HANDLES[i] != null) {
                         try {
                             String r = resolveChannelIdFromHandle(client, apiKey, CHANNEL_HANDLES[i]);
                             if (r != null && !r.isEmpty()) resolvedIds[i] = r;
-                        } catch (Exception e) { Log.w(TAG, "Resolve " + CHANNEL_HANDLES[i] + " failed", e); }
+                        } catch (Exception e) {
+                            Log.w(TAG, "Resolve (API) " + CHANNEL_HANDLES[i] + " failed", e);
+                            // fallback: without API key (best-effort)
+                            try { resolvedIds[i] = resolveChannelIdFromHandleFallback(client, CHANNEL_HANDLES[i]); } catch (Exception ignore) {}
+                        }
                     }
                 }
 
@@ -343,7 +407,13 @@ public class VideosFragment extends Fragment {
                 Set<String> seen = new HashSet<>();
                 for (int i = 0; i < resolvedIds.length; i++) {
                     try {
-                        fetchFromSearchByQuery(client, apiKey, q, resolvedIds[i], null, searchResults);
+                        String channelId = resolvedIds[i];
+                        // Agar channelId resolve nahi hua, to global search mat karo (warna baki channels bhi aa jati).
+                        if (channelId == null || channelId.isEmpty()) {
+                            Log.w(TAG, "YouTube search skip: channelId not resolved for handle=" + CHANNEL_HANDLES[i]);
+                            continue;
+                        }
+                        fetchFromSearchByQuery(client, apiKey, q, channelId, null, searchResults);
                     } catch (Exception e) {
                         Log.e(TAG, "Search failed for " + resolvedIds[i], e);
                     }
@@ -395,6 +465,29 @@ public class VideosFragment extends Fragment {
         if (errorLayout != null) errorLayout.setVisibility(View.GONE);
         if (recyclerView != null) recyclerView.setVisibility(View.VISIBLE);
         showMessage("");
+        scheduleLoadMoreIfScreenNotFull();
+    }
+
+    /**
+     * Agar saari items screen par aa jaye (scroll hi na ho) to scroll listener load-more trigger nahi karta.
+     * Tab bhi neeche ke videos lane ke liye ek baar load-more chalao.
+     */
+    private void scheduleLoadMoreIfScreenNotFull() {
+        if (isSearchMode || recyclerView == null || adapter == null) return;
+        recyclerView.post(() -> {
+            if (!isAdded() || recyclerView == null || adapter == null || loadingMore) return;
+            if (adapter.getItemCount() == 0) return;
+            if (!recyclerView.canScrollVertically(1)) {
+                loadMoreVideos(true);
+            }
+        });
+    }
+
+    /** Pehli successful load ke turant baad ek baar load-more — user scroll kiye bina niche videos. */
+    private void scheduleAutoPrefetchBelowFold() {
+        if (recyclerView == null || isSearchMode) return;
+        recyclerView.removeCallbacks(autoPrefetchBelowFoldRunnable);
+        recyclerView.postDelayed(autoPrefetchBelowFoldRunnable, 450);
     }
 
     private void startVoiceSearch() {
@@ -429,8 +522,14 @@ public class VideosFragment extends Fragment {
         final android.app.Activity activity = getActivity();
         if (activity == null || activity.isFinishing()) return;
 
-        setLoading(true);
-        showMessage("");
+        final boolean hadOldData = !allVideos.isEmpty();
+        if (hadOldData) {
+            if (swipeRefresh != null) swipeRefresh.setRefreshing(true);
+            showMessage("");
+        } else {
+            setLoading(true);
+            showMessage("");
+        }
 
         new Thread(() -> {
             try {
@@ -453,18 +552,42 @@ public class VideosFragment extends Fragment {
                 loadMorePlaylistIds.clear();
                 loadMorePageTokens.clear();
 
-                // Resolve handles to channel IDs (use CHANNEL_IDS when API key not available)
+                // Resolve handles to UC channel IDs (best-effort fallback by scraping)
                 String[] resolvedIds = new String[CHANNEL_HANDLES.length];
                 for (int i = 0; i < CHANNEL_HANDLES.length; i++) {
-                    resolvedIds[i] = CHANNEL_IDS[i];
-                    if (apiKeyOk && CHANNEL_HANDLES[i] != null) {
+                    resolvedIds[i] = null;
+                    if (CHANNEL_HANDLES[i] != null) {
                         try {
-                            String r = resolveChannelIdFromHandle(client, apiKey, CHANNEL_HANDLES[i]);
-                            if (r != null && !r.isEmpty()) resolvedIds[i] = r;
+                            if (apiKeyOk) {
+                                String r = resolveChannelIdFromHandle(client, apiKey, CHANNEL_HANDLES[i]);
+                                if (r != null && !r.isEmpty()) resolvedIds[i] = r;
+                            }
                         } catch (Exception e) {
-                            Log.w(TAG, "Resolve " + CHANNEL_HANDLES[i] + " failed", e);
+                            Log.w(TAG, "Resolve (API) " + CHANNEL_HANDLES[i] + " failed", e);
+                        }
+                        // If API resolution failed or API key is not available, scrape best-effort.
+                        if (resolvedIds[i] == null || resolvedIds[i].isEmpty()) {
+                            try {
+                                resolvedIds[i] = resolveChannelIdFromHandleFallback(client, CHANNEL_HANDLES[i]);
+                            } catch (Exception ignore) {}
                         }
                     }
+                }
+
+                // Resolve disallowed channel UC id once, so even if handle->UC mapping goes wrong we still skip it.
+                String disallowedUcId = null;
+                try {
+                    if (apiKeyOk) {
+                        disallowedUcId = resolveChannelIdFromHandle(client, apiKey, DISALLOWED_CHANNEL_HANDLE);
+                    }
+                } catch (Exception ignore) {}
+                if (disallowedUcId == null || disallowedUcId.isEmpty()) {
+                    try {
+                        disallowedUcId = resolveChannelIdFromHandleFallback(client, DISALLOWED_CHANNEL_HANDLE);
+                    } catch (Exception ignore) {}
+                }
+                if (disallowedUcId != null && !disallowedUcId.isEmpty()) {
+                    Log.d(TAG, "Disallowed channel UC id=" + disallowedUcId);
                 }
 
                 // 1) YouTube Data API – uploads playlist from BOTH channels (videos + Shorts)
@@ -478,10 +601,17 @@ public class VideosFragment extends Fragment {
                             if ((uploadsId == null || uploadsId.isEmpty()) && handle != null) {
                                 uploadsId = getUploadsPlaylistId(client, apiKey, handle);
                             }
-                            String playlistId = uploadsId != null && !uploadsId.isEmpty()
-                                ? uploadsId : "UU" + (channelId.length() > 2 ? channelId.substring(2) : "");
+                            if (uploadsId == null || uploadsId.isEmpty()) continue;
+
+                            // Safety: if our resolved UC accidentally matches the disallowed channel UC, skip.
+                            if (disallowedUcId != null && disallowedUcId.equals(channelId)) {
+                                Log.w(TAG, "Skipping disallowed channel (UC match) handle=" + handle + " uc=" + channelId);
+                                continue;
+                            }
+
+                            String playlistId = uploadsId;
                             String np = fetchPlaylistVideos(client, apiKey, playlistId, null, videos, i);
-                            for (int p = 0; p < 2 && np != null && !np.isEmpty(); p++) {
+                            for (int p = 0; p < INITIAL_PLAYLIST_EXTRA_PAGES && np != null && !np.isEmpty(); p++) {
                                 np = fetchPlaylistVideos(client, apiKey, playlistId, np, videos, i);
                             }
                             if (!videos.isEmpty() && lastFetchSource == null) {
@@ -512,7 +642,11 @@ public class VideosFragment extends Fragment {
                         String channelId = resolvedIds[i];
                         String handle = CHANNEL_HANDLES[i];
                         try {
-                            boolean got = fetchFromInvidious(client, channelId, videos, i);
+                            // channelId null/empty se invalid URL banega; handle fallback use karke best-effort lo.
+                            boolean got = false;
+                            if (channelId != null && !channelId.isEmpty()) {
+                                got = fetchFromInvidious(client, channelId, videos, i);
+                            }
                             if (!got && handle != null) got = fetchFromInvidious(client, handle, videos, i);
                             if (got && lastFetchSource == null) {
                                 lastFetchSource = "invidious";
@@ -531,6 +665,14 @@ public class VideosFragment extends Fragment {
                     for (int i = 0; i < resolvedIds.length; i++) {
                         String channelId = resolvedIds[i];
                         try {
+                            if (channelId == null || channelId.isEmpty()) {
+                                Log.w(TAG, "RSS skip: channelId not resolved for handle=" + CHANNEL_HANDLES[i]);
+                                continue;
+                            }
+                            if (disallowedUcId != null && disallowedUcId.equals(channelId)) {
+                                Log.w(TAG, "Skipping disallowed channel (UC match) RSS handle=" + CHANNEL_HANDLES[i]);
+                                continue;
+                            }
                             fetchFromRssFeed(client, channelId, videos, i);
                             if (lastFetchSource == null && !videos.isEmpty()) {
                                 lastFetchSource = "rss";
@@ -562,6 +704,14 @@ public class VideosFragment extends Fragment {
                     for (int i = 0; i < CHANNEL_HANDLES.length; i++) {
                         String channelId = resolvedIds[i];
                         try {
+                            if (channelId == null || channelId.isEmpty()) {
+                                Log.w(TAG, "Search API skip: channelId not resolved for handle=" + CHANNEL_HANDLES[i]);
+                                continue;
+                            }
+                            if (disallowedUcId != null && disallowedUcId.equals(channelId)) {
+                                Log.w(TAG, "Skipping disallowed channel (UC match) Search handle=" + CHANNEL_HANDLES[i]);
+                                continue;
+                            }
                             String np = fetchFromSearchApi(client, apiKey, channelId, null, videos, i);
                             if (lastFetchSource == null && !videos.isEmpty()) {
                                 lastFetchSource = "search";
@@ -580,6 +730,14 @@ public class VideosFragment extends Fragment {
                     for (int i = 0; i < CHANNEL_HANDLES.length; i++) {
                         String channelId = resolvedIds[i];
                         try {
+                            if (channelId == null || channelId.isEmpty()) {
+                                Log.w(TAG, "HTML skip: channelId not resolved for handle=" + CHANNEL_HANDLES[i]);
+                                continue;
+                            }
+                            if (disallowedUcId != null && disallowedUcId.equals(channelId)) {
+                                Log.w(TAG, "Skipping disallowed channel (UC match) HTML handle=" + CHANNEL_HANDLES[i]);
+                                continue;
+                            }
                             fetchFromChannelHtml(client, channelId, videos, i);
                             if (lastFetchSource == null && !videos.isEmpty()) {
                                 lastFetchSource = "html";
@@ -597,8 +755,10 @@ public class VideosFragment extends Fragment {
                     try {
                         boolean pipedOk = false;
                         for (int i = 0; i < CHANNEL_HANDLES.length; i++) {
-                            pipedOk = fetchFromPiped(client, CHANNEL_HANDLES[i], null, videos, true, i)
-                                || fetchFromPiped(client, resolvedIds[i], null, videos, false, i);
+                            pipedOk = fetchFromPiped(client, CHANNEL_HANDLES[i], null, videos, true, i);
+                            if (!pipedOk && resolvedIds[i] != null && !resolvedIds[i].isEmpty()) {
+                                pipedOk = fetchFromPiped(client, resolvedIds[i], null, videos, false, i);
+                            }
                             if (pipedOk) break;
                         }
                         if (pipedOk) {
@@ -607,6 +767,8 @@ public class VideosFragment extends Fragment {
                             // Piped returns Shorts only – augment with long-form from multiple sources
                             Log.d(TAG, "Augmenting Piped with long-form videos (Invidious, RSS, HTML)");
                             for (int i = 0; i < CHANNEL_HANDLES.length; i++) {
+                                if (resolvedIds[i] == null || resolvedIds[i].isEmpty()) continue;
+                                if (disallowedUcId != null && disallowedUcId.equals(resolvedIds[i])) continue;
                                 fetchFromInvidiousVideosOnly(client, resolvedIds[i], videos, i);
                                 try { fetchFromRssFeed(client, resolvedIds[i], videos, i); } catch (Exception e) { }
                                 try { fetchFromChannelHtml(client, resolvedIds[i], videos, i); } catch (Exception e) { }
@@ -623,6 +785,8 @@ public class VideosFragment extends Fragment {
                     int beforeShorts = videos.size();
                     Log.d(TAG, "Augmenting with Shorts from Invidious (source=" + lastFetchSource + ", videos=" + beforeShorts + ")");
                     for (int i = 0; i < resolvedIds.length; i++) {
+                        if (resolvedIds[i] == null || resolvedIds[i].isEmpty()) continue;
+                        if (disallowedUcId != null && disallowedUcId.equals(resolvedIds[i])) continue;
                         fetchFromInvidiousShortsOnly(client, resolvedIds[i], videos, i);
                     }
                     Log.d(TAG, "Shorts augment done: total videos=" + videos.size() + " (added " + (videos.size() - beforeShorts) + " shorts)");
@@ -643,6 +807,31 @@ public class VideosFragment extends Fragment {
                     }
                 }
 
+                // Final safety filter: remove any videoId that is known to belong to disallowed channel.
+                // This covers cases where some upstream source (piped/html/etc) returns wrong channel content.
+                if (disallowedUcId != null && !disallowedUcId.isEmpty()) {
+                    try {
+                        List<YouTubeVideo> disallowedTemp = new ArrayList<>();
+                        fetchFromRssFeed(client, disallowedUcId, disallowedTemp, -1);
+                        Set<String> disallowedVideoIds = new HashSet<>();
+                        for (YouTubeVideo v : disallowedTemp) {
+                            if (v != null && v.videoId != null && !v.videoId.isEmpty()) {
+                                disallowedVideoIds.add(v.videoId);
+                            }
+                        }
+                        int before = deduped.size();
+                        if (!disallowedVideoIds.isEmpty()) {
+                            deduped.removeIf(v -> v != null && v.videoId != null && disallowedVideoIds.contains(v.videoId));
+                        }
+                        int after = deduped.size();
+                        if (before != after) {
+                            Log.w(TAG, "Filtered disallowed videos by RSS. before=" + before + " after=" + after);
+                        }
+                    } catch (Exception e) {
+                        Log.w(TAG, "Disallowed RSS filter failed (non-fatal)", e);
+                    }
+                }
+
                 // Sort by publishedAt (latest first)
                 Collections.sort(deduped, (a, b) -> {
                     String pa = a.publishedAt != null ? a.publishedAt : "";
@@ -652,6 +841,14 @@ public class VideosFragment extends Fragment {
 
                 final List<YouTubeVideo> result = deduped;
                 Log.d(TAG, "Videos loaded: source=" + lastFetchSource + " count=" + result.size());
+                // RSS / Invidious / HTML પર initial list ની pagination નથી — playlist API થી next page tokens set કરો
+                if (apiKeyOk && !result.isEmpty()) {
+                    String src = lastFetchSource;
+                    boolean searchHasMore = "search".equals(src) && nextPageToken != null && !nextPageToken.isEmpty();
+                    if (!"playlist".equals(src) && !"piped".equals(src) && !searchHasMore && loadMorePlaylistIds.isEmpty()) {
+                        tryPrimePlaylistLoadMoreForScroll(client, apiKey, resolvedIds, disallowedUcId);
+                    }
+                }
                 activity.runOnUiThread(() -> {
                     if (recyclerView == null || adapter == null) return;
                     setLoading(false);
@@ -660,21 +857,190 @@ public class VideosFragment extends Fragment {
                     if (errorLayout != null) errorLayout.setVisibility(View.GONE);
                     allVideos.clear();
                     allVideos.addAll(result);
+                    saveCachedVideos(activity, allVideos);
                     if (!isSearchMode) applyDisplayVideos(new ArrayList<>(allVideos));
                     lastLoadVideosTime = System.currentTimeMillis();
+                    checkAndNotifyIfNewestVideoChanged(activity, allVideos);
+                    scheduleAutoPrefetchBelowFold();
                 });
             } catch (Throwable t) {
                 Log.e(TAG, "loadVideos error", t);
                 final android.app.Activity act = getActivity();
                 if (act != null && !act.isFinishing()) {
                     act.runOnUiThread(() -> {
-                        setErrorState("વિડિઓ લોડ થતાં ભૂલ આવી. નીચે ખેંચીને ફરી પ્રયાસ કરો.");
                         if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
+                        if (allVideos.isEmpty()) {
+                            setErrorState("વિડિઓ લોડ થતાં ભૂલ આવી. નીચે ખેંચીને ફરી પ્રયાસ કરો.");
+                        } else {
+                            // Keep old videos visible; do not blank UI.
+                            showMessage("નેટવર્ક ધીમું છે — જૂના વિડિઓ બતાવી રહ્યા છીએ.");
+                            if (errorLayout != null) errorLayout.setVisibility(View.GONE);
+                            if (recyclerView != null) recyclerView.setVisibility(View.VISIBLE);
+                        }
                     });
                 }
             }
         }).start();
     }
+
+    private void loadFromFirebaseFeed() {
+        if (!isAdded()) return;
+        FirebaseFirestore.getInstance()
+                .collection(FIREBASE_FEED_COLLECTION)
+                .document(FIREBASE_FEED_DOC)
+                .get()
+                .addOnSuccessListener(this::applyFirebaseFeed)
+                .addOnFailureListener(e -> Log.w(TAG, "Firebase feed load failed", e));
+    }
+
+    private void applyFirebaseFeed(DocumentSnapshot doc) {
+        if (!isAdded() || doc == null || !doc.exists()) return;
+        try {
+            Object raw = doc.get("videos");
+            if (!(raw instanceof List)) return;
+            @SuppressWarnings("unchecked")
+            List<Object> list = (List<Object>) raw;
+            List<YouTubeVideo> firebaseVideos = new ArrayList<>();
+            for (Object item : list) {
+                if (!(item instanceof java.util.Map)) continue;
+                @SuppressWarnings("unchecked")
+                java.util.Map<String, Object> m = (java.util.Map<String, Object>) item;
+                String videoId = m.get("videoId") != null ? String.valueOf(m.get("videoId")) : "";
+                if (videoId.isEmpty()) continue;
+                YouTubeVideo v = new YouTubeVideo();
+                v.videoId = videoId;
+                v.title = m.get("title") != null ? String.valueOf(m.get("title")) : "";
+                Object thumb = m.get("thumbnailUrl");
+                if (thumb == null) thumb = m.get("thumbUrl");
+                v.thumbnailUrl = thumb != null ? String.valueOf(thumb) : ("https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg");
+                v.publishedAt = m.get("publishedAt") != null ? String.valueOf(m.get("publishedAt")) : "";
+                Object chIdx = m.get("channelIndex");
+                if (chIdx instanceof Number) v.channelIndex = ((Number) chIdx).intValue();
+                Object dur = m.get("durationSeconds");
+                if (dur instanceof Number) v.durationSeconds = ((Number) dur).intValue();
+                Object vc = m.get("viewCount");
+                if (vc instanceof Number) v.viewCount = ((Number) vc).longValue();
+                firebaseVideos.add(v);
+            }
+            if (firebaseVideos.isEmpty()) return;
+            Collections.sort(firebaseVideos, (a, b) -> {
+                String pa = a.publishedAt != null ? a.publishedAt : "";
+                String pb = b.publishedAt != null ? b.publishedAt : "";
+                return pb.compareTo(pa);
+            });
+            allVideos.clear();
+            allVideos.addAll(firebaseVideos);
+            if (!isSearchMode) applyDisplayVideos(new ArrayList<>(allVideos));
+            Context ctx = getContext();
+            if (ctx != null) saveCachedVideos(ctx, allVideos);
+            if (ctx != null) checkAndNotifyIfNewestVideoChanged(ctx, allVideos);
+            setLoading(false);
+            if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
+            Log.d(TAG, "Firebase videos loaded: " + firebaseVideos.size());
+        } catch (Exception e) {
+            Log.w(TAG, "applyFirebaseFeed failed", e);
+        }
+    }
+
+    /**
+     * YouTube/API/Firebase feed updates do not send FCM by themselves. Compare newest video id to last run;
+     * if it changed, show the same notification as topic {@code new_video} (opens Videos tab).
+     */
+    private void checkAndNotifyIfNewestVideoChanged(@Nullable Context ctx, @NonNull List<YouTubeVideo> sortedNewestFirst) {
+        if (ctx == null || sortedNewestFirst.isEmpty() || isSearchMode) return;
+        YouTubeVideo top = sortedNewestFirst.get(0);
+        if (top == null || top.videoId == null || top.videoId.isEmpty()) return;
+        try {
+            SharedPreferences sp = ctx.getSharedPreferences(VIDEOS_CACHE_PREFS, Context.MODE_PRIVATE);
+            String prev = sp.getString(PREF_LAST_NEWEST_VIDEO_ID, null);
+            String topId = top.videoId;
+            if (prev == null) {
+                sp.edit().putString(PREF_LAST_NEWEST_VIDEO_ID, topId).apply();
+                Log.d(TAG, "videos notify: baseline newest id=" + topId);
+                return;
+            }
+            if (prev.equals(topId)) return;
+
+            sp.edit().putString(PREF_LAST_NEWEST_VIDEO_ID, topId).apply();
+            Log.d(TAG, "videos notify: new top video " + topId + " (was " + prev + ")");
+
+            boolean canPost = true;
+            if (Build.VERSION.SDK_INT >= 33) {
+                canPost = ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS)
+                        == PackageManager.PERMISSION_GRANTED;
+                if (!canPost) {
+                    Log.w(TAG, "videos notify: POST_NOTIFICATIONS not granted — id updated, no local notification");
+                }
+            }
+            if (!canPost) return;
+
+            String title = ctx.getString(R.string.new_video_notification_title);
+            String body = (top.title != null && !top.title.trim().isEmpty()) ? top.title.trim() : topId;
+            String thumb = top.thumbnailUrl;
+            ContentUpdateNotificationHelper.showContentUpdate(ctx, "new_video", title, body, thumb);
+        } catch (Throwable t) {
+            Log.e(TAG, "checkAndNotifyIfNewestVideoChanged", t);
+        }
+    }
+
+    private List<YouTubeVideo> loadCachedVideos(Context context) {
+        List<YouTubeVideo> out = new ArrayList<>();
+        if (context == null) return out;
+        try {
+            SharedPreferences sp = context.getSharedPreferences(VIDEOS_CACHE_PREFS, Context.MODE_PRIVATE);
+            String raw = sp.getString(VIDEOS_CACHE_KEY, null);
+            if (raw == null || raw.isEmpty()) return out;
+            JSONArray arr = new JSONArray(raw);
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.optJSONObject(i);
+                if (o == null) continue;
+                YouTubeVideo v = new YouTubeVideo();
+                v.videoId = o.optString("videoId", "");
+                if (v.videoId == null || v.videoId.isEmpty()) continue;
+                v.title = o.optString("title", "");
+                v.thumbnailUrl = o.optString("thumbnailUrl", "");
+                v.publishedAt = o.optString("publishedAt", "");
+                v.channelIndex = o.optInt("channelIndex", -1);
+                v.durationSeconds = o.optInt("durationSeconds", -1);
+                v.viewCount = o.optLong("viewCount", -1L);
+                out.add(v);
+            }
+            Log.d(TAG, "Loaded cached videos: " + out.size());
+        } catch (Exception e) {
+            Log.w(TAG, "loadCachedVideos failed", e);
+        }
+        return out;
+    }
+
+    private void saveCachedVideos(Context context, List<YouTubeVideo> videos) {
+        if (context == null || videos == null) return;
+        try {
+            JSONArray arr = new JSONArray();
+            int max = Math.min(120, videos.size());
+            for (int i = 0; i < max; i++) {
+                YouTubeVideo v = videos.get(i);
+                if (v == null || v.videoId == null || v.videoId.isEmpty()) continue;
+                JSONObject o = new JSONObject();
+                o.put("videoId", v.videoId);
+                o.put("title", v.title != null ? v.title : "");
+                o.put("thumbnailUrl", v.thumbnailUrl != null ? v.thumbnailUrl : "");
+                o.put("publishedAt", v.publishedAt != null ? v.publishedAt : "");
+                o.put("channelIndex", v.channelIndex);
+                o.put("durationSeconds", v.durationSeconds);
+                o.put("viewCount", v.viewCount);
+                arr.put(o);
+            }
+            SharedPreferences sp = context.getSharedPreferences(VIDEOS_CACHE_PREFS, Context.MODE_PRIVATE);
+            sp.edit()
+                    .putString(VIDEOS_CACHE_KEY, arr.toString())
+                    .putLong(VIDEOS_CACHE_UPDATED_AT, System.currentTimeMillis())
+                    .apply();
+        } catch (Exception e) {
+            Log.w(TAG, "saveCachedVideos failed", e);
+        }
+    }
+
+    // No-op helper (kept for readability): disallowed RSS filter is done inline in loadVideos.
 
     /** Sample videos when all fetch methods fail – user can tap to open YouTube. */
     private void addSampleVideos(List<YouTubeVideo> out) {
@@ -741,6 +1107,36 @@ public class VideosFragment extends Fragment {
             if (id != null && !id.isEmpty()) Log.d(TAG, "Resolved handle " + h + " -> " + id);
             return id;
         }
+    }
+
+    /**
+     * Best-effort resolve: handle -> UC channel id without YouTube API key.
+     * We fetch the public /@handle/about HTML and extract the UC id from it.
+     */
+    private String resolveChannelIdFromHandleFallback(OkHttpClient client, String handle) throws Exception {
+        if (handle == null || handle.isEmpty()) return null;
+        String h = handle.startsWith("@") ? handle.substring(1) : handle;
+        String url = "https://www.youtube.com/@"+h+"/about";
+
+        Request req = new Request.Builder()
+                .url(url)
+                .addHeader("User-Agent", "SwamiSachidanand/1.0")
+                .build();
+
+        try (Response r = client.newCall(req).execute()) {
+            if (!r.isSuccessful() || r.body() == null) return null;
+            String body = r.body().string();
+            if (body == null || body.isEmpty()) return null;
+
+            // Common patterns found in YouTube HTML/JSON blobs.
+            Matcher m1 = Pattern.compile("channelId\\\"\\s*:\\s*\\\"(UC[0-9A-Za-z_-]{22})\\\"").matcher(body);
+            if (m1.find()) return m1.group(1);
+
+            Matcher m2 = Pattern.compile("\\/channel\\/(UC[0-9A-Za-z_-]{22})").matcher(body);
+            if (m2.find()) return m2.group(1);
+        }
+
+        return null;
     }
 
     /** Get uploads playlist ID from channel via channels.list API. Supports UC id or @handle. */
@@ -1564,7 +1960,6 @@ public class VideosFragment extends Fragment {
                             .load(video.thumbnailUrl)
                             .placeholder(R.drawable.book_placeholder)
                             .error(R.drawable.book_placeholder)
-                            .centerCrop()
                             .into(thumbnailView);
                     } else {
                         thumbnailView.setImageResource(R.drawable.book_placeholder);
@@ -1576,10 +1971,51 @@ public class VideosFragment extends Fragment {
         }
     }
 
-    private void loadMoreVideos() {
+    /**
+     * RSS/Invidious પછી playlist next-page tokens મૂકીને scroll થી નીચે વધુ વિડિઓ લોડ કરી શકાય.
+     */
+    private void tryPrimePlaylistLoadMoreForScroll(OkHttpClient client, String apiKey,
+            String[] resolvedIds, String disallowedUcId) {
+        if (apiKey == null || apiKey.isEmpty() || resolvedIds == null) return;
+        try {
+            for (int i = 0; i < resolvedIds.length && i < CHANNEL_HANDLES.length; i++) {
+                String channelId = resolvedIds[i];
+                String handle = CHANNEL_HANDLES[i];
+                if (channelId != null && disallowedUcId != null && disallowedUcId.equals(channelId)) {
+                    continue;
+                }
+                String uploadsId = null;
+                try {
+                    if (channelId != null && !channelId.isEmpty()) {
+                        uploadsId = getUploadsPlaylistId(client, apiKey, channelId);
+                    }
+                    if ((uploadsId == null || uploadsId.isEmpty()) && handle != null) {
+                        uploadsId = getUploadsPlaylistId(client, apiKey, handle);
+                    }
+                } catch (Exception e) {
+                    Log.w(TAG, "prime load-more: uploads playlist id failed handle=" + handle, e);
+                }
+                if (uploadsId == null || uploadsId.isEmpty()) continue;
+                List<YouTubeVideo> discard = new ArrayList<>();
+                String np = fetchPlaylistVideos(client, apiKey, uploadsId, null, discard, i);
+                if (np != null && !np.isEmpty()) {
+                    loadMorePlaylistIds.add(uploadsId);
+                    loadMorePageTokens.add(np);
+                }
+            }
+            if (!loadMorePlaylistIds.isEmpty()) {
+                lastFetchSource = "playlist";
+                Log.d(TAG, "Primed playlist cursors for infinite scroll: " + loadMorePlaylistIds.size());
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "tryPrimePlaylistLoadMoreForScroll failed", e);
+        }
+    }
+
+    private void loadMoreVideos(boolean bypassThrottle) {
         if (loadingMore) return;
         long now = System.currentTimeMillis();
-        if (now - lastLoadMoreTime < LOAD_MORE_THROTTLE_MS) return;
+        if (!bypassThrottle && now - lastLoadMoreTime < LOAD_MORE_THROTTLE_MS) return;
         boolean canLoad = false;
         if ("piped".equals(lastFetchSource) && lastPipedBase != null && lastPipedNextpage != null && lastChannelId != null) canLoad = true;
         else if ("playlist".equals(lastFetchSource)) {
@@ -1671,6 +2107,7 @@ public class VideosFragment extends Fragment {
                     nextPageToken = finalNext;
                     if ("piped".equals(src)) lastPipedNextpage = finalNext;
                     loadingMore = false;
+                    scheduleLoadMoreIfScreenNotFull();
                 });
             } catch (Throwable t) {
                 Log.e(TAG, "loadMoreVideos error", t);
@@ -1681,18 +2118,24 @@ public class VideosFragment extends Fragment {
 
     private void openVideo(String videoId) {
         if (videoId == null || videoId.isEmpty()) return;
+        final String vid = videoId;
         RecentVideoHelper.saveRecentVideoId(requireContext(), videoId);
-        try {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube://" + videoId));
-            startActivity(intent);
-        } catch (Exception e) {
+        android.app.Activity act = getActivity();
+        AdLoadingOverlay.show(act);
+        InterstitialAdHelper.showIfAllowed(act, () -> {
+            AdLoadingOverlay.dismiss(act);
             try {
-                Intent intent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://www.youtube.com/watch?v=" + videoId));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube://" + vid));
                 startActivity(intent);
-            } catch (Exception e2) {
-                Log.e(TAG, "openVideo failed", e2);
+            } catch (Exception e) {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://www.youtube.com/watch?v=" + vid));
+                    startActivity(intent);
+                } catch (Exception e2) {
+                    Log.e(TAG, "openVideo failed", e2);
+                }
             }
-        }
+        });
     }
 }

@@ -60,6 +60,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -85,6 +89,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
     private RecyclerView bhaktiBooksRecycler;
     private RecyclerView homeVideosRecycler;
     private RecyclerView homeAudioRecycler;
+    private RecyclerView homePravachanRecycler;
     private com.google.android.material.textfield.TextInputEditText searchInput;
     private ImageView clearSearch, micButton;
     private LinearLayout searchResultsSection;
@@ -98,6 +103,9 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
     private BookAdapter bhaktiBooksAdapter;
     private HomeVideoAdapter homeVideoAdapter;
     private AudioBookCardAdapter homeAudioAdapter;
+    private PravachanAdapter homePravachanAdapter;
+    private TextView homePravachanViewAll;
+    private final List<PravachanItem> allHomePravachans = new ArrayList<>();
     private List<ServerAudioBook> allHomeAudio;
     private List<HomeVideoLoader.HomeVideoItem> allHomeVideos;
     
@@ -114,7 +122,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
     private GallerySlideshowPagerAdapter heroSlideshowAdapter;
     private final List<String> heroPhotoUrls = new ArrayList<>();
     private static final String HERO_GALLERY_BASE = "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/gallery/";
-    private static final String HERO_GALLERY_LIST_URL = HERO_GALLERY_BASE + "list.json";
+    private static final String HERO_GALLERY_LIST_URL = HERO_GALLERY_BASE + "list.json?v=2";
     private static final long HERO_VIDEO_TO_PHOTO_MS = 45_000L;
     // Hero box slideshow – 6 seconds so अगला photo आराम से load हो सके
     private static final int HERO_SLIDESHOW_INTERVAL_MS = 6000;
@@ -141,7 +149,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
     private final Handler suvicharHandler = new Handler(Looper.getMainLooper());
     private Runnable suvicharHideRunnable;
     private boolean suvicharShowing = false;
-    private AdView inlineBannerAd;
+    private AdView homeBottomBannerAd;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -167,9 +175,11 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             bhaktiBooksRecycler = view.findViewById(R.id.bhakti_books_recycler);
             homeVideosRecycler = view.findViewById(R.id.home_videos_recycler);
             homeAudioRecycler = view.findViewById(R.id.home_audio_recycler);
+            homePravachanRecycler = view.findViewById(R.id.home_pravachan_recycler);
 
             setupHomeVideos();
             setupHomeAudio();
+            setupHomePravachan(view);
             setupHistoryRow(view);
             setupViewAllClicks(view);
             setupBookStoreSection(view);
@@ -212,8 +222,8 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                 });
             }
 
-            // Inline banner ad between new audio and new books
-            setupInlineBannerAd(view);
+            // Banner at the very bottom (scroll to see it)
+            setupHomeBottomBannerAd(view);
 
         if (getContext() != null && searchResultsRecycler != null) {
             searchResultsRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -243,9 +253,8 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                 view.postDelayed(() -> {
                     if (!isAdded() || getContext() == null) return;
                     loadUnifiedHistory();
-                    loadBestBooks();
-                    loadBhaktiBooks();
-                }, 500);
+                    loadBestAndBhaktiBooksCombined();
+                }, 380);
             }
         } catch (Throwable t) {
             Log.e(TAG, "Error in onCreateView", t);
@@ -291,38 +300,53 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
         loadSuvichar();
     }
 
-    private void setupInlineBannerAd(View root) {
+    private void setupHomeBottomBannerAd(View root) {
         try {
-            inlineBannerAd = root.findViewById(R.id.home_inline_banner);
-            if (inlineBannerAd == null) return;
+            homeBottomBannerAd = root.findViewById(R.id.home_bottom_banner);
+            if (homeBottomBannerAd == null) return;
             AdRequest request = new AdRequest.Builder().build();
-            inlineBannerAd.setAdListener(new AdListener() {
+            homeBottomBannerAd.setAdListener(AdLog.wrapBannerListener("home_bottom", new AdListener() {
                 @Override
                 public void onAdLoaded() {
                     try {
-                        if (inlineBannerAd.getVisibility() != View.VISIBLE) {
-                            inlineBannerAd.setAlpha(0f);
-                            inlineBannerAd.setTranslationY(inlineBannerAd.getHeight());
-                            inlineBannerAd.setVisibility(View.VISIBLE);
-                            inlineBannerAd.animate()
+                        if (homeBottomBannerAd.getVisibility() != View.VISIBLE) {
+                            homeBottomBannerAd.setAlpha(0f);
+                            homeBottomBannerAd.setTranslationY(12f);
+                            homeBottomBannerAd.setVisibility(View.VISIBLE);
+                            homeBottomBannerAd.animate()
                                     .translationY(0f)
                                     .alpha(1f)
-                                    .setDuration(350L)
+                                    .setDuration(400L)
+                                    .setInterpolator(new android.view.animation.DecelerateInterpolator(1.5f))
                                     .start();
                         }
-                    } catch (Throwable t) {
-                        inlineBannerAd.setVisibility(View.VISIBLE);
-                    }
+                    } catch (Throwable ignore) {}
                 }
 
                 @Override
                 public void onAdFailedToLoad(LoadAdError adError) {
-                    Log.w(TAG, "home banner failed: " + adError);
+                    try {
+                        String code = adError != null ? String.valueOf(adError.getCode()) : "null";
+                        String msg = adError != null ? adError.getMessage() : "null";
+                        String domain = adError != null ? adError.getDomain() : "null";
+                        Log.w(TAG, "home bottom banner failed: code=" + code + ", domain=" + domain + ", message=" + msg);
+                        homeBottomBannerAd.setVisibility(View.VISIBLE);
+                        homeBottomBannerAd.setAlpha(0.25f);
+                    } catch (Throwable ignore) {}
                 }
-            });
-            inlineBannerAd.loadAd(request);
+            }));
+            homeBottomBannerAd.postDelayed(() -> {
+                try {
+                    if (homeBottomBannerAd != null && isAdded()) {
+                        AdLog.bannerRequest("home_bottom");
+                        BannerAdHelper.loadWhenReady(requireContext(), homeBottomBannerAd, request);
+                    }
+                } catch (Throwable t2) {
+                    Log.e(TAG, "bottom banner loadAd delayed", t2);
+                }
+            }, 1200);
         } catch (Throwable t) {
-            Log.e(TAG, "setupInlineBannerAd", t);
+            Log.e(TAG, "setupHomeBottomBannerAd", t);
         }
     }
 
@@ -538,12 +562,17 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             suvicharHandler.postDelayed(suvicharHideRunnable, displayMsAfterScroll);
             return;
         }
-        suvicharRecycler.getViewTreeObserver().addOnGlobalLayoutListener(new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
+        // Capture view reference: field becomes null in onDestroyView while a pending layout callback may still run.
+        final RecyclerView recyclerForLayout = suvicharRecycler;
+        recyclerForLayout.getViewTreeObserver().addOnGlobalLayoutListener(new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                suvicharRecycler.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                try {
+                    recyclerForLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } catch (Throwable ignored) {
+                }
                 if (!isAdded()) return;
-                View itemView = suvicharRecycler.getChildAt(0);
+                View itemView = recyclerForLayout.getChildAt(0);
                 if (itemView == null && retryCount < 3) {
                     Log.d(TAG, "suvichar scroll: itemView null, retry " + (retryCount + 1));
                     suvicharHandler.postDelayed(() -> startSuvicharTextScrollAnimation(displayMsAfterScroll, retryCount + 1), 150);
@@ -1659,68 +1688,52 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
         }).start();
     }
 
-    private void loadBestBooks() {
-        new Thread(() -> {
-            try {
-                android.app.Activity act = getActivity();
-                if (act == null) return;
-                List<Book> bestBooks = ServerBookLoader.load(act);
-                // સર્વર newFileNames વાળાં પુસ્તકો પહેલાં, પછી બાકી – નવાં હોમ પર પહેલાં દેખાશે
-                Collections.sort(bestBooks, (b1, b2) -> {
-                    if (b1.isNew() != b2.isNew()) return b1.isNew() ? -1 : 1;
-                    return safeCompare(b1.getName(), b2.getName());
-                });
-                final List<Book> bestBooksToShow = bestBooks.size() > BEST_BOOKS_COUNT
-                    ? new ArrayList<>(bestBooks.subList(0, BEST_BOOKS_COUNT)) : bestBooks;
-
-                android.app.Activity a = getActivity();
-                if (a != null && bestBooksRecycler != null) {
-                    a.runOnUiThread(() -> {
-                        if (!isAdded() || getContext() == null || bestBooksRecycler == null) return;
-                        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-                        bestBooksRecycler.setLayoutManager(layoutManager);
-                        bestBooksRecycler.setItemAnimator(new DefaultItemAnimator());
-                        int spacing = (int) (10 * getResources().getDisplayMetrics().density);
-                        bestBooksRecycler.addItemDecoration(new HorizontalSpacingItemDecoration(spacing));
-                        bestBooksAdapter = new BookAdapter(bestBooksToShow, this);
-                        bestBooksAdapter.setUseCompactLayout(true);
-                        bestBooksRecycler.setAdapter(bestBooksAdapter);
-                    });
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Error loading best books", e);
-            }
-        }).start();
-    }
-
-    private void loadBhaktiBooks() {
+    /** એક જ નેટવર્ક લોડથી શ્રેષ્ઠ + ભક્તિ બંને — ઓછી થ્રેડ/ઓછું UI જંક */
+    private void loadBestAndBhaktiBooksCombined() {
         new Thread(() -> {
             try {
                 android.app.Activity act = getActivity();
                 if (act == null) return;
                 List<Book> allBooks = ServerBookLoader.load(act);
+                List<Book> bestBooks = new ArrayList<>(allBooks);
+                Collections.sort(bestBooks, (b1, b2) -> {
+                    if (b1.isNew() != b2.isNew()) return b1.isNew() ? -1 : 1;
+                    return safeCompare(b1.getName(), b2.getName());
+                });
+                final List<Book> bestSlice = bestBooks.size() > BEST_BOOKS_COUNT
+                        ? new ArrayList<>(bestBooks.subList(0, BEST_BOOKS_COUNT)) : bestBooks;
                 List<Book> bhaktiBooks = new ArrayList<>();
                 for (Book book : allBooks) {
                     if ("Bhakti".equals(book.getCategory())) bhaktiBooks.add(book);
                 }
                 Collections.sort(bhaktiBooks, (b1, b2) -> safeCompare(b1.getName(), b2.getName()));
-                allBooksForSearch = new ArrayList<>(allBooks);
-
-                android.app.Activity a = getActivity();
-                if (a == null) return;
-                a.runOnUiThread(() -> {
-                    if (!isAdded() || getContext() == null || bhaktiBooksRecycler == null) return;
-                    LinearLayoutManager lm = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-                    bhaktiBooksRecycler.setLayoutManager(lm);
-                    bhaktiBooksRecycler.setItemAnimator(new DefaultItemAnimator());
-                    int spacing = (int) (10 * getResources().getDisplayMetrics().density);
-                    bhaktiBooksRecycler.addItemDecoration(new HorizontalSpacingItemDecoration(spacing));
-                    bhaktiBooksAdapter = new BookAdapter(bhaktiBooks, this);
-                    bhaktiBooksAdapter.setUseCompactLayout(true);
-                    bhaktiBooksRecycler.setAdapter(bhaktiBooksAdapter);
+                final List<Book> bhaktiFinal = bhaktiBooks;
+                act.runOnUiThread(() -> {
+                    if (!isAdded() || getContext() == null) return;
+                    allBooksForSearch = new ArrayList<>(allBooks);
+                    if (bestBooksRecycler != null) {
+                        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+                        bestBooksRecycler.setLayoutManager(layoutManager);
+                        bestBooksRecycler.setItemAnimator(new DefaultItemAnimator());
+                        int spacing = (int) (10 * getResources().getDisplayMetrics().density);
+                        bestBooksRecycler.addItemDecoration(new HorizontalSpacingItemDecoration(spacing));
+                        bestBooksAdapter = new BookAdapter(bestSlice, this);
+                        bestBooksAdapter.setUseCompactLayout(true);
+                        bestBooksRecycler.setAdapter(bestBooksAdapter);
+                    }
+                    if (bhaktiBooksRecycler != null) {
+                        LinearLayoutManager lm = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+                        bhaktiBooksRecycler.setLayoutManager(lm);
+                        bhaktiBooksRecycler.setItemAnimator(new DefaultItemAnimator());
+                        int spacing = (int) (10 * getResources().getDisplayMetrics().density);
+                        bhaktiBooksRecycler.addItemDecoration(new HorizontalSpacingItemDecoration(spacing));
+                        bhaktiBooksAdapter = new BookAdapter(bhaktiFinal, this);
+                        bhaktiBooksAdapter.setUseCompactLayout(true);
+                        bhaktiBooksRecycler.setAdapter(bhaktiBooksAdapter);
+                    }
                 });
             } catch (Exception e) {
-                Log.e(TAG, "Error loading bhakti books", e);
+                Log.e(TAG, "loadBestAndBhaktiBooksCombined", e);
             }
         }).start();
     }
@@ -1769,6 +1782,219 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
         loadHomeAudioAsync();
     }
 
+    private void setupHomePravachan(View root) {
+        if (homePravachanRecycler == null || getContext() == null) return;
+
+        homePravachanRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        homePravachanRecycler.setItemAnimator(new DefaultItemAnimator());
+
+        homePravachanAdapter = new PravachanAdapter();
+        homePravachanAdapter.setListener((item, adapterPosition) -> {
+            if (item == null) return;
+            MainActivity.queuePravachanStart(item);
+            switchToBottomNavTab(R.id.nav_pravachan);
+        });
+        homePravachanRecycler.setAdapter(homePravachanAdapter);
+
+        homePravachanViewAll = root.findViewById(R.id.home_pravachan_view_all);
+        if (homePravachanViewAll != null) {
+            homePravachanViewAll.setOnClickListener(v -> switchToBottomNavTab(R.id.nav_pravachan));
+        }
+
+        loadHomePravachanAsync();
+    }
+
+    private void loadHomePravachanAsync() {
+        if (!isAdded() || homePravachanAdapter == null) return;
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Query q = db.collection("pravachan")
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
+                .limit(6);
+
+        q.get()
+                .addOnSuccessListener(snap -> {
+                    if (!isAdded() || homePravachanAdapter == null) return;
+
+                    java.util.HashSet<String> seenUrls = new java.util.HashSet<>();
+                    List<PravachanItem> list = new ArrayList<>();
+                    if (snap != null && snap.getDocuments() != null) {
+                        for (com.google.firebase.firestore.DocumentSnapshot d : snap.getDocuments()) {
+                            try {
+                                String id = d.getId();
+                                String title = d.getString("title");
+                                String url = d.getString("audioUrl");
+                                if (url == null || url.trim().isEmpty()) {
+                                    url = d.getString("audio_url");
+                                }
+                                String speaker = d.getString("speaker");
+
+                                long createdAt = 0L;
+                                try {
+                                    com.google.firebase.Timestamp ts = d.getTimestamp("createdAt");
+                                    if (ts != null) createdAt = ts.toDate().getTime();
+                                    else {
+                                        Long lng = d.getLong("createdAt");
+                                        if (lng != null) createdAt = lng;
+                                    }
+                                } catch (Throwable ignore) {
+                                }
+
+                                if (title == null || url == null) continue;
+                                String cleanTitle = cleanPravachanTitle(title.trim());
+                                String cleanUrl = url.trim();
+                                if (cleanTitle.isEmpty() || cleanUrl.isEmpty()) continue;
+
+                                // Skip test / old entries like "aud 2026 ..."
+                                String lowerTitle = cleanTitle.toLowerCase();
+                                if (lowerTitle.startsWith("aud 2026") || lowerTitle.startsWith("aud_2026")) continue;
+
+                                // Avoid duplicates within this home section.
+                                if (seenUrls.contains(cleanUrl)) continue;
+                                seenUrls.add(cleanUrl);
+
+                                list.add(new PravachanItem(id, cleanTitle, cleanUrl, speaker, createdAt));
+                            } catch (Throwable ignore) {
+                            }
+                        }
+                    }
+
+                    // Ensure: Part A before Part B, and groups ordered by latest createdAt.
+                    list = reorderPravachansByBaseAndPart(list);
+                    allHomePravachans.clear();
+                    allHomePravachans.addAll(list);
+                    homePravachanAdapter.setItems(list);
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "loadHomePravachan error", e));
+    }
+
+    private static String cleanPravachanTitle(String title) {
+        if (title == null) return "";
+        String t = title.trim();
+        if (t.isEmpty()) return t;
+
+        // If it already contains "(Part A/B)", just normalize spaces.
+        if (t.matches("(?i).*\\(\\s*Part\\s+[AB]\\s*\\)\\s*$")) {
+            return t.replaceAll("\\s+", " ").trim();
+        }
+
+        // Normalize filename-like strings: remove extension and convert suffix A/B to "(Part A/B)".
+        t = t.replaceAll("(?i)\\.(mp3|wav)\\s*$", "").trim();
+
+        // Detect trailing part letter: supports "..._A", "... A", "...-B", "...B" (as last token).
+        java.util.regex.Matcher partMatcher = java.util.regex.Pattern
+                .compile("(?i)(.*?)(?:[_\\s-]?)([AB])\\s*$")
+                .matcher(t);
+
+        String partLetter = null;
+        String base = t;
+        if (partMatcher.find()) {
+            String maybeBase = partMatcher.group(1);
+            String maybeLetter = partMatcher.group(2);
+            if (maybeBase != null && maybeLetter != null) {
+                String baseTrim = maybeBase.trim();
+                if (!baseTrim.isEmpty()) {
+                    base = baseTrim;
+                    partLetter = maybeLetter.toUpperCase();
+                }
+            }
+        }
+
+        // Replace underscores with spaces for readability.
+        base = base.replace('_', ' ').replaceAll("\\s+", " ").trim();
+        if (partLetter != null && ("A".equals(partLetter) || "B".equals(partLetter))) {
+            return base + " (Part " + partLetter + ")";
+        }
+        return base;
+    }
+
+    private static class PartInfo {
+        final String baseKey;
+        final int partIndex; // 0 = A, 1 = B, 2 = other/unknown
+        PartInfo(String baseKey, int partIndex) {
+            this.baseKey = baseKey;
+            this.partIndex = partIndex;
+        }
+    }
+
+    private static PartInfo parsePartInfo(String title) {
+        if (title == null) return new PartInfo("", 2);
+        String t = title.trim();
+
+        // Already in format: "... (Part A)" / "... (Part B)"
+        java.util.regex.Matcher m = java.util.regex.Pattern
+                .compile("\\(\\s*Part\\s+([AB])\\s*\\)\\s*$", java.util.regex.Pattern.CASE_INSENSITIVE)
+                .matcher(t);
+        if (m.find()) {
+            String letter = m.group(1) != null ? m.group(1).toUpperCase() : "";
+            int partIndex = "A".equals(letter) ? 0 : 1;
+            String base = t.substring(0, m.start()).trim();
+            String baseKey = base.toLowerCase().replaceAll("\\s+", " ");
+            return new PartInfo(baseKey, partIndex);
+        }
+
+        // Fallback: title ends with "A" or "B" as a word
+        java.util.regex.Matcher m2 = java.util.regex.Pattern
+                .compile("(^|\\s|_)([AB])\\s*$", java.util.regex.Pattern.CASE_INSENSITIVE)
+                .matcher(t);
+        if (m2.find()) {
+            String letter = m2.group(2) != null ? m2.group(2).toUpperCase() : "";
+            int partIndex = "A".equals(letter) ? 0 : 1;
+            String base = t.substring(0, m2.start(2)).trim();
+            String baseKey = base.toLowerCase().replaceAll("\\s+", " ");
+            return new PartInfo(baseKey, partIndex);
+        }
+
+        String baseKey = t.toLowerCase().replaceAll("\\s+", " ");
+        return new PartInfo(baseKey, 2);
+    }
+
+    private static List<PravachanItem> reorderPravachansByBaseAndPart(List<PravachanItem> input) {
+        if (input == null || input.isEmpty()) return new ArrayList<>();
+
+        // Group by base title (title without "(Part A/B)")
+        class Group {
+            final String baseKey;
+            final List<PravachanItem> items = new ArrayList<>();
+            long groupLatest = 0L;
+            Group(String baseKey) { this.baseKey = baseKey; }
+        }
+
+        java.util.LinkedHashMap<String, Group> groups = new java.util.LinkedHashMap<>();
+        for (PravachanItem p : input) {
+            if (p == null) continue;
+            PartInfo info = parsePartInfo(p.title);
+            String baseKey = info.baseKey != null ? info.baseKey : "";
+            Group g = groups.get(baseKey);
+            if (g == null) {
+                g = new Group(baseKey);
+                groups.put(baseKey, g);
+            }
+            g.items.add(p);
+            g.groupLatest = Math.max(g.groupLatest, p.createdAtMillis);
+        }
+
+        // Sort groups by latest createdAt (desc) to keep “new items first”
+        List<Group> groupList = new ArrayList<>(groups.values());
+        groupList.sort((g1, g2) -> Long.compare(g2.groupLatest, g1.groupLatest));
+
+        List<PravachanItem> out = new ArrayList<>();
+        for (Group g : groupList) {
+            // Within group: A then B then others, fallback by createdAt desc.
+            g.items.sort((a, b) -> {
+                PartInfo ia = parsePartInfo(a.title);
+                PartInfo ib = parsePartInfo(b.title);
+                int c = Integer.compare(ia.partIndex, ib.partIndex);
+                if (c != 0) return c;
+                return Long.compare(b.createdAtMillis, a.createdAtMillis);
+            });
+            out.addAll(g.items);
+        }
+
+        return out;
+    }
+
     private void setupHistoryRow(View root) {
         if (homeHistoryRecycler == null || getContext() == null) return;
         homeHistoryRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -1789,12 +2015,17 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             @Override
             public void onVideoClick(HomeVideoLoader.HomeVideoItem video) {
                 if (video == null || video.videoId == null || getActivity() == null) return;
-                try {
-                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + video.videoId));
-                    startActivity(i);
-                } catch (Exception e) {
-                    Log.e(TAG, "open video", e);
-                }
+                final String vid = video.videoId;
+                android.app.Activity act = getActivity();
+                AdLoadingOverlay.show(act);
+                InterstitialAdHelper.showIfAllowed(act, () -> {
+                    AdLoadingOverlay.dismiss(act);
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + vid)));
+                    } catch (Exception e) {
+                        Log.e(TAG, "open video", e);
+                    }
+                });
             }
         });
         homeHistoryRecycler.setAdapter(homeHistoryAdapter);
@@ -1896,6 +2127,15 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
             booksViewAll.setOnClickListener(v -> {
                 if (getActivity() instanceof MainActivity) {
                     ((MainActivity) getActivity()).switchToTab(R.id.nav_books);
+                }
+            });
+        }
+
+        TextView pravachanViewAll = root.findViewById(R.id.home_pravachan_view_all);
+        if (pravachanViewAll != null) {
+            pravachanViewAll.setOnClickListener(v -> {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).switchToTab(R.id.nav_pravachan);
                 }
             });
         }

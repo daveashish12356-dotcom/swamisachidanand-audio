@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:animateLayoutChanges="true"
     android:paddingStart="8dp"
     android:paddingEnd="8dp"
     android:paddingTop="6dp"
@@ -14,17 +15,18 @@
         android:orientation="horizontal"
         android:padding="8dp"
         android:background="@drawable/pravachan_item_bg"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:elevation="3dp">
 
         <ImageView
             android:id="@+id/pravachan_item_image"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_pravachan_swami"
             android:contentDescription="@string/nav_audio_pravachan"
             android:background="@drawable/pravachan_item_image_bg"
-            android:padding="2dp" />
+            android:padding="3dp" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -55,8 +57,8 @@
 
         <TextView
             android:id="@+id/pravachan_item_play"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:gravity="center"
             android:text="▶"
             android:textSize="18sp"
@@ -64,6 +66,96 @@
             android:background="@drawable/pravachan_item_play_bg"
             android:padding="4dp" />
 
+    </LinearLayout>
+
+    <!-- Inline player under the selected pravachan card -->
+    <LinearLayout
+        android:id="@+id/pravachan_inline_player_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:background="@drawable/bg_player_card"
+        android:padding="14dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp">
+
+            <TextView
+                android:id="@+id/pravachan_inline_time_current"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:textSize="12sp"
+                android:textColor="@color/bhagva"
+                android:textStyle="bold"
+                android:gravity="end" />
+
+            <SeekBar
+                android:id="@+id/pravachan_inline_seek"
+                android:layout_width="0dp"
+                android:layout_height="4dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:max="1000"
+                android:progress="0"
+                android:progressTint="@color/bhagva"
+                android:thumbTint="@color/bhagva" />
+
+            <TextView
+                android:id="@+id/pravachan_inline_time_total"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:textSize="12sp"
+                android:textColor="#757575"
+                android:textStyle="bold"
+                android:gravity="start" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="12dp">
+
+            <ImageButton
+                android:id="@+id/pravachan_inline_back_10"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="@drawable/pravachan_skip_button_bg"
+                android:padding="14dp"
+                android:contentDescription="Back 10 seconds"
+                android:src="@android:drawable/ic_media_rew"
+                android:tint="@android:color/white" />
+
+            <ImageButton
+                android:id="@+id/pravachan_inline_play"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/play_button_gradient"
+                android:padding="20dp"
+                android:contentDescription="@string/audio_play"
+                android:src="@android:drawable/ic_media_play"
+                android:tint="@android:color/white" />
+
+            <ImageButton
+                android:id="@+id/pravachan_inline_forward_10"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="@drawable/pravachan_skip_button_bg"
+                android:padding="14dp"
+                android:contentDescription="Forward 10 seconds"
+                android:src="@android:drawable/ic_media_ff"
+                android:tint="@android:color/white" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

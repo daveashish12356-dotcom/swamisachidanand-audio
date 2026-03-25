@@ -255,6 +255,7 @@
                     android:textColor="?attr/text_primary" />
 
                 <TextView
+                    android:id="@+id/swami_philosophy_body"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_small"
@@ -378,7 +379,7 @@
             android:layout_marginBottom="@dimen/spacing_xlarge"
             android:visibility="gone"
             app:adSize="BANNER"
-            app:adUnitId="ca-app-pub-7592986107944664/4541738286" />
+            app:adUnitId="@string/admob_banner_unit_id" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

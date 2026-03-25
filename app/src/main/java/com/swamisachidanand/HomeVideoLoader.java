@@ -1,11 +1,16 @@
 package com.swamisachidanand;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -33,6 +38,10 @@ public class HomeVideoLoader {
 
     private static final int MAX_VIDEOS = 5;
     private static final int TIMEOUT_SEC = 12;
+    private static final String CACHE_PREFS = "home_video_cache_prefs";
+    private static final String CACHE_KEY = "home_videos_json";
+    private static final String FIREBASE_FEED_COLLECTION = "yt_feed";
+    private static final String FIREBASE_FEED_DOC = "latest";
 
     public interface Callback {
         void onVideosLoaded(List<HomeVideoItem> videos);
@@ -43,6 +52,14 @@ public class HomeVideoLoader {
         ExecutorService exec = Executors.newSingleThreadExecutor();
         Handler main = new Handler(Looper.getMainLooper());
         exec.execute(() -> {
+            // 0) Show cached videos immediately (fast UI, no blank state).
+            List<HomeVideoItem> cached = loadCache(context);
+            if (!cached.isEmpty()) {
+                main.post(() -> callback.onVideosLoaded(cached));
+            }
+            // 0b) Try Firebase feed doc (YouTube API -> Firebase -> App).
+            loadFromFirebase(context, main, callback);
+
             List<HomeVideoItem> result = new ArrayList<>();
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(TIMEOUT_SEC, java.util.concurrent.TimeUnit.SECONDS)
@@ -81,6 +98,7 @@ public class HomeVideoLoader {
                         });
                         final List<HomeVideoItem> toSend = fromApi.size() > MAX_VIDEOS ? fromApi.subList(0, MAX_VIDEOS) : fromApi;
                         Log.d(TAG, "Home videos from API: " + toSend.size());
+                        saveCache(context, toSend);
                         main.post(() -> callback.onVideosLoaded(toSend));
                         return;
                     }
@@ -123,6 +141,12 @@ public class HomeVideoLoader {
             List<HomeVideoItem> finalResult = result.size() > MAX_VIDEOS ? result.subList(0, MAX_VIDEOS) : result;
             if (finalResult.isEmpty()) {
                 Log.d(TAG, "No videos from API or RSS – HomeFragment will use search fallback");
+                if (!cached.isEmpty()) {
+                    // Keep cached UI; no need to overwrite with empty.
+                    return;
+                }
+            } else {
+                saveCache(context, finalResult);
             }
             main.post(() -> callback.onVideosLoaded(finalResult));
         });
@@ -409,5 +433,111 @@ public class HomeVideoLoader {
         public String publishedAt;
         public int durationSeconds;
         public long viewCount;
+    }
+
+    private static void saveCache(Context context, List<HomeVideoItem> list) {
+        if (context == null || list == null) return;
+        try {
+            JSONArray arr = new JSONArray();
+            for (HomeVideoItem v : list) {
+                if (v == null || v.videoId == null || v.videoId.isEmpty()) continue;
+                JSONObject o = new JSONObject();
+                o.put("videoId", v.videoId);
+                o.put("title", v.title != null ? v.title : "");
+                o.put("thumbnailUrl", v.thumbnailUrl != null ? v.thumbnailUrl : "");
+                o.put("publishedAt", v.publishedAt != null ? v.publishedAt : "");
+                o.put("durationSeconds", v.durationSeconds);
+                o.put("viewCount", v.viewCount);
+                arr.put(o);
+            }
+            SharedPreferences sp = context.getSharedPreferences(CACHE_PREFS, Context.MODE_PRIVATE);
+            sp.edit().putString(CACHE_KEY, arr.toString()).apply();
+        } catch (Exception e) {
+            Log.w(TAG, "saveCache failed", e);
+        }
+    }
+
+    private static List<HomeVideoItem> loadCache(Context context) {
+        List<HomeVideoItem> out = new ArrayList<>();
+        if (context == null) return out;
+        try {
+            SharedPreferences sp = context.getSharedPreferences(CACHE_PREFS, Context.MODE_PRIVATE);
+            String raw = sp.getString(CACHE_KEY, null);
+            if (raw == null || raw.isEmpty()) return out;
+            JSONArray arr = new JSONArray(raw);
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.optJSONObject(i);
+                if (o == null) continue;
+                HomeVideoItem v = new HomeVideoItem();
+                v.videoId = o.optString("videoId", "");
+                if (v.videoId == null || v.videoId.isEmpty()) continue;
+                v.title = o.optString("title", "");
+                v.thumbnailUrl = o.optString("thumbnailUrl", "");
+                v.publishedAt = o.optString("publishedAt", "");
+                v.durationSeconds = o.optInt("durationSeconds", -1);
+                v.viewCount = o.optLong("viewCount", -1L);
+                out.add(v);
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "loadCache failed", e);
+        }
+        return out;
+    }
+
+    private static void loadFromFirebase(Context context, Handler main, Callback callback) {
+        try {
+            FirebaseFirestore.getInstance()
+                    .collection(FIREBASE_FEED_COLLECTION)
+                    .document(FIREBASE_FEED_DOC)
+                    .get()
+                    .addOnSuccessListener(doc -> {
+                        List<HomeVideoItem> list = mapFirebaseDoc(doc);
+                        if (!list.isEmpty()) {
+                            saveCache(context, list);
+                            main.post(() -> callback.onVideosLoaded(list.size() > MAX_VIDEOS ? list.subList(0, MAX_VIDEOS) : list));
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.w(TAG, "Home Firebase feed failed", e));
+        } catch (Exception e) {
+            Log.w(TAG, "loadFromFirebase setup failed", e);
+        }
+    }
+
+    private static List<HomeVideoItem> mapFirebaseDoc(DocumentSnapshot doc) {
+        List<HomeVideoItem> out = new ArrayList<>();
+        if (doc == null || !doc.exists()) return out;
+        try {
+            Object raw = doc.get("videos");
+            if (!(raw instanceof List)) return out;
+            @SuppressWarnings("unchecked")
+            List<Object> rows = (List<Object>) raw;
+            for (Object row : rows) {
+                if (!(row instanceof java.util.Map)) continue;
+                @SuppressWarnings("unchecked")
+                java.util.Map<String, Object> m = (java.util.Map<String, Object>) row;
+                String videoId = m.get("videoId") != null ? String.valueOf(m.get("videoId")) : "";
+                if (videoId.isEmpty()) continue;
+                HomeVideoItem v = new HomeVideoItem();
+                v.videoId = videoId;
+                v.title = m.get("title") != null ? String.valueOf(m.get("title")) : "";
+                Object thumb = m.get("thumbnailUrl");
+                if (thumb == null) thumb = m.get("thumbUrl");
+                v.thumbnailUrl = thumb != null ? String.valueOf(thumb) : ("https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg");
+                v.publishedAt = m.get("publishedAt") != null ? String.valueOf(m.get("publishedAt")) : "";
+                Object dur = m.get("durationSeconds");
+                if (dur instanceof Number) v.durationSeconds = ((Number) dur).intValue();
+                Object vc = m.get("viewCount");
+                if (vc instanceof Number) v.viewCount = ((Number) vc).longValue();
+                out.add(v);
+            }
+            java.util.Collections.sort(out, (a, b) -> {
+                String pa = a.publishedAt != null ? a.publishedAt : "";
+                String pb = b.publishedAt != null ? b.publishedAt : "";
+                return pb.compareTo(pa);
+            });
+        } catch (Exception e) {
+            Log.w(TAG, "mapFirebaseDoc failed", e);
+        }
+        return out;
     }
 }

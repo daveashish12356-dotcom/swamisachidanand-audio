@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Public read for app video feed only.
+    match /yt_feed/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Audio pravachan list (Home + Pravachan tab) – read-only for clients.
+    match /pravachan/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Keep all other collections locked by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

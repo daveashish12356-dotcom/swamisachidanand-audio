@@ -37,7 +37,7 @@ public class AboutFragment extends Fragment {
 
     private static final String TAG = "AboutFragment";
     private static final String SAMPARK_GALLERY_BASE = "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/gallery/";
-    private static final String SAMPARK_GALLERY_LIST_URL = SAMPARK_GALLERY_BASE + "list.json";
+    private static final String SAMPARK_GALLERY_LIST_URL = SAMPARK_GALLERY_BASE + "list.json?v=2";
     private static final long SAMPARK_FIRST_PHOTO_MS = 10_000L;
     // Sampark photo slideshow – 6 seconds per photo
     private static final int SAMPARK_SLIDESHOW_INTERVAL_MS = 6000;
@@ -85,11 +85,30 @@ public class AboutFragment extends Fragment {
         bindSocialLink(view, R.id.sampark_facebook, getString(R.string.url_facebook));
         bindSocialLink(view, R.id.sampark_whatsapp, getString(R.string.url_whatsapp));
         bindSocialLink(view, R.id.sampark_telegram, getString(R.string.url_telegram));
+        bindSocialLink(view, R.id.sampark_instagram, getString(R.string.url_instagram));
 
         View galleryLink = view.findViewById(R.id.sampark_photo_gallery_link);
         if (galleryLink != null) {
             galleryLink.setOnClickListener(v -> {
                 if (getContext() != null) startActivity(new Intent(getContext(), PhotoGalleryActivity.class));
+            });
+        }
+
+        View tourBtn = view.findViewById(R.id.about_app_tour_btn);
+        if (tourBtn != null) {
+            tourBtn.setOnClickListener(v -> {
+                try {
+                    if (getActivity() instanceof MainActivity) {
+                        ((MainActivity) getActivity()).launchInteractiveTour();
+                    } else if (getContext() != null) {
+                        Intent i = new Intent(getContext(), MainActivity.class);
+                        i.putExtra(MainActivity.EXTRA_INTERACTIVE_TOUR, true);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(i);
+                    }
+                } catch (Throwable t) {
+                    Log.e(TAG, "open interactive tour", t);
+                }
             });
         }
 
@@ -380,18 +399,19 @@ public class AboutFragment extends Fragment {
             bottomBannerAd = root.findViewById(R.id.about_bottom_banner);
             if (bottomBannerAd == null) return;
             AdRequest request = new AdRequest.Builder().build();
-            bottomBannerAd.setAdListener(new AdListener() {
+            bottomBannerAd.setAdListener(AdLog.wrapBannerListener("about_bottom", new AdListener() {
                 @Override
                 public void onAdLoaded() {
                     try {
                         if (bottomBannerAd.getVisibility() != View.VISIBLE) {
                             bottomBannerAd.setAlpha(0f);
-                            bottomBannerAd.setTranslationY(bottomBannerAd.getHeight());
+                            bottomBannerAd.setTranslationY(12f);
                             bottomBannerAd.setVisibility(View.VISIBLE);
                             bottomBannerAd.animate()
                                     .translationY(0f)
                                     .alpha(1f)
-                                    .setDuration(350L)
+                                    .setDuration(400L)
+                                    .setInterpolator(new android.view.animation.DecelerateInterpolator(1.5f))
                                     .start();
                         }
                     } catch (Throwable t) {
@@ -401,10 +421,20 @@ public class AboutFragment extends Fragment {
 
                 @Override
                 public void onAdFailedToLoad(LoadAdError adError) {
-                    Log.w(TAG, "about banner failed: " + adError);
+                    try {
+                        String code = adError != null ? String.valueOf(adError.getCode()) : "null";
+                        String msg = adError != null ? adError.getMessage() : "null";
+                        String domain = adError != null ? adError.getDomain() : "null";
+                        Log.w(TAG, "about banner failed: code=" + code + ", domain=" + domain + ", message=" + msg);
+                        if (bottomBannerAd != null) {
+                            bottomBannerAd.setVisibility(View.VISIBLE);
+                            bottomBannerAd.setAlpha(0.25f); // show the slot for debugging
+                        }
+                    } catch (Throwable ignore) {}
                 }
-            });
-            bottomBannerAd.loadAd(request);
+            }));
+            AdLog.bannerRequest("about_bottom");
+            BannerAdHelper.loadWhenReady(requireContext(), bottomBannerAd, request);
         } catch (Throwable t) {
             Log.e(TAG, "setupBottomBannerAd", t);
         }

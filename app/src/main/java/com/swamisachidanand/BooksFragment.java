@@ -154,18 +154,19 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
             bottomBannerAd = root.findViewById(R.id.books_bottom_banner);
             if (bottomBannerAd == null) return;
             AdRequest request = new AdRequest.Builder().build();
-            bottomBannerAd.setAdListener(new AdListener() {
+            bottomBannerAd.setAdListener(AdLog.wrapBannerListener("books_bottom", new AdListener() {
                 @Override
                 public void onAdLoaded() {
                     try {
                         if (bottomBannerAd.getVisibility() != View.VISIBLE) {
                             bottomBannerAd.setAlpha(0f);
-                            bottomBannerAd.setTranslationY(bottomBannerAd.getHeight());
+                            bottomBannerAd.setTranslationY(12f);
                             bottomBannerAd.setVisibility(View.VISIBLE);
                             bottomBannerAd.animate()
                                     .translationY(0f)
                                     .alpha(1f)
-                                    .setDuration(350L)
+                                    .setDuration(400L)
+                                    .setInterpolator(new android.view.animation.DecelerateInterpolator(1.5f))
                                     .start();
                         }
                     } catch (Throwable t) {
@@ -175,10 +176,20 @@ public class BooksFragment extends Fragment implements BookAdapter.OnBookClickLi
 
                 @Override
                 public void onAdFailedToLoad(LoadAdError adError) {
-                    Log.w(TAG, "books banner failed: " + adError);
+                    try {
+                        String code = adError != null ? String.valueOf(adError.getCode()) : "null";
+                        String msg = adError != null ? adError.getMessage() : "null";
+                        String domain = adError != null ? adError.getDomain() : "null";
+                        Log.w(TAG, "books banner failed: code=" + code + ", domain=" + domain + ", message=" + msg);
+                        if (bottomBannerAd != null) {
+                            bottomBannerAd.setVisibility(View.VISIBLE);
+                            bottomBannerAd.setAlpha(0.25f); // visible slot (debug)
+                        }
+                    } catch (Throwable ignore) {}
                 }
-            });
-            bottomBannerAd.loadAd(request);
+            }));
+            AdLog.bannerRequest("books_bottom");
+            BannerAdHelper.loadWhenReady(requireContext(), bottomBannerAd, request);
         } catch (Throwable t) {
             Log.e(TAG, "setupBottomBannerAd", t);
         }

@@ -39,7 +39,7 @@
             android:textSize="16sp" />
     </LinearLayout>
 
-    <!-- YouTube-style card with rounded video box -->
+    <!-- YouTube page inside app -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/player_card"
         android:layout_width="0dp"

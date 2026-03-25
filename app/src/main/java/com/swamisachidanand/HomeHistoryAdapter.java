@@ -109,7 +109,6 @@ public class HomeHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             Glide.with(h.itemView.getContext())
                     .load(thumbUrl)
                     .apply(new RequestOptions()
-                            .centerCrop()
                             .transform(new RoundedCorners(8)))
                     .placeholder(R.drawable.book_placeholder)
                     .error(R.drawable.book_placeholder)
@@ -154,7 +153,7 @@ public class HomeHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (thumbUrl != null && !thumbUrl.isEmpty()) {
             Glide.with(ctx)
                     .load(thumbUrl)
-                    .apply(new RequestOptions().centerCrop())
+                    .apply(new RequestOptions())
                     .placeholder(R.drawable.book_placeholder)
                     .error(R.drawable.book_placeholder)
                     .into(h.thumb);
@@ -175,7 +174,7 @@ public class HomeHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (thumbUrl != null) {
             Glide.with(h.itemView.getContext())
                     .load(thumbUrl)
-                    .apply(new RequestOptions().centerCrop())
+                    .apply(new RequestOptions())
                     .placeholder(R.drawable.book_placeholder)
                     .error(R.drawable.book_placeholder)
                     .into(h.thumb);

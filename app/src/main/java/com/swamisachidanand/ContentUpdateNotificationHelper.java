@@ -1,13 +1,17 @@
 package com.swamisachidanand;
 
+import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -26,6 +30,8 @@ class ContentUpdateNotificationHelper {
             targetTabId = R.id.nav_books;
         } else if ("new_audio".equals(kind)) {
             targetTabId = R.id.nav_audio;
+        } else if ("new_pravachan".equals(kind)) {
+            targetTabId = R.id.nav_pravachan;
         } else if ("new_video".equals(kind)) {
             targetTabId = R.id.nav_videos;
         }
@@ -91,7 +97,10 @@ class ContentUpdateNotificationHelper {
 
         NotificationManagerCompat nm = NotificationManagerCompat.from(context);
         int id = BASE_ID + (targetTabId != 0 ? targetTabId : 1);
-        nm.notify(id, builder.build());
+        try {
+            nm.notify(id, builder.build());
+        } catch (SecurityException ignored) {
+        }
     }
 }
 

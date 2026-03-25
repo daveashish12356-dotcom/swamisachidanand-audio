@@ -39,6 +39,35 @@ public class PravachanPlayerFragment extends Fragment {
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private Runnable seekRunnable;
     private boolean userSeeking;
+    // When user navigates away (bottom nav), this fragment can remain in backstack.
+    // We pause audio whenever fragment is not in foreground, so other pages pe audio nahi chale.
+    private boolean wasPlayingBeforePause = false;
+    /** Pauses playback immediately (used when user switches bottom-nav pages). */
+    public void pausePlayback() {
+        if (player == null) return;
+        try {
+            wasPlayingBeforePause = player.getPlayWhenReady();
+            // Stop is important because this fragment can stay in backstack,
+            // and some devices may keep audio running if only pause is called.
+            player.setPlayWhenReady(false);
+            player.pause();
+            player.stop();
+            updatePlayIcon();
+        } catch (Throwable t) {
+            // ignore
+        }
+        stopSeekUpdates();
+    }
+
+    /** Optional helper to resume after pause if needed. */
+    private void resumePlaybackIfNeeded() {
+        if (player == null) return;
+        if (wasPlayingBeforePause) {
+            player.setPlayWhenReady(true);
+            updatePlayIcon();
+            startSeekUpdates();
+        }
+    }
 
     private TextView titleView;
     private TextView timeCurrent;
@@ -117,6 +146,11 @@ public class PravachanPlayerFragment extends Fragment {
             Toast.makeText(requireContext(), R.string.audio_error, Toast.LENGTH_SHORT).show();
             return;
         }
+        String raw = item.audioUrl.trim();
+        playUrl(raw, encodeUrl(raw), raw, true);
+    }
+
+    private void playUrl(String rawUrl, String urlToPlay, String rawForRetry, boolean allowRawFallback) {
         if (player != null) {
             player.release();
             player = null;
@@ -125,12 +159,12 @@ public class PravachanPlayerFragment extends Fragment {
         Toast.makeText(requireContext(), R.string.audio_loading, Toast.LENGTH_SHORT).show();
 
         HashMap<String, String> headers = new HashMap<>();
-        headers.put("Accept", "application/octet-stream,*/*");
+        headers.put("Accept", "application/octet-stream,audio/*,*/*");
         DefaultHttpDataSource.Factory httpFactory = new DefaultHttpDataSource.Factory()
-                .setUserAgent("Mozilla/5.0 (Android Pravachan)")
+                .setUserAgent("Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36")
                 .setAllowCrossProtocolRedirects(true)
-                .setConnectTimeoutMs(30_000)
-                .setReadTimeoutMs(90_000)
+                .setConnectTimeoutMs(45_000)
+                .setReadTimeoutMs(120_000)
                 .setDefaultRequestProperties(headers);
         DefaultDataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(requireContext(), httpFactory);
         DefaultMediaSourceFactory mediaSourceFactory =
@@ -156,6 +190,10 @@ public class PravachanPlayerFragment extends Fragment {
 
             @Override
             public void onPlayerError(@NonNull androidx.media3.common.PlaybackException error) {
+                if (allowRawFallback && rawForRetry != null && !rawForRetry.equals(urlToPlay)) {
+                    mainHandler.post(() -> playUrl(rawForRetry, rawForRetry, rawForRetry, false));
+                    return;
+                }
                 mainHandler.post(() -> {
                     Toast.makeText(requireContext(), R.string.audio_play_error, Toast.LENGTH_LONG).show();
                     stopSeekUpdates();
@@ -163,15 +201,21 @@ public class PravachanPlayerFragment extends Fragment {
             }
         });
 
-        String encodedUrl = encodeUrl(item.audioUrl);
-        Uri uri = Uri.parse(encodedUrl);
-        MediaItem mediaItem = encodedUrl.toLowerCase().endsWith(".wav")
+        Uri uri = Uri.parse(urlToPlay);
+        MediaItem mediaItem = isWavUrl(urlToPlay)
                 ? new MediaItem.Builder().setUri(uri).setMimeType("audio/wav").build()
                 : MediaItem.fromUri(uri);
         player.setMediaItem(mediaItem);
         player.prepare();
         player.setPlayWhenReady(true);
         updatePlayIcon();
+    }
+
+    private static boolean isWavUrl(String url) {
+        if (url == null) return false;
+        int q = url.indexOf('?');
+        String path = q >= 0 ? url.substring(0, q) : url;
+        return path.toLowerCase().endsWith(".wav");
     }
 
     private void startSeekUpdates() {
@@ -218,15 +262,27 @@ public class PravachanPlayerFragment extends Fragment {
         return String.format("%02d:%02d", min, sec);
     }
 
+    /** Same as AudioPravachanFragment — preserve ?query (signed URLs). */
     private static String encodeUrl(String url) {
         if (url == null || url.isEmpty()) return url;
-        int lastSlash = url.lastIndexOf('/');
+        String query = "";
+        String pathPart = url;
+        int qi = url.indexOf('?');
+        if (qi >= 0) {
+            pathPart = url.substring(0, qi);
+            query = url.substring(qi);
+        }
+        int lastSlash = pathPart.lastIndexOf('/');
         if (lastSlash < 0) return url;
-        String base = url.substring(0, lastSlash + 1);
-        String filename = url.substring(lastSlash + 1);
+        String base = pathPart.substring(0, lastSlash + 1);
+        String filename = pathPart.substring(lastSlash + 1);
+        if (filename.isEmpty()) return url;
+        if (java.util.regex.Pattern.compile("%[0-9A-Fa-f]{2}").matcher(filename).find()) {
+            return url;
+        }
         try {
             String encoded = URLEncoder.encode(filename, StandardCharsets.UTF_8.name()).replace("+", "%20");
-            return base + encoded;
+            return base + encoded + query;
         } catch (Exception e) {
             return url;
         }
@@ -240,6 +296,28 @@ public class PravachanPlayerFragment extends Fragment {
             player = null;
         }
         super.onDestroyView();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        pausePlayback();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        pausePlayback();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (player != null) {
+            resumePlaybackIfNeeded();
+        } else if (item != null) {
+            startPlayback();
+        }
     }
 }
 

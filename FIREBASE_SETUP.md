@@ -99,3 +99,15 @@ Deploy પછી:
 - આ પેજ ખોલો → સુવિચાર લખો → Secret key (ઉપર set કરેલ) એક વાર લગાવો → **Notification Bhejo** દબાવો. સૌને મોબાઇલ પર "આજનું ચિંતન" નોટિફિકેશન જશે.
 
 GitHub જેવી જ – ફક્ત અહીં Firebase પર છે, અને નોટિફિકેશન સીધું જ ભેજાય છે.
+
+---
+
+## 6. નવું YouTube વિડિયો — સર્વર પરથી FCM (એપ બંધ હોય ત્યારે પણ)
+
+સંપૂર્ણ સ્ટેપ્સ અને ટ્રિગર URL: **`docs/SERVER_VIDEO_FCM.md`**
+
+ટૂંકમાં:
+
+1. `youtube.key` (YouTube Data API v3) સેટ કરો અને functions deploy કરો.
+2. શેડ્યૂલ્ડ function **`pollYouTubeNewVideos`** દર ૩૦ મિનિટે ચેનલો ચેક કરે છે અને topic **`new_video`** પર push મોકલે છે.
+3. ટેસ્ટ માટે **`triggerYouTubePollNow?key=...`** URL વાપરો (Console → Functions).

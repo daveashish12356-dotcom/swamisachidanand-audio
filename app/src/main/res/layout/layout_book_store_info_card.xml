@@ -53,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="24 Meena Bazaar, Ground Floor\nNext to Raj Arcade, Palgam Circle, Adajan\nSurat – 394510"
+            android:text="123 Meena Bazaar, પહેલાં માળે\nNext to Raj Arcade, Palgam Circle, Adajan\nSurat – 394510"
             android:textSize="13sp"
             android:textColor="#333333"
             android:lineSpacingExtra="2dp" />

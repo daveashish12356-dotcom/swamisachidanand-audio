@@ -226,18 +226,19 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
             bottomBannerAd = root.findViewById(R.id.audio_bottom_banner);
             if (bottomBannerAd == null) return;
             AdRequest request = new AdRequest.Builder().build();
-            bottomBannerAd.setAdListener(new AdListener() {
+            bottomBannerAd.setAdListener(AdLog.wrapBannerListener("server_audio_bottom", new AdListener() {
                 @Override
                 public void onAdLoaded() {
                     try {
                         if (bottomBannerAd.getVisibility() != View.VISIBLE) {
                             bottomBannerAd.setAlpha(0f);
-                            bottomBannerAd.setTranslationY(bottomBannerAd.getHeight());
+                            bottomBannerAd.setTranslationY(12f);
                             bottomBannerAd.setVisibility(View.VISIBLE);
                             bottomBannerAd.animate()
                                     .translationY(0f)
                                     .alpha(1f)
-                                    .setDuration(350L)
+                                    .setDuration(400L)
+                                    .setInterpolator(new android.view.animation.DecelerateInterpolator(1.5f))
                                     .start();
                         }
                     } catch (Throwable t) {
@@ -247,10 +248,20 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
 
                 @Override
                 public void onAdFailedToLoad(LoadAdError adError) {
-                    android.util.Log.w("ServerAudioFragment", "audio banner failed: " + adError);
+                    try {
+                        String code = adError != null ? String.valueOf(adError.getCode()) : "null";
+                        String msg = adError != null ? adError.getMessage() : "null";
+                        String domain = adError != null ? adError.getDomain() : "null";
+                        android.util.Log.w("ServerAudioFragment", "audio banner failed: code=" + code + ", domain=" + domain + ", message=" + msg);
+                        if (bottomBannerAd != null) {
+                            bottomBannerAd.setVisibility(View.VISIBLE);
+                            bottomBannerAd.setAlpha(0.25f); // visible slot (debug)
+                        }
+                    } catch (Throwable ignore) {}
                 }
-            });
-            bottomBannerAd.loadAd(request);
+            }));
+            AdLog.bannerRequest("server_audio_bottom");
+            BannerAdHelper.loadWhenReady(requireContext(), bottomBannerAd, request);
         } catch (Throwable t) {
             android.util.Log.e("ServerAudioFragment", "setupBottomBannerAd", t);
         }
@@ -686,12 +697,17 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
     @Override
     public void onAudioBookClick(ServerAudioBook book) {
         if (book == null || getActivity() == null) return;
-        Fragment f = AudioBookDetailFragment.newInstance(book);
-        getActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, f)
-                .addToBackStack(null)
-                .commit();
+        // Same path as Home — interstitial + detail (was bypassing MainActivity.openAudioBook)
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).openAudioBook(book);
+        } else {
+            Fragment f = AudioBookDetailFragment.newInstance(book);
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, f)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 }
 

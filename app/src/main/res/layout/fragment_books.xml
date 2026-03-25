@@ -173,7 +173,7 @@
         android:layout_marginEnd="@dimen/spacing_large"
         android:visibility="gone"
         app:adSize="BANNER"
-        app:adUnitId="ca-app-pub-7592986107944664/4541738286" />
+        app:adUnitId="@string/admob_banner_unit_id" />
 </LinearLayout>
 </androidx.core.widget.NestedScrollView>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

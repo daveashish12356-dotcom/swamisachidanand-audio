@@ -36,18 +36,23 @@ public class App extends Application {
                 subscribeToTopicSafe("new_book");
                 subscribeToTopicSafe("new_audio");
                 subscribeToTopicSafe("new_video");
+                subscribeToTopicSafe("new_pravachan");
             } catch (Throwable t) {
                 Log.e(TAG, "Firebase init failed", t);
             }
         }, 2000);
 
-        // Initialize Google Mobile Ads SDK (AdMob) once at app start
-        try {
-            MobileAds.initialize(this, initializationStatus -> {
-                Log.d(TAG, "MobileAds initialized");
-            });
-        } catch (Throwable t) {
-            Log.e(TAG, "MobileAds init failed", t);
+        // AdMob — skipped for `noads` flavor (BuildConfig.ADS_ENABLED = false)
+        if (BuildConfig.ADS_ENABLED) {
+            try {
+                MobileAds.initialize(this, initializationStatus -> {
+                    Log.d(TAG, "MobileAds initialized");
+                    AdLog.logSdkInit(initializationStatus);
+                    InterstitialAdHelper.preload(this);
+                });
+            } catch (Throwable t) {
+                Log.e(TAG, "MobileAds init failed", t);
+            }
         }
     }
 
@@ -68,7 +73,7 @@ public class App extends Application {
                     "નવું અપડેટ",
                     NotificationManager.IMPORTANCE_DEFAULT
             );
-            contentChannel.setDescription("નવા પુસ્તકો, ઓડિયો અને વિડિઓ માટે નોટિફિકેશન");
+            contentChannel.setDescription("નવા પુસ્તકો, ઓડિયો, પ્રવચન અને વિડિઓ માટે નોટિફિકેશન");
             nm.createNotificationChannel(contentChannel);
         } catch (Throwable t) {
             Log.e(TAG, "createNotificationChannels failed", t);

@@ -131,6 +131,19 @@
                 android:contentDescription="Facebook" />
 
             <ImageView
+                android:id="@+id/sampark_instagram"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:padding="10dp"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/ic_social_instagram_brand"
+                android:background="@drawable/bg_social_icon_circle"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="Instagram" />
+
+            <ImageView
                 android:id="@+id/sampark_whatsapp"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
@@ -191,6 +204,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <!-- Same style as ફોટા ગેલેરી / પુસ્તક ઓર્ડર cards (white card + bold primary text) -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="@android:color/white">
+
+            <TextView
+                android:id="@+id/about_app_tour_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:text="@string/about_show_app_tour"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorPrimary"
+                android:gravity="center"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:textAllCaps="false"
+                android:contentDescription="@string/about_show_app_tour" />
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- Ashrams Section Title -->
         <TextView
             android:layout_width="match_parent"
@@ -229,7 +269,25 @@
             android:layout_marginEnd="@dimen/spacing_large"
             android:visibility="gone"
             app:adSize="BANNER"
-            app:adUnitId="ca-app-pub-7592986107944664/4541738286" />
+            app:adUnitId="@string/admob_banner_unit_id" />
+
+        <!-- Credits: one line, smallest text, bottom-right -->
+        <TextView
+            android:id="@+id/sampark_credits_line"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="12dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="@string/sampark_credits_line"
+            android:textSize="9sp"
+            android:textColor="#888888"
+            android:alpha="0.85"
+            android:gravity="end"
+            android:textAlignment="viewEnd"
+            android:maxLines="1"
+            android:ellipsize="end" />
 
     </LinearLayout>
 

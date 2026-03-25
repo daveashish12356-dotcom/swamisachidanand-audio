@@ -1,7 +1,7 @@
 package com.swamisachidanand;
 
 /**
- * Daily pravachan folder titles. Server-backed categories: see {@link DainikPravachanServer} (GitHub public/audio_pravachan/).
+ * Daily pravachan folder titles. Server-backed categories: see {@link DainikPravachanServer} (raw {@code main} / {@code public/audio_pravachan/}).
  */
 public final class DainikPravachanCategories {
     private DainikPravachanCategories() {}

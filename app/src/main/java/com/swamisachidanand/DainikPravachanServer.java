@@ -13,15 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * GitHub Pages audio for “દૈનિક પ્રવચન” categories: {@code public/audio_pravachan/&lt;slug&gt;/list.json}.
+ * દૈનિક પ્રવચન files live under {@code main} at {@code public/audio_pravachan/}. GitHub Pages
+ * ({@code github.io}) often has no copy there (deploy size / failed deploy → 404). The app uses
+ * {@code raw.githubusercontent.com/.../main/...} so lists and MP3s match what is on {@code main}.
  */
 public final class DainikPravachanServer {
     private DainikPravachanServer() {}
 
     public static final String BASE =
-            "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/audio_pravachan/";
-    /** Bump when list.json changes (cache bust). */
-    private static final String LIST_QUERY = "list.json?v=4";
+            "https://raw.githubusercontent.com/daveashish12356-dotcom/swamisachidanand-audio/main/public/audio_pravachan/";
+    /** Bump when list.json or fetch base changes (cache bust). */
+    private static final String LIST_QUERY = "list.json?v=6";
 
     /**
      * Folder name is same as category title (Gujarati); URL encoding is applied when building URLs.

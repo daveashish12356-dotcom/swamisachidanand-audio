@@ -109,11 +109,11 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
                             .apply(new RequestOptions()
                                     .transform(new RoundedCorners(8))
                                     .override(300, 400)
-                                    .centerCrop()
                                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC))
                             .placeholder(R.drawable.book_placeholder)
                             .error(R.drawable.book_placeholder)
                             .thumbnail(0.15f)
+                            .fitCenter()
                             .into(holder.bookThumbnail);
                 } else if (thumbnailLoader != null && ctx != null && book.getFileName() != null && !book.getFileName().isEmpty()) {
                     thumbnailLoader.loadThumbnail(ctx, book.getFileName(), thumbnail -> {

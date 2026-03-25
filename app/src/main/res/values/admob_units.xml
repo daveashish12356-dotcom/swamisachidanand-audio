@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Live AdMob IDs — Shri Swami Sachchidanand Ji (matches AdMob console) -->
+    <string name="admob_application_id" translatable="false">ca-app-pub-7592986107944664~8167456866</string>
+    <!-- Banner (AdMob → same app ca-app-pub-7592986107944664~8167456866) -->
+    <string name="admob_banner_unit_id" translatable="false">ca-app-pub-7592986107944664/9896075114</string>
+    <string name="admob_interstitial_unit_id" translatable="false">ca-app-pub-7592986107944664/6022610413</string>
+    <string name="admob_rewarded_pdf_unit_id" translatable="false">ca-app-pub-7592986107944664/7144120398</string>
+</resources>

@@ -26,7 +26,8 @@
                 android:id="@+id/audio_book_card_thumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
                 android:background="@drawable/book_placeholder"
                 android:contentDescription="Audio book" />
 

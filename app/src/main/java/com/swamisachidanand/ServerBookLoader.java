@@ -32,16 +32,24 @@ public final class ServerBookLoader {
     private static final long CACHE_TTL_MS = 2 * 60 * 1000;
 
     public static void clearCache() {
-        cachedBooks = null;
-        cacheTimeMs = 0;
+        synchronized (ServerBookLoader.class) {
+            cachedBooks = null;
+            cacheTimeMs = 0;
+        }
     }
 
+    /**
+     * Thread-safe: parallel callers (Home best/bhakti/history, etc.) share one network parse
+     * instead of hammering the server and main thread.
+     */
     public static List<Book> load(Context context) {
-        if (cachedBooks != null && (System.currentTimeMillis() - cacheTimeMs) < CACHE_TTL_MS) {
-            return new ArrayList<>(cachedBooks);
-        }
+        if (context == null) return new ArrayList<>();
+        synchronized (ServerBookLoader.class) {
+            long now = System.currentTimeMillis();
+            if (cachedBooks != null && (now - cacheTimeMs) < CACHE_TTL_MS) {
+                return new ArrayList<>(cachedBooks);
+            }
         List<Book> list = new ArrayList<>();
-        if (context == null) return list;
         try {
             String baseUrl = context.getString(R.string.server_books_base_url);
             if (baseUrl == null) baseUrl = "";
@@ -197,6 +205,7 @@ public final class ServerBookLoader {
             android.util.Log.e("ServerBookLoader", "load failed: " + e.getMessage(), e);
         }
         return list;
+        }
     }
 
     /**

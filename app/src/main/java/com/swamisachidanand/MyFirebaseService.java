@@ -38,8 +38,11 @@ public class MyFirebaseService extends FirebaseMessagingService {
             }
 
             if (kind != null && !kind.isEmpty() && !"suvichar".equals(kind)) {
-                // Generic content update: new_book / new_audio / new_video
-                String title = notif != null && notif.getTitle() != null ? notif.getTitle() : "નવું અપડેટ";
+                // Generic content update: new_book / new_audio / new_video / new_pravachan
+                String dataTitle = remoteMessage.getData() != null ? remoteMessage.getData().get("title") : null;
+                String title = dataTitle != null && !dataTitle.trim().isEmpty()
+                    ? dataTitle
+                    : (notif != null && notif.getTitle() != null ? notif.getTitle() : "નવું અપડેટ");
                 String body = notif != null && notif.getBody() != null ? notif.getBody() : (text != null ? text : "");
                 String thumbUrl = null;
                 if (remoteMessage.getData() != null) {

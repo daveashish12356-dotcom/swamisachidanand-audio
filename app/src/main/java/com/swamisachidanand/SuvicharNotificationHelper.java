@@ -1,11 +1,15 @@
 package com.swamisachidanand;
 
+import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 class SuvicharNotificationHelper {
 
@@ -43,7 +47,10 @@ class SuvicharNotificationHelper {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManagerCompat manager = NotificationManagerCompat.from(context);
-        manager.notify(NOTIFICATION_ID, builder.build());
+        try {
+            manager.notify(NOTIFICATION_ID, builder.build());
+        } catch (SecurityException ignored) {
+        }
     }
 }
 

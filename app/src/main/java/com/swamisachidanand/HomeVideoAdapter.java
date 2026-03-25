@@ -1,5 +1,6 @@
 package com.swamisachidanand;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -49,16 +50,20 @@ public class HomeVideoAdapter extends RecyclerView.Adapter<HomeVideoAdapter.VH> 
         if (item.thumbnailUrl != null && !item.thumbnailUrl.isEmpty()) {
             Glide.with(h.thumb.getContext()).load(item.thumbnailUrl)
                     .placeholder(R.drawable.book_placeholder).error(R.drawable.book_placeholder)
-                    .centerCrop().into(h.thumb);
+                    .into(h.thumb);
         } else {
             h.thumb.setImageResource(R.drawable.book_placeholder);
         }
         h.itemView.setOnClickListener(v -> {
-            if (item.videoId != null) {
-                RecentVideoHelper.saveRecentVideoId(v.getContext(), item.videoId);
-                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + item.videoId));
-                v.getContext().startActivity(i);
-            }
+            if (item.videoId == null) return;
+            Activity act = v.getContext() instanceof Activity ? (Activity) v.getContext() : null;
+            String vid = item.videoId;
+            AdLoadingOverlay.show(act);
+            InterstitialAdHelper.showIfAllowed(act, () -> {
+                AdLoadingOverlay.dismiss(act);
+                RecentVideoHelper.saveRecentVideoId(v.getContext(), vid);
+                v.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + vid)));
+            });
         });
     }
 

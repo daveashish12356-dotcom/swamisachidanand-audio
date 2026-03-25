@@ -105,7 +105,7 @@
         app:itemIconSize="24dp"
         app:itemIconTint="@null"
         app:itemTextColor="@color/nav_item_color"
-        app:labelVisibilityMode="labeled"
+        app:labelVisibilityMode="selected"
         app:menu="@menu/bottom_navigation_menu" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

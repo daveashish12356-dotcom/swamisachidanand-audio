@@ -121,7 +121,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:cardBackgroundColor="#FFF9EF"
-                app:cardCornerRadius="18dp"
+                app:cardCornerRadius="0dp"
                 app:cardElevation="8dp"
                 app:strokeColor="#E5D4BD"
                 app:strokeWidth="1dp">
@@ -140,7 +140,8 @@
                         android:layout_height="match_parent"
                         android:background="#FFFFFF"
                         android:contentDescription="PDF page"
-                        android:scaleType="fitCenter" />
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true" />
 
                     <TextView
                         android:id="@+id/scanning_progress_text"

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Rounded-square Instagram background -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="5dp" />
+            <gradient
+                android:type="linear"
+                android:angle="315"
+                android:startColor="#fdf497"
+                android:centerColor="#fd5949"
+                android:endColor="#285AEB" />
+            <size
+                android:width="24dp"
+                android:height="24dp" />
+        </shape>
+    </item>
+
+    <!-- White camera ring + top dot -->
+    <item android:drawable="@drawable/ic_social_instagram_camera" />
+
+</layer-list>
+

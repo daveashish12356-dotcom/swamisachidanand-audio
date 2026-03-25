@@ -12,8 +12,9 @@ android {
         minSdk = 26
         // Google Play requirement: target at least Android 15 (API 35)
         targetSdk = 35
-        versionCode = 29
-        versionName = "3.3"
+        // Play Store / withads bundle & APK — bump for every Play upload
+        versionCode = 34
+        versionName = "4.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
@@ -37,6 +38,20 @@ android {
         buildConfigField("String", "YOUTUBE_API_KEY", "\"$youtubeApiKey\"")
         val youtubeProxyUrl = project.findProperty("YOUTUBE_PROXY_URL") as String? ?: ""
         buildConfigField("String", "YOUTUBE_PROXY_URL", "\"$youtubeProxyUrl\"")
+        buildConfigField("boolean", "ADS_ENABLED", "true")
+    }
+
+    flavorDimensions += "distribution"
+    productFlavors {
+        create("withads") {
+            dimension = "distribution"
+            isDefault = true
+        }
+        create("noads") {
+            dimension = "distribution"
+            buildConfigField("boolean", "ADS_ENABLED", "false")
+            // Same version as defaultConfig (4 / 33)
+        }
     }
 
     signingConfigs {
@@ -70,6 +85,14 @@ android {
             initWith(getByName("release"))
             matchingFallbacks += listOf("release")
         }
+        // Ad-free `noads` APK: R8/minify off — avoids "Missing classes" on `noadsRelease`; APK thoda bada, sideload-safe
+        create("releaseNoads") {
+            initWith(getByName("release"))
+            isMinifyEnabled = false
+            isShrinkResources = false
+            signingConfig = signingConfigs.getByName("release")
+            matchingFallbacks += listOf("release")
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -101,6 +124,9 @@ android {
 
     androidResources {
         noCompress += "mp4"
+        // Splash intro: compress ho to MediaPlayer + openFd kabhi silent fail ho jata hai
+        noCompress += "mpeg"
+        noCompress += "mp3"
     }
     
     sourceSets {
@@ -108,6 +134,23 @@ android {
             java.srcDirs("src/main/java")
         }
     }
+}
+
+/** Ad-free APK (flavor `noads` + buildType `releaseNoads`) → `release-apk-noads/` — versionName 4, versionCode 33 */
+tasks.register<Copy>("copyNoadsReleaseApk") {
+    group = "build"
+    description = "assembleNoadsReleaseNoads + copy APK to release-apk-noads/"
+    dependsOn("assembleNoadsReleaseNoads")
+    from(layout.buildDirectory.file("outputs/apk/noads/releaseNoads"))
+    include("*.apk")
+    into(rootProject.layout.projectDirectory.dir("release-apk-noads"))
+    rename { _ -> "SwamiSachchidanand-noads-v4-release.apk" }
+}
+
+tasks.register("releaseNoads") {
+    group = "build"
+    description = "Ad-free signed APK (v4/33) into release-apk-noads/"
+    dependsOn("copyNoadsReleaseApk")
 }
 
 // (No extra task hacks here; rely on standard Android Gradle Plugin behaviour.)
@@ -146,6 +189,9 @@ dependencies {
 
     // Google Mobile Ads (AdMob) for banner ads
     implementation("com.google.android.gms:play-services-ads:25.0.0")
+
+    // In-App Update (Play Store)
+    implementation("com.google.android.play:app-update:2.1.0")
 
     // In-app YouTube player (video opens in app, not external)
     implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")

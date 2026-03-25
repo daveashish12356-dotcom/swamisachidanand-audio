@@ -118,7 +118,8 @@ public class ModernPdfActivity extends AppCompatActivity {
     private ImageButton textFontBiggerBtn;
     private android.widget.Button closeTextOverlayButton;
 
-    private float zoomLevel = 1.15f;
+    // Keep original page scale by default (no zoom) to avoid clipping/cut.
+    private float zoomLevel = 1.0f;
     private static final float ZOOM_MIN = 0.7f;
     private static final float ZOOM_MAX = 2.0f;
 
@@ -151,6 +152,11 @@ public class ModernPdfActivity extends AppCompatActivity {
     }
 
     private List<Chapter> chapters;
+
+    /** PDF file ready on disk; rewarded flow finished → then openPdfSafely. */
+    private volatile boolean pdfBytesReady = false;
+    private volatile boolean rewardedFlowFinished = false;
+    private boolean pdfRevealAttempted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,8 +205,9 @@ public class ModernPdfActivity extends AppCompatActivity {
             showLoadingOverlay();
             pdfContentContainer.post(() -> {
                 if (isFinishing() || isDestroyed()) return;
-                if (pdfUrl != null && !pdfUrl.isEmpty()) loadPdfFromUrl(pdfUrl);
-                else loadPdfFromAssets();
+                if (pdfLoadingOnlineText != null) pdfLoadingOnlineText.setText("પ્રસ્તુત થાય છે...");
+                startPdfDownloadInBackground();
+                PdfRewardedAdHelper.loadAndShow(ModernPdfActivity.this, this::onRewardedFlowFinished);
             });
         } catch (Exception e) {
             Log.e(TAG, "Fatal error in onCreate", e);
@@ -261,6 +268,7 @@ public class ModernPdfActivity extends AppCompatActivity {
         getWindow().getDecorView().setBackgroundColor(0xFFF5F0E6);
 
         // Apply a slightly zoomed default so page feels more full-screen.
+        // Don't auto-zoom; keep original page scale.
         applyZoom();
 
         // Enter immersive full-screen (hide system navigation/status bars).
@@ -377,6 +385,10 @@ public class ModernPdfActivity extends AppCompatActivity {
         if (pdfLoadingOnlineText != null) {
             pdfLoadingOnlineText.setText("બુક લોડ થાય છે...");
             pdfLoadingOnlineText.setVisibility(View.VISIBLE);
+        }
+        if (pdfLoadingProgress != null) {
+            pdfLoadingProgress.setVisibility(View.VISIBLE);
+            pdfLoadingProgress.setAlpha(1f);
         }
         if (pdfLoadingProgress != null) pdfLoadingProgress.setVisibility(View.VISIBLE);
         if (pdfLoadingThumbnail != null) {
@@ -541,6 +553,29 @@ public class ModernPdfActivity extends AppCompatActivity {
 
     private static final String CACHE_PDF_FILENAME = "current_book.pdf";
 
+    private void startPdfDownloadInBackground() {
+        if (pdfUrl != null && !pdfUrl.isEmpty()) loadPdfFromUrl(pdfUrl);
+        else loadPdfFromAssets();
+    }
+
+    private void onRewardedFlowFinished() {
+        rewardedFlowFinished = true;
+        tryRevealPdfIfReady();
+    }
+
+    private void tryRevealPdfIfReady() {
+        if (isFinishing() || isDestroyed()) return;
+        if (pdfRevealAttempted) return;
+        if (!pdfBytesReady || !rewardedFlowFinished) return;
+        pdfRevealAttempted = true;
+        openPdfSafely();
+    }
+
+    private void markPdfBytesReady() {
+        pdfBytesReady = true;
+        tryRevealPdfIfReady();
+    }
+
     private void loadPdfFromUrl(String url) {
         new Thread(() -> {
             try {
@@ -574,7 +609,7 @@ public class ModernPdfActivity extends AppCompatActivity {
                         int n;
                         while ((n = in.read(buf)) != -1) out.write(buf, 0, n);
                     }
-                    runOnUiThread(this::openPdfSafely);
+                    runOnUiThread(this::markPdfBytesReady);
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Error loading PDF from URL", e);
@@ -626,7 +661,7 @@ public class ModernPdfActivity extends AppCompatActivity {
                     }
                 }
                 tempFile.delete();
-                runOnUiThread(this::openPdfSafely);
+                runOnUiThread(this::markPdfBytesReady);
             } catch (Throwable e) {
                 Log.e(TAG, "Error loading PDF: " + assetName, e);
                 try { if (outputStream != null) outputStream.close(); } catch (IOException ignored) {}
@@ -678,6 +713,7 @@ public class ModernPdfActivity extends AppCompatActivity {
             throw e;
         }
         pageCount = pdfRenderer.getPageCount();
+        Log.d(TAG, "openPdf: pageCount=" + pageCount + " currentPageIndex=" + currentPageIndex + " pdfName=" + bookName);
         if (pageCount <= 0) {
             pdfRenderer.close();
             hideLoadingOverlay();
@@ -734,6 +770,7 @@ public class ModernPdfActivity extends AppCompatActivity {
                         page = pdfRenderer.openPage(pageIndex);
                         int w = page.getWidth();
                         int h = page.getHeight();
+                        Log.d(TAG, "render pageIndex=" + pageIndex + " rawW=" + w + " rawH=" + h + " maxW=" + finalMaxW + " maxH=" + finalMaxH);
                         if (w <= 0 || h <= 0) {
                             if (page != null) page.close();
                             runOnUiThread(() -> rendering = false);
@@ -742,6 +779,7 @@ public class ModernPdfActivity extends AppCompatActivity {
                         float scale = Math.min((float) finalMaxW / w, (float) finalMaxH / h);
                         int bw = Math.max(1, (int) (w * scale));
                         int bh = Math.max(1, (int) (h * scale));
+                        Log.d(TAG, "render bitmapW=" + bw + " bitmapH=" + bh + " scale=" + scale);
                         bitmap = Bitmap.createBitmap(bw, bh, Bitmap.Config.ARGB_8888);
                         if (bitmap != null) {
                             bitmap.eraseColor(0xFFFFFFFF);
@@ -752,22 +790,17 @@ public class ModernPdfActivity extends AppCompatActivity {
                     }
                 }
                 if (bitmap == null || isFinishing() || isDestroyed()) {
+                    Log.e(TAG, "render: bitmap null/finishing pageIndex=" + pageIndex);
                     runOnUiThread(() -> rendering = false);
                     return;
                 }
-                // Auto-crop empty white margins so text fills more of the screen.
-                Bitmap cropped = cropPageMarginsIfNeeded(bitmap);
-                if (cropped != null && cropped != bitmap) {
-                    bitmap.recycle();
-                    bitmap = cropped;
-                }
-                final Bitmap toShow = isDayMode ? bitmap : applyNightFilter(bitmap);
-                if (toShow != bitmap && bitmap != null && !bitmap.isRecycled()) bitmap.recycle();
+                // Show original rendered page as-is (no auto-crop / reflow / filters)
+                final Bitmap toShow = bitmap;
                 runOnUiThread(() -> {
                     rendering = false;
                     if (isFinishing() || isDestroyed() || pdfSinglePageImage == null) return;
-                    if (currentPageIndex != pageIndex) return;
                     try {
+                        Log.d(TAG, "setImageBitmap for pageIndex=" + pageIndex + " bmp=" + (toShow != null ? (toShow.getWidth() + "x" + toShow.getHeight()) : "null"));
                         pdfSinglePageImage.setImageBitmap(toShow);
                         if (runAfter != null) runAfter.run();
                     } catch (Exception e) {

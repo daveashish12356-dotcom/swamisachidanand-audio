@@ -60,6 +60,8 @@ public class AudioBookDetailFragment extends Fragment implements AudioPartsAdapt
     private static final String AFRICA_SANSMARAN_PDF = "આફ્રિકા-પ્રવાસનાં સંસ્મરણો.pdf";
     private static final String AAVEGO_LAGANIYO_PDF = "આવેગો અને લાગણીઓ.pdf";
     private static final String MAHABHARAT_JEEVANKATHAO_PDF = "મહાભારતની જીવનકથાઓ.pdf";
+    private static final String GITHUB_AUDIO_PROXY =
+            "https://us-central1-swami-sachidanand.cloudfunctions.net/githubAudioStream?u=";
 
     private ServerAudioBook book;
     /** Har book ke card me parts hamesha 1, 2, 3 ... N order me – isi list use karo display + playback. */
@@ -521,6 +523,16 @@ public class AudioBookDetailFragment extends Fragment implements AudioPartsAdapt
         }
     }
 
+    private static String buildPlaybackUrl(String rawUrl) {
+        String encoded = encodeAudioUrl(rawUrl);
+        if (encoded == null) return "";
+        String lower = encoded.toLowerCase();
+        if (lower.startsWith("https://github.com/") || lower.startsWith("http://github.com/")) {
+            return GITHUB_AUDIO_PROXY + Uri.encode(encoded);
+        }
+        return encoded;
+    }
+
     /** Stream from server (YouTube-style) – no download. */
     private void playPart(ServerAudioPart part) {
         currentPart = part;
@@ -532,7 +544,7 @@ public class AudioBookDetailFragment extends Fragment implements AudioPartsAdapt
         // Update part name in compact play menu
         updatePartName();
         if (playBtn != null) playBtn.setEnabled(false);
-        String url = encodeAudioUrl(part.getUrl());
+        String url = buildPlaybackUrl(part.getUrl());
         Toast.makeText(requireContext(), R.string.audio_loading, Toast.LENGTH_SHORT).show();
 
         if (player == null) {

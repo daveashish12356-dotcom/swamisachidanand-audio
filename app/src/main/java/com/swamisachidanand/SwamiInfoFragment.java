@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +31,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.LoadAdError;
+
 /**
  * In-app profile page for Swami Sachchidanand.
  * Top photo: 10 sec static, then server gallery slideshow.
@@ -37,7 +44,10 @@ public class SwamiInfoFragment extends Fragment {
 
     private static final String TAG = "SwamiInfoFragment";
     private static final String SWAMI_GALLERY_BASE = "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/gallery/";
-    private static final String SWAMI_GALLERY_LIST_URL = SWAMI_GALLERY_BASE + "list.json";
+    private static final String SWAMI_GALLERY_LIST_URL = SWAMI_GALLERY_BASE + "list.json?v=2";
+    /** Live philosophy paragraph (GitHub Pages). Edit JSON to add/remove points without app update. */
+    private static final String SWAMI_PHILOSOPHY_URL =
+            "https://daveashish12356-dotcom.github.io/swamisachidanand-audio/public/swami_philosophy.json?v=1";
     private static final long FIRST_PHOTO_STATIC_MS = 10_000L;
     // Swami info photo slideshow interval – 6 seconds between slides
     private static final int SLIDESHOW_INTERVAL_MS = 6000;
@@ -56,6 +66,7 @@ public class SwamiInfoFragment extends Fragment {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable firstPhotoDoneRunnable;
     private Runnable slideshowAdvanceRunnable;
+    private AdView swamiBottomBannerAd;
 
     public SwamiInfoFragment() {
         // Required empty public constructor
@@ -85,6 +96,86 @@ public class SwamiInfoFragment extends Fragment {
             });
         }
         bindBookOrderSection(view);
+        setupSwamiBottomBannerAd(view);
+        loadPhilosophyFromServer(view);
+    }
+
+    /**
+     * Overrides {@code @string/swami_philosophy} when {@code public/swami_philosophy.json} loads successfully.
+     */
+    private void loadPhilosophyFromServer(View root) {
+        final TextView body = root.findViewById(R.id.swami_philosophy_body);
+        if (body == null) return;
+        new Thread(() -> {
+            try {
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(10, TimeUnit.SECONDS)
+                        .readTimeout(15, TimeUnit.SECONDS)
+                        .build();
+                try (Response resp = client.newCall(new Request.Builder().url(SWAMI_PHILOSOPHY_URL).build()).execute()) {
+                    if (!resp.isSuccessful() || resp.body() == null) return;
+                    String json = resp.body().string();
+                    if (json != null && json.startsWith("\uFEFF")) json = json.substring(1);
+                    JSONObject o = new JSONObject(json);
+                    String p = o.optString("philosophy", "").trim();
+                    if (p.isEmpty()) return;
+                    Activity activity = getActivity();
+                    if (activity == null || !isAdded()) return;
+                    activity.runOnUiThread(() -> {
+                        if (!isAdded() || body == null) return;
+                        body.setText(p);
+                    });
+                }
+            } catch (Throwable t) {
+                Log.d(TAG, "loadPhilosophyFromServer: using bundled string", t);
+            }
+        }).start();
+    }
+
+    private void setupSwamiBottomBannerAd(View root) {
+        try {
+            swamiBottomBannerAd = root.findViewById(R.id.swami_bottom_banner);
+            if (swamiBottomBannerAd == null) return;
+            AdRequest request = new AdRequest.Builder().build();
+            swamiBottomBannerAd.setAdListener(AdLog.wrapBannerListener("swami_info_bottom", new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    try {
+                        if (swamiBottomBannerAd.getVisibility() != View.VISIBLE) {
+                            swamiBottomBannerAd.setAlpha(0f);
+                            swamiBottomBannerAd.setTranslationY(12f);
+                            swamiBottomBannerAd.setVisibility(View.VISIBLE);
+                            swamiBottomBannerAd.animate()
+                                    .translationY(0f)
+                                    .alpha(1f)
+                                    .setDuration(400L)
+                                    .setInterpolator(new android.view.animation.DecelerateInterpolator(1.5f))
+                                    .start();
+                        }
+                    } catch (Throwable t) {
+                        swamiBottomBannerAd.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onAdFailedToLoad(LoadAdError adError) {
+                    try {
+                        String code = adError != null ? String.valueOf(adError.getCode()) : "null";
+                        String msg = adError != null ? adError.getMessage() : "null";
+                        String domain = adError != null ? adError.getDomain() : "null";
+                        Log.w(TAG, "swami info banner failed: code=" + code + ", domain=" + domain + ", message=" + msg);
+                        if (swamiBottomBannerAd != null) {
+                            swamiBottomBannerAd.setVisibility(View.VISIBLE);
+                            swamiBottomBannerAd.setAlpha(0.25f);
+                        }
+                    } catch (Throwable ignore) { }
+                }
+            }));
+            AdLog.bannerRequest("swami_info_bottom");
+            BannerAdHelper.loadWhenReady(requireContext(), swamiBottomBannerAd, request);
+        } catch (Throwable t) {
+            Log.e(TAG, "setupSwamiBottomBannerAd", t);
+        }
     }
 
     private void setupSlideshow(View root) {
@@ -264,6 +355,7 @@ public class SwamiInfoFragment extends Fragment {
         swamiInfoPhotoSlideshow = null;
         swamiInfoSlideshowCard = null;
         swamiInfoSlideshowAdapter = null;
+        swamiBottomBannerAd = null;
     }
 
     private void bindBookOrderSection(View root) {
