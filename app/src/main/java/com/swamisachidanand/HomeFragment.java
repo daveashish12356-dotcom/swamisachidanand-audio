@@ -1558,7 +1558,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                     base = base.trim();
                     if (!base.isEmpty() && !base.endsWith("/")) base += "/";
                 }
-                String url = (base != null ? base : "") + "public/audio_list.json?v=9";
+                String url = (base != null ? base : "") + "public/audio_list.json?v=10";
                 OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS).build();
                 try (okhttp3.Response resp = client.newCall(new okhttp3.Request.Builder().url(url).build()).execute()) {
                     if (resp.isSuccessful() && resp.body() != null)
@@ -2039,7 +2039,7 @@ public class HomeFragment extends Fragment implements BookAdapter.OnBookClickLis
                 java.util.List<ServerAudioBook> loaded = new ArrayList<>();
                 String base = act.getString(R.string.server_books_base_url);
                 if (base != null) { base = base.trim(); if (!base.isEmpty() && !base.endsWith("/")) base += "/"; }
-                String url = (base != null ? base : "") + "public/audio_list.json?v=9";
+                String url = (base != null ? base : "") + "public/audio_list.json?v=10";
                 OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS).build();
                 okhttp3.Request req = new okhttp3.Request.Builder().url(url).build();
                 try (okhttp3.Response resp = client.newCall(req).execute()) {

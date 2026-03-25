@@ -201,7 +201,7 @@ public class SearchResultFragment extends Fragment implements BookAdapter.OnBook
             if (base == null) base = "";
             base = base.trim();
             if (!base.isEmpty() && !base.endsWith("/")) base += "/";
-            String url = base + "public/audio_list.json?v=9";
+            String url = base + "public/audio_list.json?v=10";
             List<ServerAudioBook> loaded = null;
             try {
                 okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
