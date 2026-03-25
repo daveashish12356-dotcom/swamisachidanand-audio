@@ -281,7 +281,7 @@ public class ServerAudioFragment extends Fragment implements AudioBookCardAdapte
                     if (!base.isEmpty() && !base.endsWith("/")) base += "/";
                     // Audio pustako ka main JSON: public/audio_list.json
                     // Cache-buster query (?v=9) so GitHub/OkHttp purani copy na de.
-                    String url = base + "public/audio_list.json?v=10";
+                    String url = base + "public/audio_list.json?v=9";
 
                     // Pehle server se full list (20+ books) lane ki koshish
                     try {
