@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>એપ સંપૂર્ણ ગાઇડ – સ્વામી સચ્ચિદાનંદ</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: "Noto Sans Gujarati", system-ui, sans-serif; max-width: 720px; margin: 0 auto; padding: 20px 16px 48px; background: #faf8f5; color: #222; line-height: 1.55; }
+    h1 { color: #7c4a03; font-size: 1.45rem; border-bottom: 2px solid #e8dcc8; padding-bottom: 12px; }
+    h2 { color: #5d4e37; font-size: 1.15rem; margin-top: 28px; }
+    h3 { color: #6b5b45; font-size: 1rem; margin-top: 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 12px 0; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    th, td { border: 1px solid #e8e0d4; padding: 10px 8px; text-align: left; vertical-align: top; }
+    th { background: #f3ebe0; color: #5c4a32; }
+    code, .path { font-family: ui-monospace, monospace; font-size: 0.82rem; background: #eee8df; padding: 2px 6px; border-radius: 4px; }
+    pre { background: #2d2a26; color: #e8e4dc; padding: 14px; border-radius: 10px; overflow-x: auto; font-size: 0.8rem; }
+    .badge { display: inline-block; background: #E85D04; color: #fff; padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; margin-bottom: 12px; }
+    .note { background: #fff8e8; border-left: 4px solid #f0a000; padding: 12px 14px; margin: 16px 0; border-radius: 0 8px 8px 0; }
+    a { color: #1565c0; }
+    footer { margin-top: 40px; font-size: 0.85rem; color: #777; text-align: center; }
+  </style>
+</head>
+<body>
+  <span class="badge">ડેવલપર + એડમિન</span>
+  <h1>સ્વામી સચ્ચિદાનંદ એપ — સંપૂર્ણ ગાઇડ</h1>
+  <p>સોર્સ: રિપો <code>ss</code> · પેકેજ <code>com.swamisachidanand</code> · Markdown સોર્સ: રિપોમાં <code>docs/APP_COMPLETE_GUIDE.md</code></p>
+
+  <h2>1. એપ શું છે?</h2>
+  <table>
+    <tr><th>વિગત</th><th>માહિતી</th></tr>
+    <tr><td>પેકેજ</td><td><code>com.swamisachidanand</code></td></tr>
+    <tr><td>UI</td><td>મુખ્યત્વે ગુજરાતી</td></tr>
+    <tr><td>લોન્ચ</td><td><code>SplashActivity</code> → <code>MainActivity</code></td></tr>
+    <tr><td>ડેટા</td><td>ઇન્ટરનેટ + Firebase (Firestore, FCM) + GitHub Pages</td></tr>
+  </table>
+
+  <h2>2. નીચેનું મેનુ</h2>
+  <table>
+    <tr><th>ટેબ</th><th>ફ્રેગમેન્ટ</th><th>માહિતી</th></tr>
+    <tr><td>હોમ</td><td>HomeFragment</td><td>સુવિચાર, શોધ, ઝડપી લિંકો</td></tr>
+    <tr><td>પુસ્તક</td><td>BooksFragment</td><td>PDF, ModernPdfActivity</td></tr>
+    <tr><td>ઓડિયોબુક</td><td>ServerAudioFragment</td><td>સર્વર JSON ઓડિયો</td></tr>
+    <tr><td>પ્રવચન</td><td>AudioPravachanFragment</td><td>Firestore <code>pravachan</code></td></tr>
+    <tr><td>વિડિઓ</td><td>VideosFragment</td><td>YouTube + <code>yt_feed/latest</code></td></tr>
+    <tr><td>સંપર્ક</td><td>AboutFragment</td><td>લિંક્સ, છુપો સુવિચાર એડમિન</td></tr>
+  </table>
+  <p><strong>અન્ય:</strong> BookStoreActivity, YouTubePlayerActivity, SearchResultActivity, PhotoGalleryActivity, AppTourActivity</p>
+
+  <h2>3. ડેટા સોર્સ</h2>
+  <ul>
+    <li><strong>પુસ્તક:</strong> <code>books_server_list.json</code> + <code>server_books_base_url</code></li>
+    <li><strong>પ્રવચન:</strong> Firestore <code>pravachan</code> · Telegram → <code>telegramPravachanWebhook</code></li>
+    <li><strong>વિડિઓ:</strong> <code>yt_feed/latest</code> (Cloud Function) + એપમાં YouTube API/RSS/Invidious</li>
+    <li><strong>સુવિચાર:</strong> <code>suvichar_config.json</code> + FCM <code>suvichar</code></li>
+  </ul>
+
+  <h2>4. FCM ટોપિક્સ</h2>
+  <p>એપ subscribe: <code>suvichar</code>, <code>new_book</code>, <code>new_audio</code>, <code>new_video</code></p>
+  <table>
+    <tr><th>ટોપિક/kind</th><th>પરિણામ</th></tr>
+    <tr><td>suvichar</td><td>આજનું ચિંતન</td></tr>
+    <tr><td>new_video</td><td>વિડિઓ ટેબ</td></tr>
+    <tr><td>new_pravachan વગેરે</td><td>ContentUpdateNotificationHelper</td></tr>
+  </table>
+  <p class="note">વિગત રિપોમાં: <code>docs/SERVER_VIDEO_FCM.md</code> · સુવિચાર: <code>FIREBASE_SETUP.md</code></p>
+
+  <h2>5. Cloud Functions</h2>
+  <table>
+    <tr><th>Function</th><th>કામ</th></tr>
+    <tr><td>sendSuvichar</td><td>સુવિચાર + FCM</td></tr>
+    <tr><td>pollYouTubeNewVideos</td><td>30 મિન · yt_feed + new_video</td></tr>
+    <tr><td>triggerYouTubePollNow</td><td>મેન્યુઅલ પોલ (key)</td></tr>
+    <tr><td>telegramPravachanWebhook</td><td>Telegram → pravachan + FCM</td></tr>
+  </table>
+
+  <h2>6. બિલ્ડ (સફળ કમાન્ડ)</h2>
+  <pre>cd f:\ss
+.\gradlew :app:assembleDebug
+adb install -r app\build\outputs\apk\debug\app-debug.apk</pre>
+  <p>APK પાથ: <span class="path">app/build/outputs/apk/debug/app-debug.apk</span></p>
+
+  <h2>7. મહત્વની ફાઇલો</h2>
+  <table>
+    <tr><th>વિસ્તાર</th><th>ફાઇલ</th></tr>
+    <tr><td>Nav</td><td>MainActivity.java, bottom_navigation_menu.xml</td></tr>
+    <tr><td>વિડિઓ</td><td>VideosFragment.java</td></tr>
+    <tr><td>પ્રવચન</td><td>AudioPravachanFragment.java</td></tr>
+    <tr><td>FCM</td><td>App.java, MyFirebaseService.java</td></tr>
+    <tr><td>સર્વર</td><td>functions/index.js</td></tr>
+  </table>
+
+  <h2>8. બીજા ડૉક્સ (Git / લોકલ રિપો)</h2>
+  <ul>
+    <li><code>FIREBASE_SETUP.md</code></li>
+    <li><code>docs/SERVER_VIDEO_FCM.md</code></li>
+    <li><code>docs/VIDEO_NOTIFICATIONS.md</code></li>
+    <li><code>docs/ADS_VERIFY.md</code></li>
+  </ul>
+
+  <footer>GitHub Pages પર <code>public/app_complete_guide.html</code> ખોલો — અથવા લોકલ ફાઇલ બ્રાઉઝરમાં ખોલો.</footer>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>આજનું ચિંતન – Notification Bhejo (Firebase)</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; max-width: 560px; margin: 24px auto; padding: 20px; background: linear-gradient(#f8f4ee, #efe8dc); color: #333; min-height: 100vh; }
+    .back { display: inline-block; margin-bottom: 16px; color: #E85D04; text-decoration: none; font-size: 0.9rem; }
+    .back:hover { text-decoration: underline; }
+    h1 { font-size: 1.35rem; color: #8B4513; text-align: center; margin-bottom: 6px; }
+    .sub { text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 20px; }
+    .box { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    .box label { display: block; font-size: 0.9rem; color: #5d4e37; margin-bottom: 6px; }
+    .box input, .box textarea { width: 100%; padding: 10px 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; }
+    .box textarea { min-height: 140px; resize: vertical; font-family: inherit; }
+    button { padding: 14px 24px; border-radius: 10px; font-size: 1rem; font-weight: bold; border: none; cursor: pointer; background: #2e7d32; color: #fff; margin-top: 8px; }
+    button:hover { background: #1b5e20; }
+    button:disabled { background: #9e9e9e; cursor: not-allowed; }
+    .msg { margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 0.9rem; display: none; }
+    .msg.ok { background: #e8f5e9; color: #1b5e20; display: block; }
+    .msg.err { background: #ffebee; color: #c62828; display: block; }
+    .note { background: #fff; border-radius: 12px; padding: 16px; font-size: 0.88rem; color: #555; line-height: 1.6; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-top: 20px; }
+    .note code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <!-- PIN gate – 444444 -->
+  <div id="pinGate" class="box" style="text-align:center; max-width:420px; margin-top:20px;">
+    <div style="font-weight:600; margin-bottom:8px;">Security PIN</div>
+    <div style="font-size:0.9rem; color:#666; margin-bottom:10px;">આ પેજ ખોલવા માટે PIN નાખો.</div>
+    <input
+      id="pinInput"
+      type="password"
+      inputmode="numeric"
+      pattern="[0-9]*"
+      placeholder="PIN"
+      style="text-align:center; max-width:180px; margin:0 auto;"
+    />
+    <button type="button" id="pinButton" style="margin-top:10px;">Enter</button>
+    <div id="pinMsg" style="margin-top:8px; font-size:0.85rem; color:#c62828;"></div>
+  </div>
+
+  <div id="mainContent" style="display:none;">
+    <a href="index.html" class="back">← મુખ્ય પેજ પર પાછા</a>
+    <h1>આજનું ચિંતન – Notification Bhejo</h1>
+    <p class="sub">અહીં લખો → બટન દબાવો → સૌને મોબાઇલ પર નોટિફિકેશન જશે (GitHub જેવી જ સાઇટ, પણ Firebase પર)</p>
+
+    <div class="box">
+      <label for="text">સુવિચાર (ટેક્સ્ટ) *</label>
+      <textarea id="text" placeholder="આજનું ચિંતન અહીં લખો..." required></textarea>
+    </div>
+  <div class="box">
+    <label for="author">લેખક (વૈકલ્પિક)</label>
+    <input
+      type="text"
+      id="author"
+      placeholder="જેમ કે સ્વામી શ્રીસચ્ચિદાનંદજી"
+      value="પરમ પૂજ્ય પદ્મભૂષણ સન્માનિત મહર્ષિ શ્રી સ્વામી સચ્ચિદાનંદજી"
+    />
+  </div>
+    <div class="box" id="keyBox">
+      <div id="keyRow">
+        <label for="key">Secret key (એક વાર લગાવો, પછી સેવ થશે)</label>
+        <input type="password" id="key" placeholder="Firebase માં લગાવેલ key" autocomplete="off" />
+      </div>
+      <div id="keySaved" style="display:none; font-size:0.85rem; color:#1b5e20; margin-top:4px;">
+        Secret key સેવ થઈ ગઈ છે. ફરી લખવાની જરૂર નથી.
+      </div>
+    </div>
+    <div class="box">
+      <button type="button" id="btnSend">Notification Bhejo</button>
+      <div id="msg" class="msg"></div>
+    </div>
+
+    <div class="note">
+      <strong>Setup (એક વાર):</strong> Secret key પહેલેથી સેટ છે: <code>suvichar_secret_2024</code> — આ જ અહીં લગાવો.<br>
+      બદલવી હોય તો: <code>npx firebase-tools functions:config:set admin.key="નવો_કી"</code> પછી <code>firebase deploy --only functions</code>.<br><br>
+      <strong>Functions deploy:</strong> પહેલી વાર Firebase Console → Upgrade to Blaze (free quota) પછી <code>npx firebase-tools deploy</code> ચલાવો.
+    </div>
+  </div>
+
+  <script>
+    var FUNC_URL = "https://us-central1-swami-sachidanand.cloudfunctions.net/sendSuvichar";
+    var KEY_STORAGE = "suvichar_firebase_key";
+
+    function getKey() {
+      var input = document.getElementById("key");
+      if (input) {
+        var k = input.value.trim();
+        if (k) return k;
+      }
+      try { return localStorage.getItem(KEY_STORAGE) || ""; } catch (e) { return ""; }
+    }
+    function setKey(k) {
+      try { if (k) localStorage.setItem(KEY_STORAGE, k); } catch (e) {}
+      updateKeyUI();
+    }
+    function showMsg(text, isErr) {
+      var m = document.getElementById("msg");
+      m.textContent = text;
+      m.className = "msg " + (isErr ? "err" : "ok");
+    }
+
+    function updateKeyUI() {
+      var saved = "";
+      try { saved = localStorage.getItem(KEY_STORAGE) || ""; } catch (e) {}
+      var has = saved && saved.trim().length > 0;
+      var row = document.getElementById("keyRow");
+      var savedMsg = document.getElementById("keySaved");
+      if (!row || !savedMsg) return;
+      if (has) {
+        row.style.display = "none";
+        savedMsg.style.display = "block";
+      } else {
+        row.style.display = "block";
+        savedMsg.style.display = "none";
+      }
+    }
+
+    // On load, adjust key UI based on existing saved key (if any)
+    updateKeyUI();
+
+    // ----- PIN logic -----
+    var PIN_CODE = "444444";
+    function unlockIfPinCorrect() {
+      var input = document.getElementById("pinInput");
+      var msg = document.getElementById("pinMsg");
+      if (!input) return;
+      var val = (input.value || "").trim();
+      if (val === PIN_CODE) {
+        var gate = document.getElementById("pinGate");
+        var main = document.getElementById("mainContent");
+        if (gate) gate.style.display = "none";
+        if (main) main.style.display = "block";
+        input.value = "";
+        if (msg) msg.textContent = "";
+        try { document.getElementById("text").focus(); } catch (e) {}
+      } else {
+        if (msg) msg.textContent = "PIN ખોટો છે.";
+        input.focus();
+        input.select();
+      }
+    }
+    (function initPin() {
+      var btn = document.getElementById("pinButton");
+      var input = document.getElementById("pinInput");
+      if (btn) btn.onclick = unlockIfPinCorrect;
+      if (input) {
+        input.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            unlockIfPinCorrect();
+          }
+        });
+        input.focus();
+      }
+    })();
+
+    document.getElementById("btnSend").onclick = function() {
+      var text = document.getElementById("text").value.trim();
+      var author = document.getElementById("author").value.trim();
+      var key = getKey();
+      if (!text) {
+        showMsg("પહેલા સુવિચાર લખો.", true);
+        return;
+      }
+      if (!key) {
+        showMsg("પહેલા Secret key લગાવો (નીચે નોટ જુઓ).", true);
+        return;
+      }
+      setKey(key);
+      var btn = document.getElementById("btnSend");
+      btn.disabled = true;
+      showMsg("ભેજી રહ્યું છે…", false);
+      fetch(FUNC_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: text, author: author, key: key })
+      })
+      .then(function(r) { return r.json().then(function(data) { return { ok: r.ok, data: data }; }); })
+      .then(function(result) {
+        if (result.ok && result.data.ok) {
+          showMsg("નોટિફિકેશન ભેજી દીધું. સૌને મોબાઇલ પર દેખાશે.", false);
+        } else {
+          showMsg("ભૂલ: " + (result.data.error || "ફેઈલ"), true);
+        }
+      })
+      .catch(function(e) {
+        showMsg("ભૂલ: " + (e.message || "નેટવર્ક ચેક કરો."), true);
+      })
+      .finally(function() { btn.disabled = false; });
+    };
+  </script>
+</body>
+</html>
